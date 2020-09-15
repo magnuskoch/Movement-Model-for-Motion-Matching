@@ -20,50 +20,29 @@ For $step_{\omega}$ to keep the transitions defined in $\Delta{t}_c$ updates, ea
   \caption{Frozen transition}
   \label{fig:frozen-transition}
 \end{figure*}
-To evaluate $step$ we notice that each $l\in\mathcal{L}$ should provide update routines $\dot{p}^*=l_p(\dot{p})$ and 
-
-while the derivates can be used to update positions directly from dt to get the full actor update
-
-
-
-
-velocity magnitude depends on the amount of turn.
-Velocity direction is handeled by spring thing
-orientation direction is handled by thing.
-again each element could be an abitrarily complex sub system
-
-
-
-
-velocity update depends and orientation relative to forward. And Also to rate of change of orientation.
-
-Velocity springs towards target with crititically damped spring. exponential curve
-orientation springs towards target 
-
-Updates to the model is handled by the integration routine $p^*,q^*=I(m,C,p,q)$, and all $m_i,m_j\in\mathcal{M}$ are associated with a transition curve used to update $\vec{m}^*=T(C,\vec{m})$, ie., the update that handles transition times between movement modes. 
-Each mode is associated with internal update procedures
+To evaluate $step$ we notice that each $l\in\mathcal{L}$ should provide update routines $\dot{p}^*=l_{p,m}(\mathcal{A},\mathcal{C})$ and $\dot{r}^*=l_{r,m}(\mathcal{A},\mathcal{C})$ which are then combined.
 \begin{equation}
 \begin{split}
-    p^*&=P(p,p',q')\\
-    q^*&=Q(q,q',p')\\
+\dot{p}*&=\sum_{0<=k<m}\omega_k*l_{p,k}(\mathcal{A},\mathcal{C})\\
+\dot{r}*&=\sum_{0<=k<m}\omega_k*l_{r,k}(\mathcal{A},\mathcal{C})\\
 \end{split}
 \end{equation}
-The update up the model is determined by the contribution of each movement mode in 
-\begin{equation}
-\begin{split}
-    p^*&=\sum_{m\in{M}}{P_m*\vec{m}_m}\\
-    q^*&=\sum_{m\in{M}}{Q_m*\vec{m}_m}\\
-\end{split}
-\end{equation}
+The values can be inserted directly back into $\mathcal{A}$ while $p$ and $r$ are update with a forward Euler step using $\Delta{t}$. As before the update routines can be arbitrarily complex, which is natural given the idiosyncracity of human movement. As such our choise of expressiveness in these function are imposing limits on the types of locomotion we are able to model. We use a simple yet expressive apporach common to game development.   
 
-Missing: Parameters exposed by P and Q update functions
-Missing: Updates to velocities
-Missing: Clear description of entire parameter set
-Missing: Control signal could also contain
+velocity, velocity damper function, movement spring constant, orientation spring constant
+
+velocity magnitude depends on the amount angular rotation. Slower when curving
+move from current velocity to requested velocity is handled by spring.
+move from orientation to requested orientation handled by soring.
+Parameters are velocity, velocity damper function, velocity spring constant, orientation spring constant.
+
 
 Notice that the formulation for $D$ is generic. In production a mapping between the generic movement model and a more context specific model would usually be needed. 
 
 \subsection{missing}
 Add animator constraint to model ? Example is 180. We dont start moving backwards immediately. First we rotate 90 degrees on the spot and then we start a 90 degree run to idle movement
+Handle this by setting limits on rotation relative to forward movement ?
+
+Clear description of entire parameter set
 
 Show very clear example. Pseudo code with idle and walk state. 
