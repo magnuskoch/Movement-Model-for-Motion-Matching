@@ -41,7 +41,7 @@ Notice that the formulation for $D$ is generic. In production a mapping between 
 
 \subsection{missing}
 Add animator constraint to model ? Example is 180. We dont start moving backwards immediately. First we rotate 90 degrees on the spot and then we start a 90 degree run to idle movement
-Handle this by setting limits on rotation relative to forward movement ?
+Handle this by setting limits on rotation relative to forward movement ? Better to have a locomotion mode where velocity magnitude is 0 when facing relative to direction i < threshold.
 
 Clear description of entire parameter set
 
