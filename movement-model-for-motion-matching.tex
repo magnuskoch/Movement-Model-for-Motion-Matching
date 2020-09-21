@@ -1,12 +1,20 @@
 \documentclass[format=acmtog]{acmart}
-\usepackage{graphicx}
-\graphicspath{ {./img/} }
+
+\input{custom}
 
 \begin{document}
 \title{Movement Model for Motion Matching}
 
+
+\input{sections/authors}
+\input{sections/abstract}
+\input{sections/ccs}
+\input{sections/keywords}
+\input{sections/teaser}
+
 \maketitle
 
+\magnus{
 \section{meta}
 We have a movement model. It is flexible both and parameter count and values.
 
@@ -16,36 +24,19 @@ We want a fit between these two.
 
 \subsection{Ideas for fitting optimizations}
 Could we start by distributing user control changes in animation frames ?
+}
 
 \input{sections/introduction}
-
-\section{Basic terminology}
-Define animation database as $\mathcal{D}$
-
-Define Movement model
-
-Define Animation warping.
-
-\section{Related work}
-\subsection{Animation Warping}
-Animation warping can be viewed as a generative model trained on $D$. 
+\input{sections/related_work}
+\input{sections/method}
+\input{sections/results}
+\input{sections/conclussion}
+\input{sections/appendix}
+\input{sections/acknowledgements}
 
 
-\input{sections/movement-model.tex}
-
-\section{Animation Warping}
-We need a warping system that preserves ground truth. And some linear metric for divergence than can be scaled up from 0.
 
 
-\section{Optimization Procedure}
-We need some regularization to ill posed problem
-\subsection{Primary movement modes}
-Idea: Identify areas in the animations with cyclic movement for some duration. Cluster these segments into buckets with some threshold. We now have the velocity and number of main movement modes.
-\subsection{Sparse user input}
-If we allow extremely high frequency changes in the user input a wide variety of movement model configurations could follow the animation trajectory. We distribute sparse changes in user input over the animations, ie. few keypoints where we identify changes in the user input.
-
-\section{Experiments}
-Use precise movement model for other data driven system such as pfnn,. 
 
 \bibliography{movement-model-for-motion-matching}{}
 \bibliographystyle{plain}

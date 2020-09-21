@@ -1,0 +1,97 @@
+\usepackage{blindtext}
+
+\usepackage{graphicx}
+\graphicspath{ {./img/} }
+
+\usepackage{subfig}
+
+
+\usepackage[ruled]{algorithm2e} % For algorithms
+\renewcommand{\algorithmcfname}{ALGORITHM}
+\SetAlFnt{\small}
+\SetAlCapFnt{\small}
+\SetAlCapNameFnt{\small}
+\SetAlCapHSkip{0pt}
+\IncMargin{-\parindent}
+
+
+%\newcommand{\abs}[1]{\left| {#1} \right|}
+%\newcommand{\acos }{ \ensuremath{ \cos^{-1} } }
+%\newcommand{\asin }{ \ensuremath{ \sin^{-1} } }
+%\newcommand{\atan }{ \ensuremath{ \phantom{\cdot}\text{atan}_2 } }
+%\newcommand{\ball}{\ensuremath{ \mathcal{B} }}
+%\newcommand{\bigO}{ \ensuremath{ \mathcal{O} }}
+%\newcommand{\degree}{\,^{\circ}}
+%\renewcommand{\det}[1]{ \ensuremath{ \text{det}\left( #1 \right) } }
+%\newcommand{\hull }[1]{ \ensuremath{ \text{convex hull}\left( #1 \right) } }
+%\newcommand{\identity}{ \ensuremath{ \mat I }}
+%\newcommand{\idx }[1]{ \ensuremath{ \mathbb{#1} } }
+%\newcommand{\intersection}{\ensuremath{ \cap }}
+%\newcommand{\logand }{ \ensuremath{ \wedge } }
+%\newcommand{\logor }{ \ensuremath{ \vee } }
+\newcommand{\mat}[1]{\ensuremath{\mathbf{#1} }}
+%\newcommand{\interior}[1]{\ensuremath{ {#1}^{\circ} }}
+%\newcommand{\boundary}[1]{\ensuremath{ \partial{#1} }}
+%\newcommand{\N}{ \mathbb{N} }
+\newcommand{\norm}[1]{\parallel {#1} \parallel}
+%\newcommand{\proj }[1]{ \ensuremath{ \text{proj}\left( #1 \right) } }
+\newcommand{\prox }[2]{ \ensuremath{ \text{prox}_{#1}\left( #2 \right) } }
+\renewcommand{\Re}{ \mathbb{R} }
+\newcommand{\Z}{ \mathbb{Z} }
+\newcommand{\set}[1]{\mathcal{#1}}
+\newcommand{\seq}[1]{ \left\{ #1 \right\} }
+%\newcommand{\sgn }[1]{ \ensuremath{ \text{sgn}\left( #1 \right) } }
+%\newcommand{\smallO}{\ensuremath{ \mathbf{o} }}
+\renewcommand{\th}{ \ensuremath{ ^{\text{th}}} }
+%\newcommand{\trace }[1]{ \ensuremath{ \text{tr}\left( #1 \right) } }
+%\newcommand{\union}{\ensuremath{ \cup }}
+\renewcommand{\vec}[1]{ \boldsymbol{#1 } }
+\renewcommand{\quat}[1]{ \boldsymbol{#1 } }
+%\newcommand{\activeset}{ \mathcal{ A } }
+%\newcommand{\allset}{ \mathcal{ E } \cup \mathcal{I} }
+%\newcommand{\arctantwo}{\ensuremath{\arctan\!2}}
+%\newcommand{\crossmat}[1]{\ensuremath{\boldsymbol{#1}^{\times} }}
+%\newcommand{\curl}{\operatorname{\text{curl}}}
+%\newcommand{\diag}{\operatorname{\text{diag}}}
+%\newcommand{\divergence}{\operatorname{\text{div}}}
+%\newcommand{\enorm}[1]{\ensuremath{\left\| #1 \right\|_{_2}}}
+%\newcommand{\equalityset}{ \mathcal{ E } }
+%\newcommand{\feasibledirections}{ \ensuremath{\mathcal{F}} }
+%\newcommand{\feasibleregion}{ \ensuremath{\Omega} }
+%\newcommand{\func}[1]{{\bf{#1}}}
+%\newcommand{\grad}{\operatorname{\nabla}}
+%\newcommand{\inequalityset}{ \mathcal{ I } }
+%\newcommand{\jacobian}[1]{\ensuremath{\boldsymbol{\mathit{#1}} }}
+%\newcommand{\lagrangian}{ \mathcal{ L } }
+%\newcommand{\rtm}{$^{\textrm{®}}$} % Registred trademark  \textregistered
+%\newcommand{\tangentcone}{ \ensuremath{ \mathcal{ T }_{\Omega} } }
+%\newcommand{\vecop}{\operatorname{\text{vec}}}
+%\newcommand{\FG}{ \mathcal{G} }
+%\newcommand{\FC}{ \mathcal{F} }
+%\newcommand{\LS}{ \mathcal{L} }
+
+\newcommand{\model}{ \mathcal{M} }
+\newcommand{\modes}{ \mathcal{L} }
+\newcommand{\control}{ \mathcal{C} }
+\newcommand{\interpolators}{ \mathcal{T} }
+\newcommand{\actor}{ \mathcal{A} }
+
+\newcommand{\mode}{ l }
+\newcommand{\interpolator}{ I }
+
+\newcommand{\pos}{ \vec{p} }
+\newcommand{\ori}{ \quat{\theta} }
+\newcommand{\dtpos}{ \dot{\pos} }
+\newcommand{\dtori}{ \dot{\ori} }
+\newcommand{\blend}{ \vec \omega }
+\newcommand{\weight}{ \omega }
+\newcommand{\sfunc}{ \textit{Step} }
+\newcommand{\interp}{ u }
+
+\usepackage{color} 
+\definecolor{color1}{rgb}{0.5,0.1,0.1}
+\definecolor{color2}{rgb}{0.1,0.5,0.1}
+\definecolor{color3}{rgb}{0.1,0.1,0.5}
+\definecolor{color4}{rgb}{0.5,0.1,0.5}
+\newcommand{\kenny}[1]{{ \color{color1} K: #1}}
+\newcommand{\magnus}[1]{{ \color{color2} M: #1}}
