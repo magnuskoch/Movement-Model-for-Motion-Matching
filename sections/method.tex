@@ -76,7 +76,7 @@ A step of the actor state can be described by $\actor_{t+1} = step_{\actor}(\act
     \kine_{t+1} &\leftarrow  \sfunc_{\kine}(\blend_t, \kine_{t},  \modes, \kine_{g}, \dt )\label{eq:step:kinematics}
 \end{align}
 \end{subequations}
-Where $\dt$ is a time step. Intuitively $\sfunc_{\blend}$ moves $\blend$ towards $w_{l_{g}}=1$ and $w_{i\neq{l_g}}=0$ using the combined interpolation rules in $\interpolators$. Since multiple interpolators can be active at the same time, we set a weighting of $\interpolator_k$ as the weight relative to the weight of all locomotion modes we are interpolating out of. 
+Where $\dt$ is a time step. Intuitively $\sfunc_{\blend}$ moves $\blend$ towards $w_g=1$ and $w_{i\neq{g}}=0$ using the combined interpolation rules in $\interpolators$. Since multiple interpolators can be active at the same time, we set the contribution of $\interpolator_k$ as the weight relative to the weight of all locomotion modes we are interpolating out of. 
 \begin{equation}
 \theta_{k}=\dfrac{\weight_k}{\left(\sum_{j\in\interpolators}\weight_j\right)-\weight_g}
 \end{equation}
@@ -85,12 +85,10 @@ The weighted effect of all interpolators becomes.
 \dweight_g = \sum_{\interpolator_j^{a\rightarrow g} \in \interpolators}\theta_a \, \interpolator_j^{a\rightarrow g}(\weight_j,\dt),
 \quad \forall a \neq g \,.
 \end{equation}
-We set $\weight_{g,t+1}=\weight_{g,t}=\dweight_g$ and need to maintain both $||\blend||=1$ and the distribution of locomotion modes we are transitioning away from by. Both is achieved by.
+We set $\weight_{g,t+1}=\weight_{g,t}+\dweight_g$ and need to maintain both $||\blend||=1$ and the distribution of locomotion modes we are transitioning away from by. Both is achieved by.
 \begin{equation}
-\weight_k = \theta_k \, (1-\weight_{g,t+1})  
+\weight_{k,t+1} = \theta_k * (1-\weight_{g,t+1})  
 \end{equation}
-
-
 
 This is the general framework. Now we define locomotion modes and transitions. An actual implementation of the movement model
 
