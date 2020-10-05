@@ -1,4 +1,8 @@
 \section{Movement Model}
+\magnus{A movement model outputs a control signal. If we add more and more details to this signal, in the end we will output the entire animation. Some system output a path augmented with footsteps. If we augment with more details we move towards full synthesis by movement model. Balance between descriptive and understandable}
+
+\magnus{Goal of movement model . Epressive . But very important. It should be possible for human to understand and tweak parameters. And fast to evaluate.}
+
 A movement model describes how an entity moves through space given control input. It consists of internal parameters such as velocities and accelerations. Control input could be a direction of movement supplied by a human using a gamepad, or longer paths supplied by a game engine AI system. We have not seen any formal description of the movement model. Ususally some ad hoc newtonian physics concepts are combined with springs and animation curves to control the system.
 
 Figure \ref{fig:movement:model} illustrates the definitions and concepts of a movement model.
@@ -14,16 +18,31 @@ In the following we limit \kenny{without loss of generalization} the description
  \model \equiv 
  \left\{ \modes,\,\interpolators \right\}
 \end{equation}
-where $\modes \equiv \seq{ \mode_1, \ldots, \mode_n}$ is a set of locomotion modes and $\interpolators \equiv \seq{ \interpolator_1, \ldots, \interpolator_m}$ is a set of interpolates that describes the transition between locomotion modes.  A movement model defines the behaviour of an actor 
-\begin{equation}
+where $\modes \equiv \seq{ \mode_1, \ldots, \mode_n}$ is a set of locomotion modes and $\interpolators \equiv \seq{ \interpolator_1, \ldots, \interpolator_m}$ is a set of locomotion mode interpolators that describes the transition between locomotion modes. We use the convention for $\interpolators_j$ and $\interpolators_{a,b}$ that $j$ and $a,b$ refers to indices in $\interpolators$ and $\modes$ respectively, ie. $\interpolator_{a,b}$ refers to the interpolation between $\mode_a$ and $\mode_b$. A movement model defines the behaviour of an actor 
+\begin{subequations}
+\begin{align}
     \label{eq:actor:def}
     \actor 
-    \equiv
+    &\equiv
     \seq{
-        \blend, \pos, \dtpos, \ori ,\dtori 
-        }
-\end{equation}
-where $\pos$ and $\ori$ describe position, orientation and their derivatives are $\dtpos$ and $\dtori$. \kenny{To make this more concrete one can for example think of $\pos$ as the planar 2D position of the character root position in the world and $\ori$ could be the world facing direction of the character given as an angle measure in the 2D world plane.} The contribution weights for different movement modes are given by the vector $\blend \equiv \begin{bmatrix}\weight_1 & \ldots & \weight_n \end{bmatrix}^T$ that contains the contribution weights $\weight_l$ for $l \in \modes$. We use the convention that $\norm{\blend}^2 = 1$ and remark that usually only a couple of modes will be active as in a transition between walking and running where 
+        \blend, \kine 
+        }\\
+    \kine
+    &\equiv
+    \seq{
+        \pos, \speed, \move, \dtmove, \facing, \dtfacing 
+        }\\
+\end{align}
+\end{subequations}
+where $\kine$ encapsulates kinematic properties and $\pos$ and $\ori$ describe position, speed (magnitude of velocity). The movement and facing orientations are quaternions $\move$ and $\facing$ with derivatives $\dtmove$ and $\dtfacing$. Fig. \ref{fig:actor} show a visualization of an $\actor$ in a 3d coordinate system. For planer movement, it is custom to model positions as the projection of the hip bone to ground plane. In our case $\pos$ should instead be interpreted as the position of our movement model as it tracks an animation.  
+\magnus{When describing warping at later pint: The animations need to have something like $\pos$. We compute this as a function of control signals and the movement model. Thus $p$ in the animations is a projection of the entire animation depending on optimal movement/control signal distrribution.}      
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\columnwidth]{img/actor.jpg}
+    \caption{Actor. Not showing derivatics and facing orientation}
+    \label{fig:actor}
+\end{figure}
+\kenny{To make this more concrete one can for example think of $\pos$ as the planar 2D position of the character root position in the world and $\ori$ could be the world facing direction of the character given as an angle measure in the 2D world plane.} The contribution weights for different movement modes are given by the vector $\blend \equiv \begin{bmatrix}\weight_1 & \ldots & \weight_n \end{bmatrix}^T$ that contains the contribution weights $\weight_l$ for $l \in \modes$. We use the convention that $\norm{\blend}^2 = 1$ and remark that usually only a couple of modes will be active as in a transition between walking and running where 
 \begin{equation}
     \label{eq:contribusion:weight:example}
     \weight_l \equiv
@@ -33,26 +52,30 @@ where $\pos$ and $\ori$ describe position, orientation and their derivatives are
     0 & \text{otherwise}
     \end{cases}\,.
 \end{equation}
+To describe changes in $\blend$ over time $\dt$ each $\interpolator \in \interpolators$ defines a progression
+\begin{equation}
+\weight_{a,t+\dt},\weight_{b,t+\dt}\leftarrow\interpolator_{a,b}(\weight_{a,t},\weight_{b,t}, \dt)
+\end{equation}
+
 An actor is moved with a control signal, as a concrete example this could defined as follows
 \begin{equation}
     \label{eq:control:signal:def}
     \control \equiv \seq{
-    \mode_c, \interp_c, \Delta{t}_c, \pos_c, \ori_c}
+    \mode_c, \move_c, \facing_c, \Delta{t}_c}
 \end{equation}
-where $\mode_c$ is the desired locomotion mode, $\interp_c$ is the interpolation weight \kenny{what is this? Not very clear how it is related to the $\weight_l$s} , $\Delta t_c$ is the time-step \kenny{what kind of time-step?}  and target position and orientation is given by $\pos_c$ and $\ori_c$ respectively.
+where $\mode_c, \move_c, \facing_c$ is the desired locomotion mode, movement orientation and facing orientation respectively. Since the control signal is used to advance the actor, we also provide at timestep $\Delta{t}_c$, which in many cases could be constant.
 
 The sparsity of the control signal illustrates an inherent uncertainty in character animation, as we are challenged to infer a detailed path of movement through often complex environments given a very limited disambiguation or hints to the desired trajectory \cite{holden.ea16}. We notice that a sampling of the immediate surroundings could potentially be added as part of the control signal as in \cite{holden.ea17}. 
 
-A step of the actor state can be described by two separate functions.
+A step of the actor state can be described by $\actor_{t+1} = step_{\actor}(\actor, \modes, \interpolators, \control)$ and split into two separate functions to make the update process clearer.
 \begin{subequations}
 \begin{align}
-    \left( \pos^*, \ori^* \right) &\leftarrow \sfunc( \actor, \modes, \control) \label{eq:step:kinematics}\\
-    \left( \blend^*, \interp{}^* \right) &\leftarrow  \sfunc_{\blend}(
-        \blend, \interp_c, \interpolators, \Delta{t}_c
-        )\label{eq:step:animation}
+    \blend_{t+1} &\leftarrow \sfunc_{\blend}( \blend_{t}, \interpolators, \mode_c, \Delta{t}_c) \label{eq:step:interpolators}\\
+    \kine_{t+1} &\leftarrow  \sfunc_{\kine}(\blend_t, \kine_{t},  \modes, {\move}_c, \facing_c, \Delta{t}_c )\label{eq:step:kinematics}
 \end{align}
 \end{subequations}
-\kenny{What does the star notation mean here? The optimal solution or? Should perhaps be stated explicitly?} 
+
+This is the general framework. Now we define locomotion modes and transitions. An actual implementation of the movement model
 
 For $\sfunc_{\vec \omega}$ to keep the transitions defined in $\Delta{t}_c$ updates, each $\interpolator\in\interpolators$ should define a mapping $\Delta{t} \rightarrow \Delta \interp$ which also describes the duration of that transition since $\interp=1$ implies a completed interpolation. Each individual $t$ can be modelled uniquely or in a unified approach, using animator supplied curves, Sigmoids, linear interpolation or even a neural network to capture more subtleties in the transitions. In the case of transitions that are interrupted, we simply freeze existing transitions, and perform the incoming transition as a weighted combination of multiple transitions as shown in Figure \ref{fig:frozen-transition}. 
 \begin{figure}
