@@ -18,7 +18,7 @@ In the following we limit \kenny{without loss of generalization} the description
  \model \equiv 
  \left\{ \modes,\,\interpolators \right\}
 \end{equation}
-where $\modes \equiv \seq{ \mode_1, \ldots, \mode_n}$ is a set of locomotion modes and $\interpolators \equiv \seq{ \interpolator_1, \ldots, \interpolator_m}$ is a set of locomotion mode interpolators that describes the transition between locomotion modes. We use the convention that $\interpolator_j^{a\rightarrow b}$ where $j$ refers to linear index into $\interpolators$ and $a,b$ refers to indices in $\modes$ respectively, ie. $\interpolator^{a\rightarrow b}$ refers to the interpolation between $\mode_a$ and $\mode_b$. A movement model defines the behaviour of an actor 
+where $\modes \equiv \seq{ \mode_1, \ldots, \mode_n}$ is a set of locomotion modes and $\interpolators \equiv \seq{ \interpolator_1, \ldots, \interpolator_m}$ is a set of locomotion mode interpolators that describes the transition between locomotion modes. We use the notation $\interpolator_j^{a\rightarrow b}$ where $j$ refers to linear index into $\interpolators$ and $a,b$ refers to indices in $\modes$ respectively, ie. $\interpolator^{a\rightarrow b}$ refers to the interpolation between $\mode_a$ and $\mode_b$. A movement model defines the behaviour of an actor 
 \begin{subequations}
 \begin{align}
     \label{eq:actor:def}
@@ -34,7 +34,7 @@ where $\modes \equiv \seq{ \mode_1, \ldots, \mode_n}$ is a set of locomotion mod
         }
 \end{align}
 \end{subequations}
-where $\kine$ encapsulates kinematic properties and $\pos$ and $\ori$ describe position, speed (magnitude of velocity). The movement and facing orientations are quaternions $\move$ and $\facing$ with derivatives $\dtmove$ and $\dtfacing$. Fig. \ref{fig:actor} show a visualization of an $\actor$ in a 3d coordinate system. For planer movement, it is custom to model positions as the projection of the hip bone to ground plane. In our case $\pos$ should instead be interpreted as the position of our movement model as it tracks an animation.  
+where $\kine$ encapsulates kinematic properties and $\pos$ and $\speed$ describe position and speed (magnitude of velocity). The movement and facing orientations are quaternions $\move$ and $\facing$ with derivatives $\dtmove$ and $\dtfacing$. Fig. \ref{fig:actor} show a visualization of an $\actor$ in a 3d coordinate system. For planer movement, it is custom to model positions as the projection of the hip bone to ground plane. In our case $\pos$ should instead be interpreted as the position of our movement model as it tracks an animation.  
 \magnus{When describing warping at later pint: The animations need to have something like $\pos$. We compute this as a function of control signals and the movement model. Thus $p$ in the animations is a projection of the entire animation depending on optimal movement/control signal distrribution.}      
 \begin{figure}
     \centering
