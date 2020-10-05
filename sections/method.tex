@@ -18,7 +18,7 @@ In the following we limit \kenny{without loss of generalization} the description
  \model \equiv 
  \left\{ \modes,\,\interpolators \right\}
 \end{equation}
-where $\modes \equiv \seq{ \mode_1, \ldots, \mode_n}$ is a set of locomotion modes and $\interpolators \equiv \seq{ \interpolator_1, \ldots, \interpolator_m}$ is a set of locomotion mode interpolators that describes the transition between locomotion modes. We use the convention for $\interpolators_j$ and $\interpolators_{a,b}$ that $j$ and $a,b$ refers to indices in $\interpolators$ and $\modes$ respectively, ie. $\interpolator_{a,b}$ refers to the interpolation between $\mode_a$ and $\mode_b$. A movement model defines the behaviour of an actor 
+where $\modes \equiv \seq{ \mode_1, \ldots, \mode_n}$ is a set of locomotion modes and $\interpolators \equiv \seq{ \interpolator_1, \ldots, \interpolator_m}$ is a set of locomotion mode interpolators that describes the transition between locomotion modes. We use the convention that $\interpolator_j^{a\rightarrow b}$ where $j$ refers to linear index into $\interpolators$ and $a,b$ refers to indices in $\modes$ respectively, ie. $\interpolator^{a\rightarrow b}$ refers to the interpolation between $\mode_a$ and $\mode_b$. A movement model defines the behaviour of an actor 
 \begin{subequations}
 \begin{align}
     \label{eq:actor:def}
@@ -82,11 +82,12 @@ Where $\dt$ is a time step. Intuitively $\sfunc_{\blend}$ moves $\blend$ towards
 \end{equation}
 The weighted effect of all interpolators becomes.
 \begin{equation}
-\dweight_g = \sum_{\interpolator_{j,g} j \in \interpolators}\theta_j * \interpolator_{j,g}(\weight_j,\dt)
+\dweight_g = \sum_{\interpolator_j^{a\rightarrow g} \in \interpolators}\theta_a \, \interpolator_j^{a\rightarrow g}(\weight_j,\dt),
+\quad \forall a \neq g \,.
 \end{equation}
 We set $\weight_{g,t+1}=\weight_{g,t}=\dweight_g$ and need to maintain both $||\blend||=1$ and the distribution of locomotion modes we are transitioning away from by. Both is achieved by.
 \begin{equation}
-\weight_k = \theta_k * (1-\weight_{g,t+1})  
+\weight_k = \theta_k \, (1-\weight_{g,t+1})  
 \end{equation}
 
 
