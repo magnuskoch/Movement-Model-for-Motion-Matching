@@ -52,13 +52,11 @@ where $\kine$ encapsulates kinematic properties and $\pos$ and $\ori$ describe p
     0 & \text{otherwise}
     \end{cases}\,.
 \end{equation}
-To describe changes in $\blend$ over time $\dt$ each $\interpolator \in \interpolators$ defines a mapping from $\dt$ to a change in interpolation progression $\dipweight$, where  $0=>\ipweight{<=1}$. 
-\begin{subequations}
-\begin{align}
-\dipweight &\leftarrow \interpolator_{a,b}(\dt)\\
-\weight_{a,t+\dt},\weight_{b,t+\dt} &\leftarrow\interpolator_{a,b}(\weight_{a,t},\weight_{b,t}, \dipweight)
-\end{align}
-\end{subequations}
+To describe changes in $\blend$ over time $\dt$ each $\interpolator \in \interpolators$ defines a mapping. 
+\begin{equation}
+\dweight_{a} \leftarrow\interpolator_{a,b}(\weight_{b}, \dt)
+\end{equation}
+where $\dweight_{b}=-1*\dweight_{a}$.
 
 The locomotion modes and interpolators are activated through high level goals provided by user control input or an AI navigation system. The goals contain no motion planning and should provide only states that we wish to achive as fast a possible. Goals are highly context dependent, and for locomotion in the plane we use the following.
 \begin{subequations}
@@ -67,7 +65,7 @@ The locomotion modes and interpolators are activated through high level goals pr
 \end{align}
 \end{subequations}
 
-where $\mode_g$ and $\kine_g$ is the desired locomotion mode and kinematics respectively. 
+where $\mode_g$ and $\kine_g$ is the desired locomotion mode and kinematics respectively. We also use $g$ as subscript for blend weights of the requested locomotion mode.
 
 The sparsity of the goal specifiction illustrates an inherent uncertainty in character animation, as we are challenged to infer a detailed path of movement through often complex environments given a very limited disambiguation or hints to the desired trajectory \cite{holden.ea16}. We notice that a sampling of the immediate surroundings could potentially be added as part of the goals as in \cite{holden.ea17}. 
 
@@ -78,7 +76,19 @@ A step of the actor state can be described by $\actor_{t+1} = step_{\actor}(\act
     \kine_{t+1} &\leftarrow  \sfunc_{\kine}(\blend_t, \kine_{t},  \modes, \kine_{g}, \dt )\label{eq:step:kinematics}
 \end{align}
 \end{subequations}
-Where $\dt$ is a time step. Intuitively $\sfunc_{\blend}$ moves $\blend$ towards $w_{l_{g}}=1$ and $w_{i\neq{l_g}}=0$ using the interpolations rules in $\interpolators$. To do so, we first identify each interpolator that describes a transition into $\modes_g$, and them computre a weighted sum of $\Delta{\weight}$
+Where $\dt$ is a time step. Intuitively $\sfunc_{\blend}$ moves $\blend$ towards $w_{l_{g}}=1$ and $w_{i\neq{l_g}}=0$ using the combined interpolation rules in $\interpolators$. Since multiple interpolators can be active at the same time, we set a weighting of $\interpolator_k$ as the weight relative to the weight of all locomotion modes we are interpolating out of. 
+\begin{equation}
+\theta_{k}=\dfrac{\weight_k}{\left(\sum_{j\in\interpolators}\weight_j\right)-\weight_g}
+\end{equation}
+The weighted effect of all interpolators becomes.
+\begin{equation}
+\dweight_g = \sum_{\interpolator_{j,g} j \in \interpolators}\theta_j * \interpolator_{j,g}(\weight_j,\dt)
+\end{equation}
+We set $\weight_{g,t+1}=\weight_{g,t}=\dweight_g$ and need to maintain both $||\blend||=1$ and the distribution of locomotion modes we are transitioning away from by. Both is achieved by.
+\begin{equation}
+\weight_k = \theta_k * (1-\weight_{g,t+1})  
+\end{equation}
+
 
 
 This is the general framework. Now we define locomotion modes and transitions. An actual implementation of the movement model
