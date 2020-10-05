@@ -78,7 +78,8 @@ A step of the actor state can be described by $\actor_{t+1} = step_{\actor}(\act
 \end{subequations}
 Where $\dt$ is a time step. Intuitively $\sfunc_{\blend}$ moves $\blend$ towards $w_g=1$ and $w_{i\neq{g}}=0$ using the combined interpolation rules in $\interpolators$. Since multiple interpolators can be active at the same time, we set the contribution of $\interpolator_k$ as the weight relative to the weight of all locomotion modes we are interpolating out of. 
 \begin{equation}
-\theta_{k}=\dfrac{\weight_k}{\left(\sum_{j\in\interpolators}\weight_j\right)-\weight_g}
+\theta_{k}=\dfrac{\weight_k}{\sum_{\interpolator_j^{a\rightarrow g} \in\interpolators}\weight_j},
+\quad \forall a \neq g \,.
 \end{equation}
 The weighted effect of all interpolators becomes.
 \begin{equation}
