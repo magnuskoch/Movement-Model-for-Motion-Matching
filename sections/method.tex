@@ -31,7 +31,7 @@ where $\modes \equiv \seq{ \mode_1, \ldots, \mode_n}$ is a set of locomotion mod
     &\equiv
     \seq{
         \pos, \speed, \move, \dtmove, \facing, \dtfacing 
-        }\\
+        }
 \end{align}
 \end{subequations}
 where $\kine$ encapsulates kinematic properties and $\pos$ and $\ori$ describe position, speed (magnitude of velocity). The movement and facing orientations are quaternions $\move$ and $\facing$ with derivatives $\dtmove$ and $\dtfacing$. Fig. \ref{fig:actor} show a visualization of an $\actor$ in a 3d coordinate system. For planer movement, it is custom to model positions as the projection of the hip bone to ground plane. In our case $\pos$ should instead be interpreted as the position of our movement model as it tracks an animation.  
@@ -52,28 +52,34 @@ where $\kine$ encapsulates kinematic properties and $\pos$ and $\ori$ describe p
     0 & \text{otherwise}
     \end{cases}\,.
 \end{equation}
-To describe changes in $\blend$ over time $\dt$ each $\interpolator \in \interpolators$ defines a progression
-\begin{equation}
-\weight_{a,t+\dt},\weight_{b,t+\dt}\leftarrow\interpolator_{a,b}(\weight_{a,t},\weight_{b,t}, \dt)
-\end{equation}
-
-The locomotion modes and interpolators are activated through a high level control signal \magnus{movement model generate control signal. This is more like high level intentions} provided by user control input or an AI navigation system. The signal contains no planning and should provide only goals that we wish to achive as fast a possible.  as a concrete example this could defined as follows
-\begin{equation}
-    \label{eq:control:signal:def}
-    \control \equiv \seq{
-    \mode_c, \move_c, \facing_c, \Delta{t}_c}
-\end{equation}
-where $\mode_c, \move_c, \facing_c$ is the desired locomotion mode, movement orientation and facing orientation respectively. Since the control signal is used to advance the actor, we also provide at timestep $\Delta{t}_c$, which in many cases could be constant.
-
-The sparsity of the control signal illustrates an inherent uncertainty in character animation, as we are challenged to infer a detailed path of movement through often complex environments given a very limited disambiguation or hints to the desired trajectory \cite{holden.ea16}. We notice that a sampling of the immediate surroundings could potentially be added as part of the control signal as in \cite{holden.ea17}. 
-
-A step of the actor state can be described by $\actor_{t+1} = step_{\actor}(\actor, \modes, \interpolators, \control)$ and split into two separate functions to make the update process clearer.
+To describe changes in $\blend$ over time $\dt$ each $\interpolator \in \interpolators$ defines a mapping from $\dt$ to a change in interpolation progression $\dipweight$, where  $0=>\ipweight{<=1}$. 
 \begin{subequations}
 \begin{align}
-    \blend_{t+1} &\leftarrow \sfunc_{\blend}( \blend_{t}, \interpolators, \mode_c, \Delta{t}_c) \label{eq:step:interpolators}\\
-    \kine_{t+1} &\leftarrow  \sfunc_{\kine}(\blend_t, \kine_{t},  \modes, {\move}_c, \facing_c, \Delta{t}_c )\label{eq:step:kinematics}
+\dipweight &\leftarrow \interpolator_{a,b}(\dt)\\
+\weight_{a,t+\dt},\weight_{b,t+\dt} &\leftarrow\interpolator_{a,b}(\weight_{a,t},\weight_{b,t}, \dipweight)
 \end{align}
 \end{subequations}
+
+The locomotion modes and interpolators are activated through high level goals provided by user control input or an AI navigation system. The goals contain no motion planning and should provide only states that we wish to achive as fast a possible. Goals are highly context dependent, and for locomotion in the plane we use the following.
+\begin{subequations}
+\begin{align}
+     \goals &\equiv \seq{\mode_g, \kine_g} \label{eq:goals:def} \\
+\end{align}
+\end{subequations}
+
+where $\mode_g$ and $\kine_g$ is the desired locomotion mode and kinematics respectively. 
+
+The sparsity of the goal specifiction illustrates an inherent uncertainty in character animation, as we are challenged to infer a detailed path of movement through often complex environments given a very limited disambiguation or hints to the desired trajectory \cite{holden.ea16}. We notice that a sampling of the immediate surroundings could potentially be added as part of the goals as in \cite{holden.ea17}. 
+
+A step of the actor state can be described by $\actor_{t+1} = step_{\actor}(\actor, \modes, \interpolators, \goals)$ and split into two separate functions to make the update process clearer.
+\begin{subequations}
+\begin{align}
+    \blend_{t+1} &\leftarrow \sfunc_{\blend}( \blend_{t}, \interpolators, \mode_g, \dt) \label{eq:step:interpolators}\\
+    \kine_{t+1} &\leftarrow  \sfunc_{\kine}(\blend_t, \kine_{t},  \modes, \kine_{g}, \dt )\label{eq:step:kinematics}
+\end{align}
+\end{subequations}
+Where $\dt$ is a time step. Intuitively $\sfunc_{\blend}$ moves $\blend$ towards $w_{l_{g}}=1$ and $w_{i\neq{l_g}}=0$ using the interpolations rules in $\interpolators$. To do so, we first identify each interpolator that describes a transition into $\modes_g$, and them computre a weighted sum of $\Delta{\weight}$
+
 
 This is the general framework. Now we define locomotion modes and transitions. An actual implementation of the movement model
 
@@ -87,11 +93,11 @@ For $\sfunc_{\vec \omega}$ to keep the transitions defined in $\Delta{t}_c$ upda
 
 By freezing and combining transitions in the case of interruptions, we are effectively approximating missing areas of the locomotion mode manifold by interpolations. This could be avoided by expanding $\interpolators$ to also contain transitions between combination of locomotion mode, or by expanding $\modes$ for a wider sampling of the manifold.
 
-To evaluate $\sfunc$ we notice that each $\mode\in\modes$ should provide update routines $\dtpos_k^* \equiv \mode_{\pos,k}(\actor,\control)$ and $\dtori_k^* \equiv \mode_{\ori, k}(\actor,\control)$ which are then combined.
+To evaluate $\sfunc$ we notice that each $\mode\in\modes$ should provide update routines $\dtpos_k^* \equiv \mode_{\pos,k}(\actor,\goals)$ and $\dtori_k^* \equiv \mode_{\ori, k}(\actor,\goals)$ which are then combined.
 \begin{subequations}
 \begin{align}
-\dtpos^*&\leftarrow \sum_{k=1}^{m}\weight_k \,\mode_{\pos,k}(\actor,\control)\\
-\dtori^*&\leftarrow \sum_{k=1}^{m}\weight_k \,\mode_{\ori,k}(\actor,\control)
+\dtpos^*&\leftarrow \sum_{k=1}^{m}\weight_k \,\mode_{\pos,k}(\actor,\goals)\\
+\dtori^*&\leftarrow \sum_{k=1}^{m}\weight_k \,\mode_{\ori,k}(\actor,\goals)
 \end{align}
 \end{subequations}
 \kenny{why sum over $m$ terms and not $n$ terms?}
