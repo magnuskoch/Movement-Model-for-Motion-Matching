@@ -57,7 +57,7 @@ To describe changes in $\blend$ over time $\dt$ each $\interpolator \in \interpo
 \weight_{a,t+\dt},\weight_{b,t+\dt}\leftarrow\interpolator_{a,b}(\weight_{a,t},\weight_{b,t}, \dt)
 \end{equation}
 
-An actor is moved with a control signal, as a concrete example this could defined as follows
+The locomotion modes and interpolators are activated through a high level control signal \magnus{movement model generate control signal. This is more like high level intentions} provided by user control input or an AI navigation system. The signal contains no planning and should provide only goals that we wish to achive as fast a possible.  as a concrete example this could defined as follows
 \begin{equation}
     \label{eq:control:signal:def}
     \control \equiv \seq{
