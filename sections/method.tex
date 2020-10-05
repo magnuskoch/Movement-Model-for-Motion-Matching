@@ -12,7 +12,9 @@ Figure \ref{fig:movement:model} illustrates the definitions and concepts of a mo
     \caption{\kenny{Make a data-flow illustration of how a movement model and its components work. A kind of box-figure model with arrows on, showing how actors and controls work?}.}
     \label{fig:movement:model}
 \end{figure}
-In the following we limit \kenny{without loss of generalization} the description to locomotion in the plane. We parameterize the movement model as 
+In the following we limit \kenny{without loss of generalization} the description to locomotion in the plane. 
+\subsection{general frame work}
+We parameterize the movement model as 
 \begin{equation}
     \label{eq:model:parameterization}
  \model \equiv 
@@ -54,7 +56,7 @@ where $\kine$ encapsulates kinematic properties and $\pos$ and $\speed$ describe
 \end{equation}
 To describe changes in $\blend$ over time $\dt$ each $\interpolator \in \interpolators$ defines a mapping. 
 \begin{equation}
-\dweight_{a} \leftarrow\interpolator_{a,b}(\weight_{b}, \dt)
+\dweight_{a} \leftarrow \efunc_{\interpolators}\left( \interpolator^{a \rightarrow b}, \weight_{b}, \dt\right)
 \end{equation}
 where $\dweight_{b}=-1*\dweight_{a}$.
 
@@ -73,7 +75,7 @@ A step of the actor state can be described by $\actor_{t+1} = step_{\actor}(\act
 \begin{subequations}
 \begin{align}
     \blend_{t+1} &\leftarrow \sfunc_{\blend}( \blend_{t}, \interpolators, \mode_g, \dt) \label{eq:step:interpolators}\\
-    \kine_{t+1} &\leftarrow  \sfunc_{\kine}(\blend_t, \kine_{t},  \modes, \kine_{g}, \dt )\label{eq:step:kinematics}
+    \delspeed, \delmove, \delfacing &\leftarrow  \sfunc_{\kine}(\blend_t, \kine_{t},  \modes, \kine_{g}, \dt )\label{eq:step:modes}
 \end{align}
 \end{subequations}
 Where $\dt$ is a time step. Intuitively $\sfunc_{\blend}$ moves $\blend$ towards $w_g=1$ and $w_{i\neq{g}}=0$ using the combined interpolation rules in $\interpolators$. Since multiple interpolators can be active at the same time, we set the contribution of $\interpolator_k$ as the weight relative to the weight of all locomotion modes we are interpolating out of. 
@@ -90,7 +92,28 @@ We set $\weight_{g,t+1}=\weight_{g,t}+\dweight_g$ and need to maintain both $||\
 \begin{equation}
 \weight_{k,t+1} = \theta_k * (1-\weight_{g,t+1})  
 \end{equation}
+Finally each locomotion mode map to changes in kinematics with.
+\begin{equation}
+\delspeed_j, \delmove_{,j}, \delfacing_{,j} \leftarrow \efunc_{\modes}\left( \mode_j, \kine_t, \kine_g, \dt \right)
+\end{equation}
+Now \ref{eq:step:modes} is evaluated by
+\begin{equation}
+\sfunc_{\kine,t} \leftarrow \sum_{\mode_k \in \modes} \weight_{k,t+1} \efunc_{\modes}
+\end{equation}
+And the full kinematics state is populated by
+\begin{subequations}
+\begin{align}
+   \move_{t+1} &= \delmove \move_t \\
+   \speed_{t+1} &= \speed_t + \delspeed \\
+   \pos_{t+1} &= \pos_t + \move_{t+1} \uv \speed \dt \\
+   \facing_{t+1} &= \delfacing \facing_t \\
+   \dtmove &= \move_{t+1}^{-1}\move_t \\
+   \dtfacing &= \facing_{t+1}^{-1}\facing_t
+\end{align}
+\end{subequations}
 
+
+\subsection{examples}
 This is the general framework. Now we define locomotion modes and transitions. An actual implementation of the movement model
 
 For $\sfunc_{\vec \omega}$ to keep the transitions defined in $\Delta{t}_c$ updates, each $\interpolator\in\interpolators$ should define a mapping $\Delta{t} \rightarrow \Delta \interp$ which also describes the duration of that transition since $\interp=1$ implies a completed interpolation. Each individual $t$ can be modelled uniquely or in a unified approach, using animator supplied curves, Sigmoids, linear interpolation or even a neural network to capture more subtleties in the transitions. In the case of transitions that are interrupted, we simply freeze existing transitions, and perform the incoming transition as a weighted combination of multiple transitions as shown in Figure \ref{fig:frozen-transition}. 
