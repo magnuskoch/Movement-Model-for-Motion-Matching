@@ -97,6 +97,7 @@ We set $\weight_{g,t+1}=\weight_{g,t}+\dweight_g$ and need to maintain both $||\
 \begin{equation}
 \weight_k = \theta_k \, (1-\weight_g)  
 \end{equation}
+As en example, the table shows a transition to locomotion mode $\mode_g$ starting with $[\mode_i,\mode_j]$ as active. The transition uses two interpolators $[\interpolator^{i,g},\interpolator^{j,g}]$ in the timespan $0<=t<=2$.
 \begin{center}
  \begin{tabular}{||c c c c||} 
  \hline
@@ -112,7 +113,7 @@ We set $\weight_{g,t+1}=\weight_{g,t}+\dweight_g$ and need to maintain both $||\
 \end{center}
 
 \begin{center}
- \begin{tabular}{||c c||} 
+ \begin{tabular}{c c} 
  $(\interpolator^{i,g},1.0)=$ & 0.65\\ 
  $(\interpolator^{j,g},1.0)=$ & 0.4\\ 
 \end{tabular}
