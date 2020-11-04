@@ -20,7 +20,11 @@ We parameterize the movement model as
  \model \equiv 
  \left\{ \modes,\,\interpolators \right\}
 \end{equation}
+<<<<<<< HEAD
 where $\modes \equiv \seq{ \mode_1, \ldots, \mode_n}$ is a set of locomotion modes and $\interpolators \equiv \seq{ \interpolator_1, \ldots, \interpolator_m}$ is a set of locomotion mode interpolators that describes the transition between locomotion modes. We use the notation $\interpolator_j^{a\rightarrow b}$ where $j$ refers to linear index into $\interpolators$ and $a,b$ refers to indices in $\modes$ respectively, ie. $\interpolator^{a\rightarrow b}$ refers to the interpolation between $\mode_a$ and $\mode_b$. A movement model defines the behaviour of an actor 
+=======
+where $\modes \equiv \seq{ \mode_1, \ldots, \mode_n}$ is a set of locomotion modes and $\interpolators \equiv \seq{ \interpolator_1, \ldots, \interpolator_m}$ is a set of locomotion mode interpolators that describes the transition between locomotion modes. We use the convention that $\interpolator_j^{a\rightarrow b}$ where $j$ refers to linear index into $\interpolators$ and $a,b$ refers to indices in $\modes$ respectively, ie. $\interpolator^{a\rightarrow b}$ refers to the interpolation between $\mode_a$ and $\mode_b$. A movement model defines the behaviour of an actor. 
+>>>>>>> origin/overleaf-2020-11-04-1230
 \begin{subequations}
 \begin{align}
     \label{eq:actor:def}
@@ -36,7 +40,7 @@ where $\modes \equiv \seq{ \mode_1, \ldots, \mode_n}$ is a set of locomotion mod
         }
 \end{align}
 \end{subequations}
-where $\kine$ encapsulates kinematic properties and $\pos$ and $\speed$ describe position and speed (magnitude of velocity). The movement and facing orientations are quaternions $\move$ and $\facing$ with derivatives $\dtmove$ and $\dtfacing$. Fig. \ref{fig:actor} show a visualization of an $\actor$ in a 3d coordinate system. For planer movement, it is custom to model positions as the projection of the hip bone to ground plane. In our case $\pos$ should instead be interpreted as the position of our movement model as it tracks an animation.  
+$\kine$ encapsulates kinematic properties. $\pos$ and $\speed$ describe position and speed (magnitude of velocity), and movement and facing orientations are quaternions $\move$ and $\facing$ with derivatives $\dtmove$ and $\dtfacing$. Fig. \ref{fig:actor} show a visualization of an $\actor$ in a 3d coordinate system. For planer movement, it is custom to model positions as the projection of the hip bone to ground plane. In our case $\pos$ should instead be interpreted as the position of our movement model as it tracks an animation.  
 \magnus{When describing warping at later pint: The animations need to have something like $\pos$. We compute this as a function of control signals and the movement model. Thus $p$ in the animations is a projection of the entire animation depending on optimal movement/control signal distrribution.}      
 \begin{figure}
     \centering
@@ -44,7 +48,7 @@ where $\kine$ encapsulates kinematic properties and $\pos$ and $\speed$ describe
     \caption{Actor. Not showing derivatics and facing orientation}
     \label{fig:actor}
 \end{figure}
-\kenny{To make this more concrete one can for example think of $\pos$ as the planar 2D position of the character root position in the world and $\ori$ could be the world facing direction of the character given as an angle measure in the 2D world plane.} The contribution weights for different movement modes are given by the vector $\blend \equiv \begin{bmatrix}\weight_1 & \ldots & \weight_n \end{bmatrix}^T$ that contains the contribution weights $\weight_l$ for $l \in \modes$. We use the convention that $\norm{\blend}^2 = 1$ and remark that usually only a couple of modes will be active as in a transition between walking and running where 
+\kenny{To make this more concrete one can for example think of $\pos$ as the planar 2D position of the character root position in the world and $\ori$ could be the world facing direction of the character given as an angle measure in the 2D world plane.} The contribution weights for different locomotion modes are given by the vector $\blend \equiv \begin{bmatrix}\weight_1 & \ldots & \weight_n \end{bmatrix}^T$ where $\weight_l$ contains the contribution for $l \in \modes$. We use the convention that $\norm{\blend}^2 = 1$ and remark that usually only a couple of modes will be active as in a transition between walking and running where 
 \begin{equation}
     \label{eq:contribusion:weight:example}
     \weight_l \equiv
@@ -54,11 +58,11 @@ where $\kine$ encapsulates kinematic properties and $\pos$ and $\speed$ describe
     0 & \text{otherwise}
     \end{cases}\,.
 \end{equation}
-To describe changes in $\blend$ over time $\dt$ each $\interpolator \in \interpolators$ defines a mapping. 
+To describe changes in $\blend$ over time increments $\dt$ each $\interpolator \in \interpolators$ defines a mapping. 
 \begin{equation}
-\dweight_{a} \leftarrow \efunc_{\interpolators}\left( \interpolator^{a \rightarrow b}, \weight_{b}, \dt\right)
+\dweight_{i,b} \leftarrow (\interpolator_{i}^{a,b},\dt)
 \end{equation}
-where $\dweight_{b}=-1*\dweight_{a}$.
+where $\dweight_{i,a}=-\dweight_{i,b}$.
 
 The locomotion modes and interpolators are activated through high level goals provided by user control input or an AI navigation system. The goals contain no motion planning and should provide only states that we wish to achive as fast a possible. Goals are highly context dependent, and for locomotion in the plane we use the following.
 \begin{subequations}
@@ -67,7 +71,7 @@ The locomotion modes and interpolators are activated through high level goals pr
 \end{align}
 \end{subequations}
 
-where $\mode_g$ and $\kine_g$ is the desired locomotion mode and kinematics respectively. We also use $g$ as subscript for blend weights of the requested locomotion mode.
+where $\mode_g$ and $\kine_g$ is the requested locomotion mode and kinematics respectively. We also use $g$ as subscript for blend weights of the requested locomotion mode.
 
 The sparsity of the goal specifiction illustrates an inherent uncertainty in character animation, as we are challenged to infer a detailed path of movement through often complex environments given a very limited disambiguation or hints to the desired trajectory \cite{holden.ea16}. We notice that a sampling of the immediate surroundings could potentially be added as part of the goals as in \cite{holden.ea17}. 
 
@@ -78,42 +82,42 @@ A step of the actor state can be described by $\actor_{t+1} = step_{\actor}(\act
     \delspeed, \delmove, \delfacing &\leftarrow  \sfunc_{\kine}(\blend_t, \kine_{t},  \modes, \kine_{g}, \dt )\label{eq:step:modes}
 \end{align}
 \end{subequations}
-Where $\dt$ is a time step. Intuitively $\sfunc_{\blend}$ moves $\blend$ towards $w_g=1$ and $w_{i\neq{g}}=0$ using the combined interpolation rules in $\interpolators$. Since multiple interpolators can be active at the same time, we set the contribution of $\interpolator_k$ as the weight relative to the weight of all locomotion modes we are interpolating out of. 
+Intuitively $\sfunc_{\blend}$ moves $\blend$ towards $w_g=1$ and $w_{i\neq{g}}=0$ using the combined interpolation rules in $\interpolators$. Since multiple interpolators can be active at the same time, we define the contribution $\weighti_k$ of $\interpolator_k$ as the weight of the locomotion mode $k$ relative to the weight of all locomotion modes we are interpolating out of. 
 \begin{equation}
-\theta_{k}=\dfrac{\weight_k}{\sum_{\interpolator_j^{a\rightarrow g} \in\interpolators}\weight_j},
-\quad \forall a \neq g \,.
+\theta_{k}=\dfrac{\weight_k}{\sum{\weight_n}},
+\quad \forall k, n \neq g \,.
 \end{equation}
-The weighted effect of all interpolators becomes.
+The combined effect of multiple active interpolators on $\weight_g$ follows.
 \begin{equation}
-\dweight_g = \sum_{\interpolator_j^{a\rightarrow g} \in \interpolators}\theta_a \, \interpolator_j^{a\rightarrow g}(\weight_j,\dt),
-\quad \forall a \neq g \,.
+\dweight_g = \sum \weighti_k \dweight_{i,k} \,,
+\quad \forall k \neq g \,.
 \end{equation}
-We set $\weight_{g,t+1}=\weight_{g,t}+\dweight_g$ and need to maintain both $||\blend||=1$ and the distribution of locomotion modes we are transitioning away from by. Both is achieved by.
-\begin{equation}
-\weight_{k,t+1} = \theta_k * (1-\weight_{g,t+1})  
-\end{equation}
-Finally each locomotion mode map to changes in kinematics with.
-\begin{equation}
-\delspeed_j, \delmove_{,j}, \delfacing_{,j} \leftarrow \efunc_{\modes}\left( \mode_j, \kine_t, \kine_g, \dt \right)
-\end{equation}
-Now \ref{eq:step:modes} is evaluated by
-\begin{equation}
-\sfunc_{\kine,t} \leftarrow \sum_{\mode_k \in \modes} \weight_{k,t+1} \efunc_{\modes}
-\end{equation}
-And the full kinematics state is populated by
-\begin{subequations}
-\begin{align}
-   \move_{t+1} &= \delmove \move_t \\
-   \speed_{t+1} &= \speed_t + \delspeed \\
-   \pos_{t+1} &= \pos_t + \move_{t+1} \uv \speed \dt \\
-   \facing_{t+1} &= \delfacing \facing_t \\
-   \dtmove &= \move_{t+1}^{-1}\move_t \\
-   \dtfacing &= \facing_{t+1}^{-1}\facing_t
-\end{align}
-\end{subequations}
+We set $\weight_{g,t+1}=\weight_{g,t}+\dweight_g$ and need to maintain both $||\blend||^2=1$ and the distribution of the locomotion modes we are transitioning away from. Both is achieved by.
 
+\begin{equation}
+\weight_k = \theta_k \, (1-\weight_g)  
+\end{equation}
+\begin{center}
+ \begin{tabular}{||c c c c||} 
+ \hline
+ t & $\weight_i$ & $\weight_j$ & $\weight_g$  \\ [0.5pt] 
+ \hline\hline
+ 0.0 & 0.4 & 0.6 & 0.0 \\ 
+ \hline
+ 1.0 & 0.2 & 0.3$\bar{3}$ & 0.5 \\
+ \hline
+ 2.0  & 0.0 & 0.0 & 1.0 \\
+ \hline
+\end{tabular}
+\end{center}
 
-\subsection{examples}
+\begin{center}
+ \begin{tabular}{||c c||} 
+ $(\interpolator^{i,g},1.0)=$ & 0.65\\ 
+ $(\interpolator^{j,g},1.0)=$ & 0.4\\ 
+\end{tabular}
+\end{center}
+
 This is the general framework. Now we define locomotion modes and transitions. An actual implementation of the movement model
 
 For $\sfunc_{\vec \omega}$ to keep the transitions defined in $\Delta{t}_c$ updates, each $\interpolator\in\interpolators$ should define a mapping $\Delta{t} \rightarrow \Delta \interp$ which also describes the duration of that transition since $\interp=1$ implies a completed interpolation. Each individual $t$ can be modelled uniquely or in a unified approach, using animator supplied curves, Sigmoids, linear interpolation or even a neural network to capture more subtleties in the transitions. In the case of transitions that are interrupted, we simply freeze existing transitions, and perform the incoming transition as a weighted combination of multiple transitions as shown in Figure \ref{fig:frozen-transition}. 
