@@ -20,11 +20,7 @@ We parameterize the movement model as
  \model \equiv 
  \left\{ \modes,\,\interpolators \right\}
 \end{equation}
-<<<<<<< HEAD
-where $\modes \equiv \seq{ \mode_1, \ldots, \mode_n}$ is a set of locomotion modes and $\interpolators \equiv \seq{ \interpolator_1, \ldots, \interpolator_m}$ is a set of locomotion mode interpolators that describes the transition between locomotion modes. We use the notation $\interpolator_j^{a\rightarrow b}$ where $j$ refers to linear index into $\interpolators$ and $a,b$ refers to indices in $\modes$ respectively, ie. $\interpolator^{a\rightarrow b}$ refers to the interpolation between $\mode_a$ and $\mode_b$. A movement model defines the behaviour of an actor 
-=======
 where $\modes \equiv \seq{ \mode_1, \ldots, \mode_n}$ is a set of locomotion modes and $\interpolators \equiv \seq{ \interpolator_1, \ldots, \interpolator_m}$ is a set of locomotion mode interpolators that describes the transition between locomotion modes. We use the convention that $\interpolator_j^{a\rightarrow b}$ where $j$ refers to linear index into $\interpolators$ and $a,b$ refers to indices in $\modes$ respectively, ie. $\interpolator^{a\rightarrow b}$ refers to the interpolation between $\mode_a$ and $\mode_b$. A movement model defines the behaviour of an actor. 
->>>>>>> origin/overleaf-2020-11-04-1230
 \begin{subequations}
 \begin{align}
     \label{eq:actor:def}
@@ -48,7 +44,7 @@ $\kine$ encapsulates kinematic properties. $\pos$ and $\speed$ describe position
     \caption{Actor. Not showing derivatics and facing orientation}
     \label{fig:actor}
 \end{figure}
-\kenny{To make this more concrete one can for example think of $\pos$ as the planar 2D position of the character root position in the world and $\ori$ could be the world facing direction of the character given as an angle measure in the 2D world plane.} The contribution weights for different locomotion modes are given by the vector $\blend \equiv \begin{bmatrix}\weight_1 & \ldots & \weight_n \end{bmatrix}^T$ where $\weight_l$ contains the contribution for $l \in \modes$. We use the convention that $\norm{\blend}^2 = 1$ and remark that usually only a couple of modes will be active as in a transition between walking and running where 
+\kenny{To make this more concrete one can for example think of $\pos$ as the planar 2D position of the character root position in the world and $\ori$ could be the world facing direction of the character given as an angle measure in the 2D world plane.} The contribution weights for different locomotion modes are given by the vector $\blend \equiv \begin{bmatrix}\weight_1 & \ldots & \weight_n \end{bmatrix}^T$ where $\weight_l$ contains the contribution for $l \in \modes$. We impose that $\norm{\blend}^2 = 1$ and remark that usually only a couple of modes will be active as in a transition between walking and running where 
 \begin{equation}
     \label{eq:contribusion:weight:example}
     \weight_l \equiv
@@ -118,6 +114,11 @@ As en example, the table shows a transition to locomotion mode $\mode_g$ startin
  $(\interpolator^{j,g},1.0)=$ & 0.4\\ 
 \end{tabular}
 \end{center}
+
+\subsection{Optimization}
+How do we fit a movement model ? What is the optimization criterion ?
+
+\subsection{Plane locomotion}
 
 This is the general framework. Now we define locomotion modes and transitions. An actual implementation of the movement model
 
