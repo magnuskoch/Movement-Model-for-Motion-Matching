@@ -1,9 +1,13 @@
+\section{System Overview}
+In the following we will introduce a method for optimal synchronization between a Movement Model and a set of animations. There are 4 main part the system. 
+
+
 \section{Movement Model}
 \magnus{A movement model outputs a control signal. If we add more and more details to this signal, in the end we will output the entire animation. Some system output a path augmented with footsteps. If we augment with more details we move towards full synthesis by movement model. Balance between descriptive and understandable}
 
 \magnus{Goal of movement model . Epressive . But very important. It should be possible for human to understand and tweak parameters. And fast to evaluate.}
 
-A movement model describes how an entity moves through space given control input. It consists of internal parameters such as velocities and accelerations. Control input could be a direction of movement supplied by a human using a gamepad, or longer paths supplied by a game engine AI system. We have not seen any formal description of the movement model. Ususally some ad hoc newtonian physics concepts are combined with springs and animation curves to control the system.
+A movement model describes how an entity moves through space given control input. It consists of internal parameters such as velocities and accelerations. Control input could be a direction of movement supplied by a human using a gamepad, or longer paths supplied by a game engine AI system. We have not seen any formal description of the movement model. Usually some ad hoc newtonian physics concepts are combined with springs and animation curves to control the system.
 
 Figure \ref{fig:movement:model} illustrates the definitions and concepts of a movement model.
 \begin{figure}
@@ -20,7 +24,7 @@ We parameterize the movement model as
  \model \equiv 
  \left\{ \modes,\,\interpolators \right\}
 \end{equation}
-where $\modes \equiv \seq{ \mode_1, \ldots, \mode_n}$ is a set of locomotion modes and $\interpolators \equiv \seq{ \interpolator_1, \ldots, \interpolator_m}$ is a set of locomotion mode interpolators that describes the transition between locomotion modes. We use the convention that $\interpolator_j^{a\rightarrow b}$ where $j$ refers to linear index into $\interpolators$ and $a,b$ refers to indices in $\modes$ respectively, ie. $\interpolator^{a\rightarrow b}$ refers to the interpolation between $\mode_a$ and $\mode_b$. A movement model defines the behaviour of an actor. 
+where $\modes \equiv \seq{ \mode_1, \ldots, \mode_n}$ is a set of locomotion modes and $\interpolators \equiv \seq{ \interpolator_1, \ldots, \interpolator_m}$ is a set of locomotion mode interpolators that describes the transition between locomotion modes. We use the convention that $\interpolator_j^{a\rightarrow b}$ where $j$ refers to linear index into $\interpolators$ and $a,b$ refers to indices in $\modes$ respectively, ie. $\interpolator^{a\rightarrow b}$ refers to the interpolation between $\mode_a$ and $\mode_b$. A movement model defines the behavior of an actor. 
 \begin{subequations}
 \begin{align}
     \label{eq:actor:def}
@@ -41,7 +45,7 @@ $\kine$ encapsulates kinematic properties. $\pos$ and $\speed$ describe position
 \begin{figure}
     \centering
     \includegraphics[width=0.75\columnwidth]{img/actor.jpg}
-    \caption{Actor. Not showing derivatics and facing orientation}
+    \caption{Actor. Not showing derivatives and facing orientation}
     \label{fig:actor}
 \end{figure}
 \kenny{To make this more concrete one can for example think of $\pos$ as the planar 2D position of the character root position in the world and $\ori$ could be the world facing direction of the character given as an angle measure in the 2D world plane.} The contribution weights for different locomotion modes are given by the vector $\blend \equiv \begin{bmatrix}\weight_1 & \ldots & \weight_n \end{bmatrix}^T$ where $\weight_l$ contains the contribution for $l \in \modes$. We impose that $\norm{\blend}^2 = 1$ and remark that usually only a couple of modes will be active as in a transition between walking and running where 
@@ -60,7 +64,7 @@ To describe changes in $\blend$ over time increments $\dt$ each $\interpolator \
 \end{equation}
 where $\dweight_{i,a}=-\dweight_{i,b}$.
 
-The locomotion modes and interpolators are activated through high level goals provided by user control input or an AI navigation system. The goals contain no motion planning and should provide only states that we wish to achive as fast a possible. Goals are highly context dependent, and for locomotion in the plane we use the following.
+The locomotion modes and interpolators are activated through high level goals provided by user control input or an AI navigation system. The goals contain no motion planning and should provide only states that we wish to active as fast a possible. Goals are highly context dependent, and for locomotion in the plane we use the following.
 \begin{subequations}
 \begin{align}
      \goals &\equiv \seq{\mode_g, \kine_g} \label{eq:goals:def} \\
@@ -69,7 +73,7 @@ The locomotion modes and interpolators are activated through high level goals pr
 
 where $\mode_g$ and $\kine_g$ is the requested locomotion mode and kinematics respectively. We also use $g$ as subscript for blend weights of the requested locomotion mode.
 
-The sparsity of the goal specifiction illustrates an inherent uncertainty in character animation, as we are challenged to infer a detailed path of movement through often complex environments given a very limited disambiguation or hints to the desired trajectory \cite{holden.ea16}. We notice that a sampling of the immediate surroundings could potentially be added as part of the goals as in \cite{holden.ea17}. 
+The sparsity of the goal specification illustrates an inherent uncertainty in character animation, as we are challenged to infer a detailed path of movement through often complex environments given a very limited disambiguation or hints to the desired trajectory \cite{holden.ea16}. We notice that a sampling of the immediate surroundings could potentially be added as part of the goals as in \cite{holden.ea17}. 
 
 A step of the actor state can be described by $\actor_{t+1} = step_{\actor}(\actor, \modes, \interpolators, \goals)$ and split into two separate functions to make the update process clearer.
 \begin{subequations}
@@ -116,6 +120,19 @@ As en example, the table shows a transition to locomotion mode $\mode_g$ startin
 \end{center}
 
 \subsection{Optimization}
+An animation is a time series of bone positions and rotations ordered in a hierarchy or skeleton in character animation. We define an animated skeleton.
+\begin{equation}
+    \skeleton=[(\vec{v}_0,\quat{q}_0), \dots, (\vec{v}_b,\quat{q}_b)]
+\end{equation}
+All 
+
+Define an animation.
+Define a trajectory extraction
+Purpose of trajectory is dual . Stay consistent. Similar animation should have similar trajectories. Re replicatable by movement model. 
+Define realization of movement model. 
+Define optimization.
+
+
 How do we fit a movement model ? What is the optimization criterion ?
 
 \subsection{Plane locomotion}
