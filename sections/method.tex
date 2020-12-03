@@ -190,6 +190,16 @@ Our problem is ill posed. If we allow any type of $\goals$ (control signal) we c
 \\
 We also do a heuristic pre-pass over the animation to estimate locomotion mode at each goal keyframe.
 \\
+Finally we apply a heuristic to identify where movement templates should be applied.
+\\
+We use \magnus{term from reinforcement learning. Start with easy examples, progress to harder}. We fit all segments in the animation with individual  locomotion modes (including movement templates).
+Now we have two further steps.
+\begin{itemize}
+    \item \textbf{Align} fitted locomotion modes. 
+    \item \textbf{Collapse or discard} locomotion modes.
+\end{itemize}
+
+\\
 Let's go through an example of the optimization. Imagine we have 4 steps, in an animation containing 2 locomotion model. And goals key framed at 1 and 3. For the sake of simplicity our goals only define a direction in the plane instead of full kinematics state $\kine$.
 \begin{subequations}
 \begin{align}
@@ -215,6 +225,8 @@ Then we unroll the movement model.
 \\\\
 Use warp and filter to extract 4 trajectory points. Define optimization.
 
+\subsection{Plane Locomotion}
+Examine some concrete models. What parameters do they have ? 
 
 \subsection{regularization REST OF TEXT IS JUNK}
 
