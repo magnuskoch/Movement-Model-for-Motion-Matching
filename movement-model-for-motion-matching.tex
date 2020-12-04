@@ -15,17 +15,21 @@
 
 \maketitle
 
-\magnus{
 \section{meta}
-We have a movement model. It is flexible both and parameter count and values.
+\subsection{Elevator Pitch}
+In game development it is a common construct to have character position driven by a simple algorithmic model that responds to player input.
+\\ 
+In-place animations are then played at the position given by the model at any given time.
+\\
+If the model movement matches poorly with the movement in the animations, the character will appear to float.
+\\
+We propose a general \textit{Movement Model} and optimization framework that ensures synchronization between animations and model. 
+\\
+It is our believe that such a synchronization could also be of use on generative system, as a way to provide better input to eg. neural networks.
 
-We have reference motion. It is flexible under warping.
+\subsection{Verification}
+Remove root motion from animation. Replay in-place animation on top of movement model. If there is no sliding, we have a perfect match.
 
-We want a fit between these two.
-
-\subsection{Ideas for fitting optimizations}
-Could we start by distributing user control changes in animation frames ?
-}
 
 \input{sections/introduction}
 \input{sections/related_work}
