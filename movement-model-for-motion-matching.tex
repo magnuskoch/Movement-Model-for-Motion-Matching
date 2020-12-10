@@ -16,7 +16,30 @@
 \maketitle
 
 \section{meta}
-\subsection{Elevator Pitch}
+\subsection{Method section}
+\begin{itemize}
+    \item Describe animations, annotated control -> genomes.
+    \item Describe model. A what can influence movement ? Velocity. Angular Velocity. Sharpness of desired turn. Style (run etc). Movement templates that react to this, and return updated parameters. Position, and orientation. Rest can be derived.
+\end{itemize}
+
+\subsection{Elevator Pitch A}
+\clearpage
+It is often necessary to understand the coverage (range of motions) available in an animation database. However, we do not know of any good metric to answer this question, what is coverage ? We propose to describe coverage through a Movement Model that responds to control input. Thus coverage can be examined analytically by inspection of the model, and coverage is formalized at the capability of an animation database to respond to some user controls.
+
+\subsection{Contributions}
+\begin{itemize}
+    \item Idea to describe coverage through a model that reacts to control genomes.
+    \item Description of model for plane locomotion.
+    \item Procedure to fit model under non destructive alterations of animations.
+\end{itemize}
+\subsection{Applications}
+\begin{itemize}
+    \item Analytical tool for animators.
+    \item Displacement of character in computer games. In-place animation played on top.
+    \item Control input to data driven systems such as motion matching or generative neural networks.
+\end{itemize}
+
+\subsection{Elevator Pitch B}
 In game development it is a common construct to have character position driven by a simple algorithmic model that responds to player input.
 \\ 
 In-place animations are then played at the position given by the model at any given time.
@@ -24,8 +47,6 @@ In-place animations are then played at the position given by the model at any gi
 If the model movement matches poorly with the movement in the animations, the character will appear to float.
 \\
 We propose a general \textit{Movement Model} and optimization framework that ensures synchronization between animations and model. 
-\\
-It is our believe that such a synchronization could also be of use on generative system, as a way to provide better input to eg. neural networks.
 
 \subsection{Verification}
 Remove root motion from animation. Replay in-place animation on top of movement model. If there is no sliding, we have a perfect match.
