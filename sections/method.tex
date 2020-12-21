@@ -1,9 +1,11 @@
 \section{System Overview}
-In the following we will introduce a method for optimal synchronization between a Movement Model and a set of animations. There are 4 main parts to the system. 
+Human movement is a complex interplay between intentions within the brain and the physical environment. The though to 'walk-forward' triggers and array of intractable optimization  
+
+In the following we will introduce a method for optimal synchronization between a Movement Model and a set of animations given Control Genomes. There are 4 main parts to the system. 
 \begin{itemize}
-    \item \textbf{Movement Model} that generates a movement-trajectory given control goals supplied by the end user.
-    \item \textbf{Trajectory Filter} that extracts animation-trajectories from reference animations 
-    \item \textbf{Warping} that can fine adjust velocities and movement curves in reference animations.
+    \item \textbf{Control Genomes} extracted from animations.
+    \item \textbf{Movement Model} that generates a movement given Control Genomes.
+    \item \textbf{Non destructive} animation smoothing. 
     \item \textbf{Optimization procedure} that fits exposed parameters of all the above systems to minimize the difference between the movement- and animation trajectories.
 \end{itemize}
 Figure \ref{fig:movement:model} illustrates the definitions and concepts of a movement model.
@@ -14,10 +16,43 @@ Figure \ref{fig:movement:model} illustrates the definitions and concepts of a mo
     label{fig:movement:model}
 \end{figure}
 
+\section{Control Genomes}
+We define Control Genomes as signals that can generate movement. They are a combination of intentions and enough contextual state to follow the Markov principle. As an example a position, direction and time is a Control Genome for a straight walk. Conversely a straight walk contains a latent Control Genome (position, direction, time). Under this naive framework we quickly realize that multiple straight walks could be associated with a single Control Genome. We further impose the constraint that Control Genomes must disambiguate movement, ie. a unique Control Genome maps to a unique movement. In our simple example we might resolve conflicts by adding a style parameter and assign values such as 'brisk walk' or 'dragging feet' to our Control Genomes. 
+
+Control Genomes can have a direct counter part in the host application such as user input through a game controller or navigational path from an AI system, and therefore can also be viewed as tasks (ie. turn right) that are carried out by the animations. In general we want the Control Genomes to be of minimal size, since in the limit we could have the animation itself as the Control Genome. We say that a genome is in \textit{reduced} and \textit{segmented} form if it contains no repetitions and removal of information would break either the Markov property of the disambiguation constraint. 
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\columnwidth]{img/controlgenome.png}
+    \caption{Control Genome}
+    \label{fig:control:genome}
+\end{figure}
+
+Figure Fig. \ref{fig:control:genome} shows an example where an animation has been assigned a Control Genome. Each frame is annotated with a 2d-control direction corresponding to stick input from a game controller. A dense and redundant Control Genome contains the entire skeletal animation as well as the annotated directions. The animation has two similar right turns so we get a single segmented Control Genome by splitting the redundant genome in two identical parts. We then trim all unnecessary information from the genome to get the reduced form which only contain a starting position and two direction offset in time. This last step assumes that we are capable of regenerating the animation from the reduced genome using a procedure we will refer to as a \textit{Movement Model}. A [Control Genome, Movement Model]-pair describes an animation exactly when the Movement Model can regenerate the Animation from the Control Genome.  In practice it is not possible to develop accurate generative or predictive models for human movement. So we will allow our animations to undergo non destructive transformation such as smoothing and path adjustment, and only expect our model to regenerate a fraction of the complete signal, such as the trajectory. 
+
+We will now proceed to a formalized description of Control Genomes.
+
+The input to our system is an annotated animation. Let $\anim^{\dimat\times\dimas\times\dimaa}$ denote $\dimat$ frames of animation of a skeleton with $\dimas$ degrees of freedom, where each frame is given an $\dimaa$-dimensional annotation. We assume the presence of a Retrieve-and-Collapse procedure (automated or manual) that extracts all reduced and segmented Control Genomes present in the animation, and for each returns a mapping $\reco(\genome)^\dimg \rightarrow (\anim^\dimae_0 \ldots \anim^\dimae_k)$ ie. to all $k$ corresponding (un-annotated) segments of the source animation, where $\dimg$ is the dimensionality of the Control Genome and $\dimae<=\dimat$.
+
+We define two parametric projections to a shared $\dimes$-dimensional evaluation space as $\model(\paramm,\genome^{\dimg}) \rightarrow \mathcal{R}^{\dimes}$ and $\edit(\parame,\anim^{\dimae{\times\dimas}}) \rightarrow \mathcal{R}^{\dimes}$. The evaluation space will usually have a natural counterpart in the application such as the trajectory (position and orientation of character over time).\\
+Intuitively $\model$ is a Movement Model capable of generating movement (or more accurately an evaluation space representation) from the Control Genomes. $\edit$ corresponds to the adjustment we allow our animations to undergo, such a smoothing or more advanced manipulation. The optimal parameters for a single Control Genome are found as the minimization of the L2-norm.
+\begin{subequations}
+\begin{align}
+    \gnorm(\paramm,\parame,\genome)&=\sum_{\anim_k\in\reco(\genome)}{\frac{1}{2}|\model(\paramm,\genome)-\edit(\parame\anim_k)|^2}\\
+    \paramm^*,\parame^*&=\min_{\paramm,\parame}{\gnorm(\paramm,\parame,\genome)}
+\end{align}
+\end{subequations}
+When we want constant parameters across the fitting of multiple Control Genomes $\genome_i\in\genome$ an additional term is added to the minimization. 
+\begin{equation}
+    \vec{\paramm^*},\vec{\parame^*}=\min_{\paramm,\parame}{\sum_{\genome_i\in\genome}{\gnorm(\paramm^i,\parame^i,\genome_i)}}+VAR(\vec{\paramm},\vec{\parame})
+\end{equation}
+Where $\vec{\paramm^*},\vec{\parame^*}$ is the full set of parameters and $\paramm^i,\parame^i$ are the parameters fitted to $\genome_i$.
+
 \section{Movement Model}
 A movement model describes how an entity moves through space given control input (goals). It consists of internal parameters such as velocities and accelerations. Control input could be a direction of movement supplied by a human using a gamepad, or longer paths supplied by a game engine AI system. We have not seen any formal description of the movement model. Usually some ad hoc newtonian physics concepts are combined with springs and animation curves to control the system.
 
 For complex systems such as human beings the movement model has an inherent dichotomy between accuracy and simplicity. Deep Neural Networks are hard to tweak after they have been trained, physical simulations are hard to tune towards artistic expressions while on the other hand a 2-parameter linear model will be too simplistic to capture meaningful details.
+
 
 
 In the following we limit \kenny{without loss of generalization} the description to locomotion in the plane. 

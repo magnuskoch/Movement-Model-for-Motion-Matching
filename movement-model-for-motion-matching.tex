@@ -20,15 +20,17 @@
 \begin{itemize}
     \item Describe animations, annotated control -> genomes.
     \item Describe model. A what can influence movement ? Velocity. Angular Velocity. Sharpness of desired turn. Style (run etc). Movement templates that react to this, and return updated parameters. Position, and orientation. Rest can be derived.
+    \item Initialize optimization with sane values from physics.
 \end{itemize}
 
-\subsection{Elevator Pitch A}
-\clearpage
-It is often necessary to understand the coverage (range of motions) available in an animation database. However, we do not know of any good metric to answer this question, what is coverage ? We propose to describe coverage through a Movement Model that responds to control input. Thus coverage can be examined analytically by inspection of the model, and coverage is formalized at the capability of an animation database to respond to some user controls.
-
+\subsection{Elevator Pitch A,}
+It is often necessary for developers of interactive applications to understand the coverage (range of motions) available in an animation database or generative animation system. It has been customary to conceptualize coverage as the degree to which a system is able to achieve pre-defined tasks, such as walking from A to B, following a curve etc. We propose an alternative approach where tasks are extracted from the animations themselves in the form of \textit{Control Genomes}, which are parsed by a parametric \textit{Movement Model} to generate movement. The parameters of the Movement Model are fitted for correspondence between the generated movement and the reference animation system. By inspecting the detected Control Genomes and feeding synthetic Control Genomes tot the fitted Movement Model, the user is provided a condensed view of the often chaotic details in larger animation sets. This view of coverage is pragmatic as the Movement Model will generally not be able to capture all the variations in the animations. As such we will treat coverage as the identification of stereotypical patterns within the animations.      
+\\\\ 
+We could use a car as example. Currently we would ask, can the car drive from a to b in 5 minutes ? We ask. It seems the user pressing the speed continuously. This is our genome. Now we assume that the model is simple acceleration plus wind resistance. We fit the parameters of that model to best describe the movement we have been provided. \\ Previous work should include animation research from the 00s as well as physical simulation / control signal stuff.  
 \subsection{Contributions}
 \begin{itemize}
     \item Idea to describe coverage through a model that reacts to control genomes.
+    \item Idea to annotate with control signal. Authored fitting
     \item Description of model for plane locomotion.
     \item Procedure to fit model under non destructive alterations of animations.
 \end{itemize}
@@ -50,6 +52,7 @@ We propose a general \textit{Movement Model} and optimization framework that ens
 
 \subsection{Verification}
 Remove root motion from animation. Replay in-place animation on top of movement model. If there is no sliding, we have a perfect match.
+
 
 
 \input{sections/introduction}
