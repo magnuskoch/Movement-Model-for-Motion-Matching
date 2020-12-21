@@ -3,7 +3,7 @@ In the following we will introduce a method for optimal synchronization between 
 \begin{itemize}
     \item \textbf{Movement Model} that generates a movement-trajectory given control goals supplied by the end user.
     \item \textbf{Trajectory Filter} that extracts animation-trajectories from reference animations 
-    \item \textbf{Warping} that can fine adjust velocities and movement curves in reference animations.
+    \item \textbf{Warping} that can fine adjust velocities and movement curves \kenny{what is a movementt curve vs trajectory?}in reference animations.
     \item \textbf{Optimization procedure} that fits exposed parameters of all the above systems to minimize the difference between the movement- and animation trajectories.
 \end{itemize}
 Figure \ref{fig:movement:model} illustrates the definitions and concepts of a movement model.
@@ -15,7 +15,7 @@ Figure \ref{fig:movement:model} illustrates the definitions and concepts of a mo
 \end{figure}
 
 \section{Movement Model}
-A movement model describes how an entity moves through space given control input (goals). It consists of internal parameters such as velocities and accelerations. Control input could be a direction of movement supplied by a human using a gamepad, or longer paths supplied by a game engine AI system. We have not seen any formal description of the movement model. Usually some ad hoc newtonian physics concepts are combined with springs and animation curves to control the system.
+A movement model describes how an entity moves through space given control input (goals). It consists of internal parameters such as velocities and accelerations. Control input could be a direction of movement supplied by a human using a gamepad, or longer paths supplied by a game engine AI system. We have not seen any formal description of the movement model. Usually some ad hoc newtonian physics concepts are combined with springs and animation curves to control the system \kenny{Thing about generality of your statement, as it stands now you are claiming this is so for all. Hence, can you prove/cite it? Otherwise rephrase so it becomes a more subjective observation from a single context. Like to our knowlege or our observation suggest that.}.
 
 For complex systems such as human beings the movement model has an inherent dichotomy between accuracy and simplicity. Deep Neural Networks are hard to tweak after they have been trained, physical simulations are hard to tune towards artistic expressions while on the other hand a 2-parameter linear model will be too simplistic to capture meaningful details.
 
@@ -41,10 +41,10 @@ where $\modes \equiv \seq{ \mode_1, \ldots, \mode_n}$ is a set of locomotion mod
     &\equiv
     \seq{
         \pos, \speed, \move, \dtmove, \facing, \dtfacing 
-        }
+        }\,,
 \end{align}
 \end{subequations}
-$\kine$ encapsulates kinematic properties. $\pos$ and $\speed$ describe position and speed (magnitude of velocity), and movement and facing orientations are quaternions $\move$ and $\facing$ with derivatives $\dtmove$ and $\dtfacing$. Fig. \ref{fig:actor} show a visualization of an $\actor$ in a 3d coordinate system.  
+Here $\blend$ are contribution weights for different locomotion modes and $\kine$ encapsulates kinematic properties. $\pos$ and $\speed$ describe position and speed (magnitude of velocity), and movement and facing orientations are quaternions $\move$ and $\facing$ with derivatives $\dtmove$ and $\dtfacing$. Fig. \ref{fig:actor} show a visualization of an $\actor$ in a 3d coordinate system.  
 \begin{figure}
     \centering
     \includegraphics[width=0.75\columnwidth]{img/actor.jpg}
@@ -61,11 +61,11 @@ $\kine$ encapsulates kinematic properties. $\pos$ and $\speed$ describe position
     0 & \text{otherwise}
     \end{cases}\,.
 \end{equation}
-To describe changes in $\blend$ over time increments $\dt$ each $\interpolator \in \interpolators$ defines a mapping. 
+To describe changes in $\blend$ over time increments $\dt$ each $\interpolator \in \interpolators$ defines a mapping.\kenny{I do not get the notation here, $(\cdot, \cdot)$ is a mapping, maybe it should be written that $\interpolator_{i}^{a,b} : \Re \mapsto \Re^n$ and then one would write $\dweight_{i,b} \leftarrow \interpolator_{i}^{a,b}(\dt)$?} 
 \begin{equation}
 \dweight_{i,b} \leftarrow (\interpolator_{i}^{a,b},\dt)
 \end{equation}
-where $\dweight_{i,a}=-\dweight_{i,b}$.
+where $\dweight_{i,a}=-\dweight_{i,b}$. \kenny{The sub-index is not really needed? I think you can drop it? The minus sign comes from $\interpolator^{a,b}$ being symmetric opposite to $\interpolator^{b,a}$?}
 
 The locomotion modes and interpolators are activated through high level goals provided by user control input or an AI navigation system. The goals contain no motion planning and should provide only states that we wish to active as fast a possible. Goals are highly context dependent, and for locomotion in the plane we use the following.
 \begin{subequations}
@@ -172,7 +172,8 @@ The first measure is the one most commonly addressed, as it is common to use a s
 The seconds measure implies that we are not free to apply any filtering since the trajectory is used to position a character. Visual coherence such as positioning and pose blending brakes down if the trajectory is modified without constraint.\\
 Mathematically we can formulate the measures by.
 \begin{equation}
-    \epsilon_a=\min_{\theta_f,\theta_m,{\goals_{0\dots{t}}}}\sum{\ffunc(\theta_f,\skeleton)-\ufunc(\model(\theta)m,\goals_{0\dots{t}}) }
+    \epsilon_a
+    \equiv \min_{\theta_f,\theta_m,{\goals_{0\dots{t}}}}\sum{\ffunc(\theta_f,\skeleton)-\ufunc(\model(\theta)m,\goals_{0\dots{t}}) }
 \end{equation}
 \magnus{How do we formulate second meassue ? If two frame are similar in source animation. They should remain similar when trajectory is used as reference instead of hips. Enforces consistency in way trajectory is estimated relative to similarity expressed by animation it self.}
 
