@@ -32,19 +32,20 @@ Figure Fig. \ref{fig:control:genome} shows an example where an animation has bee
 
 We will now proceed to a formalized description of Control Genomes.
 
-The input to our system is an annotated animation. Let $\anim^{\dimat\times\dimas\times\dimaa}$ denote $\dimat$ frames of animation of a skeleton with $\dimas$ degrees of freedom, where each frame is given an $\dimaa$-dimensional annotation. We assume the presence of a Retrieve-and-Collapse procedure (automated or manual) that extracts all reduced and segmented Control Genomes present in the animation, and for each returns a mapping $\reco(\genome)^\dimg \rightarrow (\anim^\dimae_0 \ldots \anim^\dimae_k)$ ie. to all $k$ corresponding (un-annotated) segments of the source animation, where $\dimg$ is the dimensionality of the Control Genome and $\dimae<=\dimat$.
+The input to our system is an annotated animation. Let $\anim^{\dimas,\dimaa}_\dimat$ denote $\dimat$ frames of animation of a skeleton with $\dimas$ degrees of freedom, where each frame is given an $\dimaa$-dimensional annotation. We assume the presence of a Retrieve-and-Collapse procedure (automated or manual) that extracts all reduced and segmented Control Genomes present in the animation and for each maintains a pairing to all $k$ corresponding (un-annotated) segments of the source animation. With $i$ and $\dimg$ as the number of and dimensionality of the Control Genomes we have $\genome^g_i\in\reco(\anim^{\dimas,\dimaa}_\dimat)\rightarrow\anim^{\dimas,0}_{\dimae_0}\ldots\anim^{\dimas,0}_{\dimae_k}$ where $\dimae\ll\dimat$ refers to a segment of the full animation and $k$ is the number of segments matched to the $i$'th Control Genome.
 
-We define two parametric projections to a shared $\dimes$-dimensional evaluation space as $\model(\paramm,\genome^{\dimg}) \rightarrow \mathcal{R}^{\dimes}$ and $\edit(\parame,\anim^{\dimae{\times\dimas}}) \rightarrow \mathcal{R}^{\dimes}$. The evaluation space will usually have a natural counterpart in the application such as the trajectory (position and orientation of character over time).\\
+
+We define two parametric projections to a shared $\dimes$-dimensional evaluation space as $\model(\paramm,\genome^{\dimg}) \rightarrow \mathcal{R}^{\dimes}$ and $\edit(\parame,\anim_{\dimae}^{\dimas,0}) \rightarrow \mathcal{R}^{\dimes}$. The evaluation space will usually have a natural counterpart in the application such as the trajectory (position and orientation of character over time).\\
 Intuitively $\model$ is a Movement Model capable of generating movement (or more accurately an evaluation space representation) from the Control Genomes. $\edit$ corresponds to the adjustment we allow our animations to undergo, such a smoothing or more advanced manipulation. The optimal parameters for a single Control Genome are found as the minimization of the L2-norm.
 \begin{subequations}
 \begin{align}
-    \gnorm(\paramm,\parame,\genome)&=\sum_{\anim_k\in\reco(\genome)}{\frac{1}{2}|\model(\paramm,\genome)-\edit(\parame\anim_k)|^2}\\
+    \gnorm(\paramm,\parame,\genome)&=\sum_{\anim_k\in\genome}{\frac{1}{2}|\model(\paramm,\genome)-\edit(\parame\anim_k)|^2}\\
     \paramm^*,\parame^*&=\min_{\paramm,\parame}{\gnorm(\paramm,\parame,\genome)}
 \end{align}
 \end{subequations}
-When we want constant parameters across the fitting of multiple Control Genomes $\genome_i\in\genome$ an additional term is added to the minimization. 
+When we want constant parameters across the fitting of multiple Control Genomes $\genome_i\in\reco(\genome)$ an additional term is added to the minimization. 
 \begin{equation}
-    \vec{\paramm^*},\vec{\parame^*}=\min_{\paramm,\parame}{\sum_{\genome_i\in\genome}{\gnorm(\paramm^i,\parame^i,\genome_i)}}+VAR(\vec{\paramm},\vec{\parame})
+    \vec{\paramm^*},\vec{\parame^*}=\min_{\paramm,\parame}{\sum_{\genome_i\in\reco(\genome)}{\gnorm(\paramm^i,\parame^i,\genome_i)}}+VAR(\vec{\paramm},\vec{\parame})
 \end{equation}
 Where $\vec{\paramm^*},\vec{\parame^*}$ is the full set of parameters and $\paramm^i,\parame^i$ are the parameters fitted to $\genome_i$.
 
