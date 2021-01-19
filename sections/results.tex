@@ -1,4 +1,51 @@
 \section{Experiments}
-Move capsule and playback animation on top (root motion removed). Without our solution we see no coordination. Lots of sliding etc.
-\\\\
-Use precise movement model for other data driven system such as pfnn,. 
+A series of animations was recorded using the inertial sensor based XSens suit and a single human subject. The raw sensor data was cleaned using the automatic post processing procedure available in the XSens MVN Animate Pro software application.
+The movement set was inspired by the structure of locomotion sets used in game production. The subject was instructed to keep the movement consistent and to follow the various movements closely.   
+
+\subsection{Movement Characteristics}
+\subsubsection{Purpose}
+Illustrate the problem we wish to solve using 1-2 video examples.
+\subsubsection{Content}
+Show that basic animations have complex root motions that are difficult to replicate using standard 'weak control signal' (splines, springs). 
+Show that trivial approaches (smoothing) does not solve problem in convincing way.
+\paragraph{Videos}
+\begin{itemize}
+    \item Show character moving straight and in curves. Trace complex root motion. Highlight the presence of both high and low frequency information in the plot.
+    \item Show character running straight with smoothed trajectory. Highlight problems. Show turning characters and illustrate how superficially 'identical' turns are actually very different.
+\end{itemize}
+\paragraph{Figures}
+\begin{itemize}
+    \item Plots of trajectory and weak control signal paths.
+    \item Plots of smoothing effects
+\end{itemize}
+
+\subsubsection{Draft}
+Final text
+
+\subsection{Fitting Movement Model}
+\subsubsection{Purpose} Show that we are able to solve problem using 3-5 video examples (didactic).
+Show how various models can be fitted to data (that has itself been adjusted). 
+\begin{itemize}
+    \item Straight movement. Walk and run. 
+    \item Multiple straight movements. Walk and run. 
+    \item 180.
+    \item Multiple 180s.
+    \item Banking
+    \item Multiple banking
+    \item 45 turn
+    \item Multiple 45 turn
+    \item 90 turn
+    \item Multiple 90 turn
+    \item Mixed modes
+\end{itemize}
+Additionally we could look at animations published by ubisoft.\url{https://github.com/ubisoft/Ubisoft-LaForge-Animation-Dataset}
+
+\subsection{Application}
+\subsubsection{Purpose} Show that our solution has interesting applications using 3-5 video examples (eye candy).
+Replace standard control signal with our model.
+\begin{itemize}
+    \item{Replay animations to illustrate correct root motion}
+    \item{Use with motion matching} exponential decay = uttner, Holden Spring damper Kermse 2004].
+    \item{use generative neural network} Can we avoid floating character ?
+\end{itemize}
+
