@@ -102,18 +102,25 @@
 
 \newcommand{\mode}{ \phi }
 \newcommand{\interpolator}{ \psi }
-\newcommand{\prim}{ \mathcal{P} }
+\newcommand{\prim}{ \mathcal{P}}
+
+\newcommand{\stateangularspeed}{s^{m'}}
+\newcommand{\statemove}{s^m}
 
 \newcommand{\pos}{ \vec{p} }
-\newcommand{\speed}{s}
+\newcommand{\speed}{s^{p'}}
+\newcommand{\diffmove}{\epsilon_m}
+\newcommand{\difffacing}{\epsilon_f}
 \newcommand{\delspeed}{\Delta{s}}
 \newcommand{\ori}{ \quat{\theta} }
-\newcommand{\move}{\quat{\theta_m}}
+\newcommand{\move}{m}
 \newcommand{\dtmove}{\dot{\quat{\theta}}_m}
 \newcommand{\delmove}{{\Delta{\quat{\theta}}_m}}
-\newcommand{\facing}{{\quat{\theta_f}}}
-\newcommand{\dtfacing}{\dot{\quat{\theta}}_f}
-\newcommand{\delfacing}{{\Delta{\quat{\theta}}_f}}
+\newcommand{\facing}{f}
+\newcommand{\controlface}{{c^f}}
+\newcommand{\controlmove}{{c^m}}
+\newcommand{\dtfacing}{\dot{\facing}}
+\newcommand{\delfacing}{{\Delta{\theta}_f}}
 \newcommand{\dtpos}{ \dot{\pos} }
 \newcommand{\dtori}{ \dot{\ori} }
 \newcommand{\blend}{ \vec \omega }
@@ -127,6 +134,10 @@
 \newcommand{\interp}{ u }
 \newcommand{\dt}{\Delta{t}}
 \newcommand{\uv}{\vec{u}}
+
+\newcommand{\spring}{P_s}
+\newcommand{\mapo}{P_{1D}}
+\newcommand{\mapt}{P_{2D}}
 
 \usepackage{color} 
 \definecolor{color1}{rgb}{0.5,0.1,0.1}
