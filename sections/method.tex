@@ -70,14 +70,30 @@ We construct the planning function in \ref{eq:move:update} as a composition of p
 
 Fig [??] illustrates the 3 planning primitives we use to model plane locomotion. A Critically damped spring $out\leftarrow{}\spring{(in,t,k)}$ exposes a spring coefficient $k$ used to control the drag of the input variable $y$ towards the target $t$. The 1D-Map $out\leftarrow{}\mapo(in,k)$ uses spline interpolation over knots in $k$ to map a parametric input to a line position. The 2D-map $out\leftarrow{}\mapt([in_x, in_y], k)$ uses barycentric coordinates to interpolate polygon knots in $k$ according to a 2 dimensional grid position given as input.    
 
-As an example we propose a Movement Model for plane locomotion typical for 3rd person computer games that strikes a compromise between simplicity and expressiveness. We use the convention that s, c, m, i refers to values associated with state, control, model output, and  model intermediaries respectively. First the position and facing information contained in the Control Genome state is augmented with derived values $\speed, \statemove, \stateangularspeed$ for speed, move direction and angular speed. We also compute $\diffmove=||\statemove-\controlmove||$ as the absolute error between the state and control values for movement direction. A Movement model is constructed in the following way.
+As an example we propose a Movement Model for plane locomotion typical for 3rd person computer games that strikes a compromise between simplicity and expressiveness. We use the convention that s, c, m, i refers to values associated with state, control, model output, and  model intermediaries respectively. First the position and facing information contained in the Control Genome state is augmented with derived values $\statespeed, \statemove, \stateangularspeed$ for speed, move direction and angular speed ie. rate of change of the movement direction. We also compute $\diffmove=||\statemove-\controlmove||$ as the absolute error between the state and control values for movement direction. A Movement model is constructed by first describing changes related to speed.
 
 \begin{subequations}
 \begin{align}
-
-
+    \modelspeed&\leftarrow{}\spring(\statespeed,\intermediaryspeed,\intermediary_0)\\
+    \intermediaryspeed&\leftarrow{}\mapt([\stateangularspeed,\diffmove],\param_0)\\
+    \intermediary_0&\leftarrow{}\mapo(\statespeed-\intermediaryspeed, \param_1)
 \end{align}
 \end{subequations}
+Here $\param_0$ models the acceleration of the model depending on the relative change in speed, and $\param_1$ models planning of the target speed depending on the current angular speed and the required change to movement direction.
+
+Modeling of changes to movement and facing directions are added.
+\begin{subequations}
+\begin{align}
+    \modelmove&\leftarrow\spring(\statemove,\controlmove,{spring}_m)\\ 
+    \modelfacing&\leftarrow\spring(\statefacing,\controlface,{spring}_f)\\
+    {spring}_m&\leftarrow{}\mapt([\statespeed,\diffmove], \param_2)\\
+    {spring}_f&\leftarrow{}\mapt([\statespeed,\difffacing], \param_3)
+\end{align}
+\end{subequations}
+Here $\param_2$ and $\param_3$ model planning of movement and facing direction dependent on the current movement and facing values and the differences to the control targets.
+
+
+If we use 9 knots for the 2D blends, and 4 four the 1d, we have a total of 4 + 3*9 tuneable parameters. An example plot of the model using reasonable parameters is depicted in fig ??.
 
 
 Introducde, diff values. Control fiff.
