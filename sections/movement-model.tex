@@ -1,4 +1,12 @@
+\section{Locomotion Mode}
+We construct a Locomotion Mode as a collection of optimizable primitives, where each $\prim^{d,p}_v$ containts $d$ optimizable parameters, takes $p$ values as input, and outputs a single return value. We implemented 3 primitive types as constant, 1DBlendSpaces and 2DBlendSpaces as illustrated in fig ???. These primitives have the advantage that optimization is readily possible, while the exposed parameters and their effetcs on the blend spaces are familiar to animators.
+It is possible to build many different types of Locomotion Modes from these simple primitives. For plane locomotion we use:
+
+Avantage that the primitiv are differntiable !
+
+
 \section{Movement Model}
+
 A movement model describes how an entity moves through space given control input. It consists of internal parameters such as velocities and accelerations. Control input could be a direction of movement supplied by a human using a gamepad, or longer paths supplied by a game engine AI system.
 
 We have not seen any formal description of the movement model. Ususally some ad hoc newtonian physics concepts are combined with springs and animation curves to control the system.
