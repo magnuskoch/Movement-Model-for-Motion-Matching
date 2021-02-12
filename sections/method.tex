@@ -70,8 +70,6 @@ Fig [??] illustrates the 3 planning primitives we use to model plane locomotion.
 
 As an example we propose a Movement Model for plane locomotion typical for 3rd person computer games that strikes a compromise between simplicity and expressiveness. We use the convention that i refers to intermediary values during the model update. First the position and facing information contained in the Control Genome state is augmented with derived values $\speed, \move, \angularspeed$ for speed, move direction and angular speed ie. rate of change of the movement direction. We also compute $\diffmove=||\statemove-\controlmove||$ as the absolute error between the state and control values for movement direction. A Movement model is constructed by first describing changes related to speed.
 
-Finally we note that multiple local Movement Models can be easily combined. Transitions between models can be established using the same primitives. In practice it is sufficient to use a single 1D blend as the shift between run and walk, which could require individual models, is usually distinct and of limited complexity and duration. 
-
 \begin{subequations}
 \begin{align}
     \speed_{t+\dt}&\leftarrow{}\spring(\speed_t,\speed^\intermediary,k^\intermediary)\\
@@ -97,6 +95,8 @@ An analytical model like this can be of great practical use to the game develope
 
 One approach is to extract a limited latent variable set using a dense neural network and then feed the latent variables to a set a primitives which are weighted to give the final output. 
 Alternatively, we could apply a hybrid approach by discovering correlations in the data by automated statistical analysis, but still allow the designer to setup the primitives and chose which parameters should be used. 
+
+Finally we note that multiple local Movement Models can be easily combined. Transitions between models can be established using the same primitives. In practice it is often sufficient to use a single 1D blend. For instance the shift between 'run' and 'walk', which could require individual models, is usually distinct and of limited complexity and duration. 
 
 \section{Motion Alignment and Filtering}
 It is difficult to capture consistent animation data. Treadmills can be used to maintain constant speeds, but this poses a limitation in maneuverability. It requires accurate high frequency control to reproduce the subtle changes in speed and direction that are present even if the subjects are directed to move in a consistent manner. It is often possible to apply minor changes to the speed and direction of the recorded animation, without loss of visual quality. By allowing this, we can align an animation set with respect to speed and movement patterns. 
