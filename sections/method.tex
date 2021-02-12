@@ -106,17 +106,15 @@ An adjustment curve contains pr. frame changes to rotation and speed of an anima
 Even perfectly consistent animation data contains hard to model fluctuations due to the way humans move. [ref] illustrates the difficulty of deriving a stable position from animation data. We apply a modulating kernel based filter similar to [ref] before the application of the adjustment curve. We use $Adjust(\theta_a,Filter(\theta_f\anim^{\dimas,0}_\dimat))\rightarrow{}[\pos_0,\facing_0, \ldots \pos_t\facing_t]$ as $\edit$ in the objective function (\ref{eq:optim:single}) where $\theta_a, \theta_f$ represent the adjustment curve values and filter kernel weights respectively.
 
 \section{Optimization}
-When the Movement Genome, Movement Model and the alignment and filtering procedures have been defined, we face a challenging optimization problem consisting of 100s of parameters and many local minima. Fig ?? illustrates how the parameters are distributed across the full system.
+When the Movement Genome, Movement Model and the alignment and filtering procedures have been defined, we face an optimization problem consisting of 100s of parameters and many local minima. Fig ?? illustrates how the parameters are distributed across the full system. \magnus(Missing: Genomes can be slightly modified. Changes are in $\theta_G$ which needs to be defined).
 
-The dimensionality of the parameter space makes it infeasible to use straight forward techniques such as finite differences. We attack the problem by using auto differentiation for the optimization procedure. This in turn requires continuity across the parameters space, and some care must be taken to achieve this. Specifically we ensure that our primitive functions have are continuous and use leaky relu outside valid ranges to support correct derivates here. 
+The dimensionality of the parameter space makes it infeasible to use straight forward techniques such as finite differences. We attack the problem by using auto differentiation with PyTorch for the optimization procedure. Having the gradients available we can use line search techniques such as Gradient Descent or Stochastic Gradient Descent which is available in PyTorch.
+
+To use a global learning rate, we normalize the range of all parameters and apply fixed constant scaling. This is easily doable since most parameters have direct physical counter parts such as velocity, turn angles etc. Scale values can then be identified by doing a pre-pass over the animation. This in turn limits the impact of local minima, as the optimization can be given plausible initialization values.
+
+L1 and L2 regularization is applied to most parameters to avoid 'oscillating' interpolations between extreme knot values which can be difficult to interpret and modify for a human. Similar regularization is applied to $\theta_a$ and $\theta_G$ where large values implies divergence from the ground truth present in the Genomes and reference animation.
+
+Auto differentiation requires continuity across the parameters space, and some care must be taken to achieve this. Specifically we ensure that our primitive function are continuous and use leaky relu outside valid ranges to support correct derivates here. 
 
 
 
-Normalization - keep spaces in normalized range and apply fixed max multiplier.
-
-Initilization - analyze animations to compute plausible multiplier. (ie. max speed. Average speed at turnrates etc)
-
-regularization - Fix not positions. Penalize close knot points.
-Genome data is ground truth, so regularize changes
-
-Multi genome fittings are done using Stochastic gradient descent
