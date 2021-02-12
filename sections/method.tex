@@ -91,6 +91,11 @@ Here $\param_2$ and $\param_3$ model planning of movement and facing direction d
 
 If we use 9 knots for the 2D blends, and 4 four the 1d, we have a total of 4 + 3*9 tuneable parameters. An example plot of the model using reasonable parameters is depicted in fig ??.
 
+An analytical model like this can be of great practical use to the game developers. The parameters have direct links to relatable properties in the animation which makes it easier to tweak the behavior of the model. On the other hand, the analytical approach requires that the designers are able to adequately model the complexity of the movement. When this is not the case, we can apply machine learning techniques to discover latent properties of our animation set. 
+
+One approach is to extract a limited latent variable set using a dense neural network and then feed the latent variables to a set a primitives which are weighted to give the final output. 
+Alternatively, we could apply a hybrid approach by discovering correlations in the data by automated statistical analysis, but still allow the designer to setup the primitives and chose which parameters should be used. 
+
 \section{Motion Alignment and Filtering}
 It is difficult to capture consistent animation data. Treadmills can be used to maintain constant speeds, but this poses a limitation in maneuverability. It requires accurate high frequency control to reproduce the subtle changes in speed and direction that are present even if the subjects are directed to move in a consistent manner. It is often possible to apply minor changes to the speed and direction of the recorded animation, without loss of visual quality. By allowing this, we can align an animation set with respect to speed and movement patterns. 
 
