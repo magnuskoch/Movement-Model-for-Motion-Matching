@@ -24,9 +24,9 @@
 \end{itemize}
 
 \subsection{Elevator Pitch A,}
-It is often necessary for developers of interactive applications to understand the coverage (range of motions) available in an animation database or generative animation system. It has been customary to conceptualize coverage as the degree to which a system is able to achieve pre-defined tasks, such as walking from A to B, following a curve etc. We propose an alternative approach where tasks are extracted from the animations themselves in the form of \textit{Control Genomes}, which are parsed by a parametric \textit{Movement Model} to generate movement. The parameters of the Movement Model are fitted for correspondence between the generated movement and the reference animation system. By inspecting the detected Control Genomes and feeding synthetic Control Genomes tot the fitted Movement Model, the user is provided a condensed view of the often chaotic details in larger animation sets. This view of coverage is pragmatic as the Movement Model will generally not be able to capture all the variations in the animations. As such we will treat coverage as the identification of stereotypical patterns within the animations.      
+It is often necessary for developers of interactive applications to understand the coverage (range of motions) available in an animation database or generative animation system. It has been customary to conceptualize coverage as the degree to which a system is able to achieve pre-defined tasks, such as walking from A to B, following a curve etc. We propose an alternative approach where tasks are extracted from the animations themselves in the form of \textit{Control Genomes}, which are parsed by a parametric \textit{Movement Model} to generate movement. The parameters of the Movement Model are fitted for correspondence between the generated movement and the reference animation system. By inspecting the detected Control Genomes and feeding synthetic Control Genomes to the fitted Movement Model, the user is provided a condensed view of the often chaotic details in larger animation sets. This view of coverage is pragmatic as the Movement Model will generally not be able to capture all the variations in the animations. As such we will treat coverage as the identification of stereotypical patterns within the animations.   
 \\\\ 
-We could use a car as example. Currently we would ask, can the car drive from a to b in 5 minutes ? We ask. It seems the user pressing the speed continuously. This is our genome. Now we assume that the model is simple acceleration plus wind resistance. We fit the parameters of that model to best describe the movement we have been provided. \\ Previous work should include animation research from the 00s as well as physical simulation / control signal stuff.  
+We could use a car as example. Currently we would ask, can the car drive from A to B in 5 minutes?. It seems the user pressing the speed continuously. This is our genome. Now we assume that the model is simple acceleration plus wind resistance. We fit the parameters of that model to best describe the movement we have been provided. \\ Previous work should include animation research from the 00s as well as physical simulation / control signal stuff.  
 \subsection{Contributions}
 \begin{itemize}
     \item Idea to describe coverage through a model that reacts to control genomes.
@@ -42,7 +42,7 @@ We could use a car as example. Currently we would ask, can the car drive from a 
 \end{itemize}
 
 
-Argument for movement model project: The 'weak control signal' \url{https://www.youtube.com/watch?v=jw0_aBPROGA}, is used to move capusle. So it is important that it fits animations as it provides the root motion.
+Argument for movement model project: The 'weak control signal' \url{https://www.youtube.com/watch?v=jw0_aBPROGA}, is used to move capsule. So it is important that it fits animations as it provides the root motion.
 
 
 \subsection{Elevator Pitch B}
@@ -57,20 +57,15 @@ We propose a general \textit{Movement Model} and optimization framework that ens
 \subsection{Verification}
 Remove root motion from animation. Replay in-place animation on top of movement model. If there is no sliding, we have a perfect match.
 
-
-
 \input{sections/introduction}
 \input{sections/related_work}
 \input{sections/method}
 \input{sections/results}
 \input{sections/conclussion}
 \input{sections/appendix}
-\input{sections/acknowledgements}https://www.overleaf.com/project/5f605a45c274230001899537
-
-
-
-
+\input{sections/acknowledgements}
 
 \bibliography{movement-model-for-motion-matching}{}
 \bibliographystyle{plain}
+
 \end{document}
