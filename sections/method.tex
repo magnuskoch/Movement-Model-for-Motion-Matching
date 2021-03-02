@@ -95,21 +95,39 @@ Where $\vec{\paramm^*},\vec{\parame^*}$ is the full set of parameters and $\para
 In this section we will describe how movement can be generated from Control Genomes using a Movement Model. Without loss of generality, we will examine plane locomotion and limit the output of the model to trajectories, which is time series of connected positions and facing directions. 
 Conceptually there are no limitations on the complexity of the models we chose. Dense neural networks [ref] or muscle based physical simulations [ref] are capable of even generating full body locomotion. However we would like a model that exposes easily and exactly tweakable parameters to the game designers and animators. In many game scenarios micro timings and the 'feel' of the character movement are core parts of the user experience. Accordingly we need descriptive models, that can still be transparently manipulated by the artists. 
 
-We use the trajectory as evaluation space with $\pos,\facing$ as the 2D plane position and 1D rotation around the up-axis.
+We use the trajectory as evaluation space with $\pos,\facing$ as the 2D plane position and 1D rotation around the up-axis over $t$ frames. Hence we have dimension $\dimes = 3 t$ for our evaluation space,
 \begin{align}
-\mathcal{R}^{3t}\equiv\pos_0,\facing_0\ldots,\pos_t,\facing_t
+\mathcal{R}^{3 t} 
+\equiv 
+\left\{
+    \pos_0,\facing_0,
+    \ldots,
+    \pos_t,\facing_t
+    \right\}
 \end{align}
-We construct Control Genomes as an initial state followed by a sequence of movement characteristics we would like to achieve. Player input is supplied through standard gamepad control using stick direction and button presses with $\controlface_t, \controlmove_t$ representing the desired facing and movement directions at time $t$. Further parameters can be added to support different movement styles and controlled with button presses. The simplest genome would contain an initial state and a single control input: $\genome^3:\pos_0,\facing_0,\move^c,\facing^c$ where the latter two parameters are controlled values for movement and facing directions. A non-parametric Movement Model maps from Control Genome to evaluation space and is easily described as recursive updates to the initial genome state.
+We construct Control Genomes as an initial state followed by a sequence of movement characteristics we would like to achieve. Player input is supplied through standard gamepad control using stick direction and button presses with $\left\{ \controlface_t, \controlmove_t\right\}$ representing the desired facing and movement directions at time $t$. Further parameters can be added to support different movement styles and controlled with button presses. The simplest genome would contain an initial state and a single control input: $\genome^3 \equiv \left\{ \pos_0,\facing_0,\move^c,\facing^c \right\}$ where the latter two parameters are controlled values for movement and facing directions. A non-parametric Movement Model maps from Control Genome to evaluation space
+\begin{equation}
+    \model(\goals^3)
+    &\rightarrow
+    \underbrace{
+    \left\{
+    \pos_0^m,\facing_0^m,\ldots,\pos_t^m,\facing_t^m\right\}
+    }_{\in \mathcal{R}^{3t}}
+    \,,
+\end{equation}
+and is easily described as recursive updates to the initial genome state.
 \begin{subequations}
 \begin{align}
-    \model(\goals^3)
-    &=\pos_0^m,\facing_0^m\ldots,\pos_t^m,\facing_t^m=\mathcal{R}^{3t}&
-    \\
     \pos_d^m,\facing_d^m
-    &=\pos_0,\facing_0,&d=0
+    &\leftarrow
+    \pos_0,\facing_0,&d=0
     \\
-    \pos_{d+\dt}^m,\facing_{d+\dt}^m
-    &\leftarrow\pos_d^m,\facing_d^m,\controlface,\controlmove,\dt\label{eq:move:update},&d>0
+    \pos_{d+1}^m,\facing_{d+1}^m
+    &\leftarrow
+    \left\{
+    \pos_d^m,\facing_d^m,\controlface,\controlmove,\dt
+    \right\}
+    \label{eq:move:update},&d>0
 \end{align}
 \end{subequations}
 The update  acts as motion planning by controlling how the current state gradually transitions towards a new state as defined by the Control Genome. We impose a restraint to model this transition process according to the characteristics of the reference animation, by parameterising $\model$ and optimizing using the objective function (\ref{eq:optim:single}). 
