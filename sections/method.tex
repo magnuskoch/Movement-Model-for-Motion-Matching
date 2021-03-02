@@ -89,8 +89,8 @@ Where $\vec{\paramm^*},\vec{\parame^*}$ is the full set of parameters and $\para
 \begin{figure*}
     \centering
     \includegraphics[width=0.75\linewidth]{img/model_primitives}
-    \caption{k values indicate parameters subject to optimization.}
-    \label{fig:movement:model}
+    \caption{Planning primitives. K values indicate parameters subject to optimization.}
+    \label{fig:movement:prims}
 \end{figure*}
 In this section we will describe how movement can be generated from Control Genomes using a Movement Model. Without loss of generality, we will examine plane locomotion and limit the output of the model to trajectories, which is time series of connected positions and facing directions. 
 Conceptually there are no limitations on the complexity of the models we chose. Dense neural networks [ref] or muscle based physical simulations [ref] are capable of even generating full body locomotion. However we would like a model that exposes easily and exactly tweakable parameters to the game designers and animators. In many game scenarios micro timings and the 'feel' of the character movement are core parts of the user experience. Accordingly we need descriptive models, that can still be transparently manipulated by the artists. 
@@ -105,17 +105,17 @@ We use the trajectory as evaluation space with $\pos,\facing$ as the 2D plane po
     \pos_t,\facing_t
     \right\}
 \end{align}
-We construct Control Genomes as an initial state followed by a sequence of movement characteristics we would like to achieve. Player input is supplied through standard gamepad control using stick direction and button presses with $\left\{ \controlface_t, \controlmove_t\right\}$ representing the desired facing and movement directions at time $t$. Further parameters can be added to support different movement styles and controlled with button presses. The simplest genome would contain an initial state and a single control input: $\genome^3 \equiv \left\{ \pos_0,\facing_0,\move^c,\facing^c \right\}$ where the latter two parameters are controlled values for movement and facing directions. A non-parametric Movement Model maps from Control Genome to evaluation space
+We construct Control Genomes as an initial state followed by a sequence of movement characteristics we would like to achieve. Player input is supplied through standard gamepad control using stick direction and button presses with $\left\{ \controlface_d, \controlmove_d\right\}$ representing the desired facing and movement directions at time $d$. Further parameters can be added to support different movement styles and are controlled with button presses. The simplest genome would contain an initial state and a single control input: $\genome^3 \equiv \left\{ \pos_0,\facing_0,\controlmove,\facing^c \right\}$. Addional data can be added to the Control Genomes either by expanding the data contained in the initial state, by adding additional control values or by providing a time series of control values which are then treated as a step curve. A non-parametric Movement Model maps from Control Genome to evaluation space
 \begin{equation}
-    \model(\goals^3)
-    &\rightarrow
+    \model,\goals^3
+    \rightarrow
     \underbrace{
     \left\{
     \pos_0^m,\facing_0^m,\ldots,\pos_t^m,\facing_t^m\right\}
     }_{\in \mathcal{R}^{3t}}
     \,,
 \end{equation}
-and is easily described as recursive updates to the initial genome state.
+and is easily described as recursive updates to the initial genome state. If the state is expanded with additional values those are also integrated by the Model Model. 
 \begin{subequations}
 \begin{align}
     \pos_d^m,\facing_d^m
@@ -124,40 +124,47 @@ and is easily described as recursive updates to the initial genome state.
     \\
     \pos_{d+1}^m,\facing_{d+1}^m
     &\leftarrow
-    \left\{
+    \model
+    (
     \pos_d^m,\facing_d^m,\controlface,\controlmove,\dt
-    \right\}
+    )
     \label{eq:move:update},&d>0
 \end{align}
 \end{subequations}
-The update  acts as motion planning by controlling how the current state gradually transitions towards a new state as defined by the Control Genome. We impose a restraint to model this transition process according to the characteristics of the reference animation, by parameterising $\model$ and optimizing using the objective function (\ref{eq:optim:single}). 
+The update  acts as motion planning by controlling how the current state transitions towards a new state as defined by the Control Genome. We impose a restraint to model this transition process according to the characteristics of the reference animation, by parameterising $\model$ and optimizing using the objective function (\ref{eq:optim:single}). 
 
 It is by no means trivial to construct a general $\model$ even for plane locomotion. Instead we opt for a modular approach where the planning function in \ref{eq:move:update} is a composition of planning primitives that can be arranged for different levels of expressiveness. Each primitive exposes a set of adjustable parameters and performs input to output mapping using various interpolation methods. In the limit the compositions could approximate full neural networks, but should be kept simple enough for human manipulation of each parameter while maintaining the capability to model the movement in the reference animations.     
 
-Fig [??] illustrates the 3 planning primitives we use to model plane locomotion. A Critically damped spring $out\leftarrow{}\spring{(in,t,k)}$ exposes a spring coefficient $k$ used to control the drag of the input variable towards the target $t$. The 1D-Map $out\leftarrow{}\mapo(in,k)$ uses spline interpolation over knots in $k$ to map a parametric input to a line position. The 2D-map $out\leftarrow{}\mapt([in_x, in_y], k)$ uses barycentric coordinates to interpolate polygon knots in $k$ according to a 2 dimensional grid position given as input.    
+Fig. \ref{fig:movement:prims} illustrates the 3 planning primitives we use to model plane locomotion, where $\theta^d$ indicate $d$-dimensional values that can be optimized. A Critically damped spring $out\leftarrow{}\spring{(in,t,\theta^1,\dt)}$ exposes a spring coefficient used to control the drag of the input variable towards the target $t$. The 1D-Map $out\leftarrow{}\mapo(in,\theta^{d>1})$ uses spline interpolation over knots in $k$ to map an input to a line position. The 2D-map $out\leftarrow{}\mapt([in_x, in_y],\theta^{d\in{n^2}})$ uses barycentric coordinates to interpolate polygon knots according to a 2D grid position given as input.    
 
-As an example we propose a Movement Model for plane locomotion typical for 3rd person computer games that strikes a compromise between simplicity and expressiveness. We use the convention that i refers to intermediary values during the model update. First the position and facing information contained in the Control Genome state is augmented with derived values $\speed, \move, \angularspeed$ for speed, move direction and angular speed ie. rate of change of the movement direction. We also compute $\diffmove=||\statemove-\controlmove||$ as the absolute error between the state and control values for movement direction. A Movement model is constructed by first describing changes related to speed.
-
+As an example we propose a Movement Model for plane locomotion typical for 3rd person computer games that strikes a compromise between simplicity and expressiveness. We use the convention that an $i$ superscript refers to intermediary values used temporarily during the model update. First the position and facing information contained in the Control Genome state is augmented with derived values $\speed_0, \move_0, \angularspeed_0$ for speed, move direction and angular speed ie. rate of change of the movement direction. Compared to REF8 the expanded Control Genome 
 \begin{subequations}
 \begin{align}
-    \speed_{t+\dt}&\leftarrow{}\spring(\speed_t,\speed^\intermediary,k^\intermediary)\\
-    \speed_\intermediary&\leftarrow{}\mapt([\angularspeed_t,\diffmove],\param_0)\\
-    k_\intermediary&\leftarrow{}\mapo(\speed_t-\speed_i, \param_1)
+    \genome^{8} \equiv \left\{ \pos_0,\facing_0,\speed_0,\move_0,\angularspeed_0,\controlmove,\facing^c \right\}
 \end{align}
 \end{subequations}
-Here $\param_1$ models the acceleration of the model depending on the relative change in speed, and $\param_0$ models planning of the target speed depending on the current angular speed and the required change to movement direction.
+has 3 additional values that the Movement Model integrates. This reflects that more context than just position and facing direction is needed to model the movement correctly. For simplicity we keep the control values fixed, but usually they will change over time.
+
+We also compute $\diffmove_d=||\move_d^m-\controlmove_d||$ as the absolute error between the state and control values for movement direction. The full parameter set is $\paramm\equiv\param_0^9,\param_1^4,\param_2^9,\param_3^9$. A Movement model is constructed by first describing changes related to speed.
+\begin{subequations}
+\begin{align}
+    \speed^\intermediary&\leftarrow{}\mapt(\angularspeed_d,\diffmove_d,\param_0^9)\\
+    \param^\intermediary&\leftarrow{}\mapo(\speed_d-\speed_i, \param_1^4)\\
+    \speed_{d+1}&\leftarrow{}\spring(\speed_d,\speed^\intermediary,\param^\intermediary,\dt)
+\end{align}
+\end{subequations}
+Here $\param_0$ models planning of the target speed depending on the current angular speed and the required change to movement direction. $\param_1$ models the acceleration of the model depending on the relative change in speed.
 
 Modeling of changes to movement and facing directions are added.
 \begin{subequations}
 \begin{align}
-    \move_\intermediary&\leftarrow\spring(\move_t,\controlmove_t,\mapt([\speed_{t+\dt},\diffmove], \param_2))\\ 
-    \pos_{t+\dt}&\leftarrow{}\pos_t+\speed_{t+\dt}{}rotate(forward,\move_\intermediary)\\
-    \facing_{t+\dt}&\leftarrow\spring(\facing_t,\controlface_t,\mapt([\speed_{t+\dt},\difffacing], \param_3))
+    \move_{d+1}&\leftarrow\spring(\move_d,\controlmove,\mapt(\speed_{d},\diffmove, \param_2^9),\dt)\\ 
+    \facing_{d+1}&\leftarrow\spring(\facing_d,\controlface,\mapt(\speed_{d},\difffacing, \param_3^9),\dt)\\
+    \pos_{d+1}&\leftarrow{}\pos_d+\speed_{d}(\cos{\move_d},\sin{\move_d})
 \end{align}
 \end{subequations}
 Here $\param_2$ and $\param_3$ model planning of movement and facing direction dependent on the current speed and facing values and the differences to the control targets.
-
-If we use 9 knots for the 2D blends, and 4 four the 1d, we have a total of 4 + 3*9 tuneable parameters. An example plot of the model using reasonable parameters is depicted in fig ??.
+The mapping to evaluation space $\model,\goals^{8}\rightarrow\mathcal{R}^{3t}$ is done by performing $t$ updates to the state and extracting $\pos$ and $\facing$ at each update, and is varied by changes to $\paramm$. 
 
 An analytical model like this can be of great practical use to the game developers. The parameters have direct links to relatable properties in the animation which makes it easier to tweak the behavior of the model. On the other hand, the analytical approach requires that the designers are able to adequately model the complexity of the movement. When this is not the case, we can apply machine learning techniques to discover latent properties of our animation set. 
 
