@@ -105,7 +105,7 @@ We use the trajectory as evaluation space with $\pos,\facing$ as the 2D plane po
     \pos_t,\facing_t
     \right\}
 \end{align}
-We construct Control Genomes as an initial state followed by a sequence of movement characteristics we would like to achieve. Player input is supplied through standard gamepad control using stick direction and button presses with $\left\{ \controlface_d, \controlmove_d\right\}$ representing the desired facing and movement directions at time $d$. Further parameters can be added to support different movement styles and are controlled with button presses. The simplest genome would contain an initial state and a single control input: $\genome^5 \equiv \left\{ \pos_0,\facing_0,\controlmove,\facing^c \right\}$. Addional data can be added to the Control Genomes either by expanding the data contained in the initial state, by adding additional control values or by providing a time series of control values which are then treated as a step curve. A non-parametric Movement Model maps from Control Genome to evaluation space
+We construct Control Genomes as an initial state followed by a sequence of movement characteristics we would like to achieve. Player input is supplied through standard gamepad control using stick direction and button presses with $\left\{ \controlface_d, \controlmove_d\right\}$ representing the desired facing and movement directions at time $d$. Further parameters can be added to support different movement styles and are controlled with button presses. The simplest genome would contain an initial state and a single control input: $\genome^5 \equiv \left\{ \pos_0,\facing_0,\controlmove,\facing^c \right\}$. Additional data can be added to the Control Genomes either by expanding the data contained in the initial state, by adding additional types of control values or by providing a time series of control values which are then treated as a step curve. A non-parametric Movement Model maps from Control Genome to evaluation space
 \begin{equation}
     \model(\goals^5)
     \rightarrow
@@ -152,9 +152,9 @@ Fig. \ref{fig:movement:prims} illustrates the 3 planning primitives we use to mo
 \begin{itemize}
 \item{\bf Spring primitive:} We use a critically damped spring primitive that depends only on one parameter $\theta^1 \in \Re_+$. Given input $x \in \Re$ we can write the primitive mathematically as a mapping to the output $y \in \Re$ as $y \leftarrow \spring{( x , \dot{x}, \theta^1, x^\prime, \dt)}$. Here $\theta^1$ exposes a spring coefficient used to control the drag of the input variable towards the target $x^\prime$. It is essentially a time-integration over $\dt$ of a spring force with initial conditions $x$ and $\dot{x}$.
 
-\item{\bf 1D interpolation:} The 1D-Map interpolation map uses $\theta^d$ with $d>$ data-values to find the interpolated value $y \in \Re$ of input $x \in \Re$. We write this as  $y \leftarrow \mapo(x,\theta^{d})$. With out loss of generality we choose to use spline interpolation over $k$ knots \kenny{what is $k$?}.
+\item{\bf 1D interpolation:} The 1D-Map interpolation map uses $\theta^d$ with $d>$ data-values to find the interpolated value $y \in \Re$ of input $x \in \Re$. We write this as  $y \leftarrow \mapo(x,\theta^{d})$. With out loss of generality we choose to use spline interpolation over 4 knots.
 
-\item{\bf 2D interpolation:} The 2D-Map interpolation is similar defined. Except it maps input $x_0,x_1 \in \Re$ to output $y_0,y_1 \in \Re$ $(y_0,y_1) \leftarrow \mapt( (x_0, x_1),\theta^{d})$. In our implementation we use barycentric coordinates to interpolate polygon knots according to a 2D grid position given as input.    
+\item{\bf 2D interpolation:} The 2D-Map interpolation is similarly defined. Except it maps input $x_0,x_1 \in \Re$ to output $y_0,y_1 \in \Re$ $(y_0,y_1) \leftarrow \mapt( (x_0, x_1),\theta^{d})$. In our implementation we use barycentric coordinates to interpolate polygon knots according to a 2D grid position given as input.    
 \end{itemize}
 
 As an example we propose a Movement Model for plane locomotion typical for 3rd person computer games that strikes a compromise between simplicity and expressiveness. We use the convention that an $i$ superscript refers to intermediary values used temporarily during the model update. First the position and facing information contained in the Control Genome state is augmented with derived values $\speed_0, \move_0, \angularspeed_0$ for speed, move direction and angular speed ie. rate of change of the movement direction. Compared to $\genome^{5}$ the expanded Control Genome looks like this,
@@ -173,7 +173,7 @@ We compute $\diffmove_d=||\move_d^m-\controlmove_d||$ as the absolute error betw
     \speed_{d+1}&\leftarrow{}\spring(\speed_d,\speed^\intermediary,\param^\intermediary,\dt)
 \end{align}
 \end{subequations}
-Here $\param_0$ \kenny{No superscript? why?} models planning of the target speed depending on the current angular speed and the required change to movement direction. $\param_1$ models the acceleration of the model depending on the relative change in speed.
+Here $\param_0$ \kenny{No superscript? why?}\magnus{To avoid "noise". But probably jst confusing to omit} models planning of the target speed depending on the current angular speed and the required change to movement direction. $\param_1$ models the acceleration of the model depending on the relative change in speed.
 
 Modeling of changes to movement and facing directions are added.
 \begin{subequations}
@@ -192,19 +192,33 @@ The mapping to evaluation space $\model(\goals^{8})\rightarrow\mathcal{R}^{3t}$ 
     \label{fig:control:modelflow}
 \end{figure}
 
-An analytical model like this can be of great practical use to the game developers. The parameters have direct links to relatable properties in the animation which makes it easier to tweak the behavior of the model. On the other hand, the analytical approach requires that the designers are able to adequately model the complexity of the movement. When this is not the case, we can apply machine learning techniques to discover latent properties of our animation set. 
+An analytical model like this can be of great practical use to the game developers. The parameters have direct links to relatable properties in the animation which makes it easier to tweak the behavior of the model. On the other hand, the analytical approach requires that the designers are able to adequately model the complexity of the movement. When this is not the case, we can apply machine learning techniques to discover latent properties of our animation set.  
 
 One approach is to extract a limited latent variable set using a dense neural network and then feed the latent variables to a set a primitives which are weighted to give the final output. 
 Alternatively, we could apply a hybrid approach by discovering correlations in the data by automated statistical analysis, but still allow the designer to setup the primitives and chose which parameters should be used. 
 
 Finally we note that multiple local Movement Models can be easily combined. Transitions between models can be established using the same primitives. In practice it is often sufficient to use a single 1D blend. For instance the shift between 'run' and 'walk', which could require individual models, is usually distinct and of limited complexity and duration. 
 
-\subsection{Motion Alignment and Filtering}
-It is difficult to capture consistent animation data. Treadmills can be used to maintain constant speeds, but this poses a limitation in maneuverability. It requires accurate high frequency control to reproduce the subtle changes in speed and direction that are present even if the subjects are directed to move in a consistent manner. It is often possible to apply minor changes to the speed and direction of the recorded animation, without loss of visual quality. By allowing this, we can align an animation set with respect to speed and movement patterns. 
-
-An adjustment curve contains pr. frame changes to rotation and speed of an animation, and is applied as modifications to the root joint of the animation. An adjustment curve containing all zeros and a single $\frac{\pi}{2}$ would for instance modify a straight walk to have a 90 degree turn over a single frame. To maintain a smooth and subtle modification we can interpolate sparsely distributed key frames and impose limitation on the amount of adjustment allowed pr. frame. We found that various heuristics such as scaling the adjustment depending the relative amount of movement at a given frame, or by the distance from a frame the to nearest control genome, helps maintain the quality of the animation (se fig for reference). Post processing techniques such as foot-IK, Paragon step length increase, or pivoting rotation around foot contacts can also be applied.
-
-Even perfectly consistent animation data contains hard to model fluctuations due to the way humans move. [ref] illustrates the difficulty of deriving a stable position from animation data. We apply a modulating kernel based filter similar to [ref] before the application of the adjustment curve. We use $Adjust(\theta_a,Filter(\theta_f\anim^{\dimas,0}_\dimat))\rightarrow{}[\pos_0,\facing_0, \ldots \pos_t\facing_t]$ as $\edit$ in the objective function (\ref{eq:optim:single}) where $\theta_a, \theta_f$ represent the adjustment curve values and filter kernel weights respectively.
+\subsection{Motion Alignment}
+Even simple animations contain details that makes it difficult to extract a reduced Control Genome. A recording of a straight walk does not contain a straight line in the bone movements of the subject. Projection of the hip bone or center of mass to the ground plane has cyclical components due to the nature of human locomotion. Additionally, the subject might drift on and off the instructed straight path. We need complex Control Genomes to model such details.
+Instead we align animations in a 2-step approach where \textit{Trajectory Estimation} is followed by \textit{Drift Correction}. A straight walk should then produce as segment of mostly straight curves, which are rotated slightly to produce a single straight trajectory. The animation can then be described by a further reduced Control Genome of just a single direction.
+\subsubsection{\bf Trajectory Estimation}
+It is common to extract trajectories by filtering bone position and projecting to the ground plane. Usually a temporal smoothing is applied to either the hip [ref] or and estimated center of mass [ref]. In some cases the filter is made context aware to prevent masking of low frequency details in turning movements. We propose an alternative approach where foot contacts are used a guiding points. Given that environment contacts is used to change movement direction, it seems natural the trajectory information can be extracted from contact analysis. We show that this approach yields trajectories that are more stable and corresponds better to intuitively observable trajectory of an animation than what is produced by bone filtering. \magnus{Also required no tuning of a smoothing filter} Although similar techniques have been described before [ref] we have not seen the approach used for trajectory estimation.
+Contacts are detected using a height/velocity heuristic for the foot bones. A preliminary line is traced by connecting center point between adjacent right-left foot contact pairs. At each contact point we locate synchronization points on the preliminary line that is closest to hip bone position at the corresponding time. Trajectory samples are evenly spaced between synchronization points at a rate controlled by animation frame distances between the associated hip positions. The process is illustrated in Fig. \ref{fig:method:trajectory}. 
+\begin{figure}
+    \centering
+    \includegraphics[width=1\columnwidth]{img/trajectory.png}
+    \caption{Trajectory estimation}
+    \label{fig:method:trajectory}
+\end{figure}
+\subsubsection{\bf Drift Correction} 
+We apply the concept of adjustment curves by distributing knots along the trajectory. Each knot is associated with a rotation and per frame values are interpolated along the curve to ensure smooth changes. The adjustment curve is applied by accumulating rotations along the entire animation, so that an adjustment rotation at frame $n$ influences all frames $>n$. An example in shown in Fig. \ref{fig:method:adjustment}. In this work we only perform drift adjustments on straight animation segments, ie. coming into a turn and coming out of a turn, while the turn itself is left unchanged. By minimizing the adjustment knot value against the error between the adjusted trajectory segment and a least squares linear fit. 
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\columnwidth]{img/adjustmentcurve.png}
+    \caption{Adjustment Curve}
+    \label{fig:method:adjustment}
+\end{figure}
 
 \subsection{Optimization}
 When the Movement Genome, Movement Model and the alignment and filtering procedures have been defined, we face an optimization problem consisting of 100s of parameters and many local minima. Fig ?? illustrates how the parameters are distributed across the full system. \magnus{Missing: Genomes can be slightly modified. Changes are in $\theta_G$ which needs to be defined}.
