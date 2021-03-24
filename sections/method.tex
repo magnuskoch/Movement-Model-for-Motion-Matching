@@ -5,7 +5,7 @@
     \caption{OMGkj}
     \label{fig:movement:overview}
 \end{figure*}
-Human movement is a complex interplay between intentions within the brain and the physical environment. The thought to 'walk-forward' triggers and array of intractable optimizations. 
+Human movement is a complex interplay between intentions within the brain and the physical environment. The thought to 'walk-forward' triggers and array of intractable optimizations. \kenny{A movement model in computer games can be explained as a process that that mimics this human though process.} 
 
 In the following we will introduce a method for synchronization between a Movement Model and a set of animations given Control Genomes. There are 4 main parts to the method. 
 \begin{itemize}
@@ -89,29 +89,29 @@ Where $\vec{\paramm^*},\vec{\parame^*}$ is the full set of parameters and $\para
 \begin{figure*}
     \centering
     \includegraphics[width=0.75\linewidth]{img/model_primitives}
-    \caption{Planning primitives. K values indicate parameters subject to optimization.}
+    \caption{Planning primitives. K values indicate parameters subject to optimization.\kenny{Please state what reader should learn from this figure.}}
     \label{fig:movement:prims}
 \end{figure*}
 In this section we will describe how movement can be generated from Control Genomes using a Movement Model. Without loss of generality, we will examine plane locomotion and limit the output of the model to trajectories, which is time series of connected positions and facing directions. 
 Conceptually there are no limitations on the complexity of the models we chose. Dense neural networks [ref] or muscle based physical simulations [ref] are capable of even generating full body locomotion. However we would like a model that exposes easily and exactly tweakable parameters to the game designers and animators. In many game scenarios micro timings and the 'feel' of the character movement are core parts of the user experience. Accordingly we need descriptive models, that can still be transparently manipulated by the artists. 
 
-We use the trajectory as evaluation space with $\pos,\facing$ as the 2D plane position and 1D rotation around the up-axis over $t$ frames. Hence we have dimension $\dimes = 3 t$ for our evaluation space,
+We use the trajectory as evaluation space with $\pos$ and $\facing$ as the 2D plane position and 1D rotation around the up-axis over $t$ frames. Hence we have dimension $\dimes = 3 t$ for our evaluation space,
 \begin{align}
 \mathcal{R}^{3 t} 
 \equiv 
 \left\{
     \pos_0,\facing_0,
     \ldots,
-    \pos_t,\facing_t
+    \pos_{t-1},\facing_{t-1}
     \right\}
 \end{align}
-We construct Control Genomes as an initial state followed by a sequence of movement characteristics we would like to achieve. Player input is supplied through standard gamepad control using stick direction and button presses with $\left\{ \controlface_d, \controlmove_d\right\}$ representing the desired facing and movement directions at time $d$. Further parameters can be added to support different movement styles and are controlled with button presses. The simplest genome would contain an initial state and a single control input: $\genome^5 \equiv \left\{ \pos_0,\facing_0,\controlmove,\facing^c \right\}$. Additional data can be added to the Control Genomes either by expanding the data contained in the initial state, by adding additional types of control values or by providing a time series of control values which are then treated as a step curve. A non-parametric Movement Model maps from Control Genome to evaluation space
+We construct Control Genomes as an initial state followed by a sequence of movement characteristics we would like to achieve. Player input is supplied through standard gamepad control using stick direction and button presses with $\left\{ \controlmove_d, \controlface_d \right\}$ representing the desired facing and movement directions at time $d$. Further parameters can be added to support different movement styles and are controlled with button presses. The simplest genome would contain an initial state and a single control input: $\genome^5 \equiv \left\{ \pos_0,\facing_0,\controlmove,\facing^c \right\}$. Additional data can be added to the Control Genomes either by expanding the data contained in the initial state, by adding additional types of control values or by providing a time series of control values which are then treated as a step curve. A non-parametric Movement Model maps from Control Genome to evaluation space
 \begin{equation}
     \model(\goals^5)
     \rightarrow
     \underbrace{
     \left\{
-    \pos_0^m,\facing_0^m,\ldots,\pos_t^m,\facing_t^m\right\}
+    \pos_0^m,\facing_0^m,\ldots,\pos_{t-1}^m,\facing_{t-1}^m\right\}
     }_{\in \mathcal{R}^{3t}}
     \,,
 \end{equation}
@@ -152,20 +152,29 @@ Fig. \ref{fig:movement:prims} illustrates the 3 planning primitives we use to mo
 \begin{itemize}
 \item{\bf Spring primitive:} We use a critically damped spring primitive that depends only on one parameter $\theta^1 \in \Re_+$. Given input $x \in \Re$ we can write the primitive mathematically as a mapping to the output $y \in \Re$ as $y \leftarrow \spring{( x , \dot{x}, \theta^1, x^\prime, \dt)}$. Here $\theta^1$ exposes a spring coefficient used to control the drag of the input variable towards the target $x^\prime$. It is essentially a time-integration over $\dt$ of a spring force with initial conditions $x$ and $\dot{x}$.
 
-\item{\bf 1D interpolation:} The 1D-Map interpolation map uses $\theta^d$ with $d>$ data-values to find the interpolated value $y \in \Re$ of input $x \in \Re$. We write this as  $y \leftarrow \mapo(x,\theta^{d})$. With out loss of generality we choose to use spline interpolation over 4 knots.
+\item{\bf 1D interpolation:} The 1D-Map interpolation map uses $\theta^d$ with $d>1$ data-values to find the interpolated value $y \in \Re$ of input $x \in \Re$. We write this as  $y \leftarrow \mapo(x,\theta^{d})$. With out loss of generality we choose to use spline interpolation over 4 knots.
 
 \item{\bf 2D interpolation:} The 2D-Map interpolation is similarly defined. Except it maps input $x_0,x_1 \in \Re$ to output $y_0,y_1 \in \Re$ $(y_0,y_1) \leftarrow \mapt( (x_0, x_1),\theta^{d})$. In our implementation we use barycentric coordinates to interpolate polygon knots according to a 2D grid position given as input.    
 \end{itemize}
 
-As an example we propose a Movement Model for plane locomotion typical for 3rd person computer games that strikes a compromise between simplicity and expressiveness. We use the convention that an $i$ superscript refers to intermediary values used temporarily during the model update. First the position and facing information contained in the Control Genome state is augmented with derived values $\speed_0, \move_0, \angularspeed_0$ for speed, move direction and angular speed ie. rate of change of the movement direction. Compared to $\genome^{5}$ the expanded Control Genome looks like this,
+As an example we propose a Movement Model for plane locomotion typical for 3rd person computer games  \kenny{how can you prove it is typical? any cites for this?} that strikes a compromise between simplicity and expressiveness. We use the convention that an $i$ superscript refers to intermediary values used temporarily during the model update \kenny{The superscript notation really clutters the math in my opinion. Perhaps using hat or tilde might be simpler layout wise?}. 
+%
+First for getting control of speed, move direction and angular speed ie. rate of change of the movement direction the position and facing information contained in the Control Genome state is augmented with derived values $\speed_0, \move_0, \angularspeed_0$. 
+%
+Compared to $\genome^{5}$ the expanded Control Genome looks like this,
 \begin{subequations}
 \begin{align}
     \genome^{8} \equiv \left\{ \pos_0,\facing_0,\speed_0,\move_0,\angularspeed_0,\controlmove,\facing^c \right\}\,.
 \end{align}
 \end{subequations}
 It has 3 additional values that the Movement Model integrates. This reflects that more context than just position and facing direction is needed to model the movement correctly. For simplicity we keep the control values fixed, but usually they will change over time.
+\kenny{Alternative control genome definitions can be made, it depends on context and the artistic work flow. We find above definition to be simple and work well for our examples.}
 
-We compute $\diffmove_d=||\move_d^m-\controlmove_d||$ as the absolute error between the state and control values for movement direction. The full parameter set is $\paramm\equiv(\param_0^9,\param_1^4,\param_2^9,\param_3^9)$. A Movement model is constructed by first describing changes related to speed.
+Our movement model needs an error measure such that it can figure out how much to change the generated motion. Hence, we compute $\diffmove_d=||\move_d^m-\controlmove_d||$ as the absolute error between the state and control values for movement direction. 
+%
+The full parameter set is $\paramm\equiv(\param_0^9,\param_1^4,\param_2^9,\param_3^9)$. 
+%
+Our Movement model update is constructed by first computing  changes related to speed. \kenny{Signature of spring model has changed. The definition takes five arguments, the one used below only takes four?}
 \begin{subequations}
 \begin{align}
     \speed^\intermediary&\leftarrow{}\mapt(\angularspeed_d,\diffmove_d,\param_0^9)\\
@@ -173,9 +182,9 @@ We compute $\diffmove_d=||\move_d^m-\controlmove_d||$ as the absolute error betw
     \speed_{d+1}&\leftarrow{}\spring(\speed_d,\speed^\intermediary,\param^\intermediary,\dt)
 \end{align}
 \end{subequations}
-Here $\param_0$ \kenny{No superscript? why?}\magnus{To avoid "noise". But probably jst confusing to omit} models planning of the target speed depending on the current angular speed and the required change to movement direction. $\param_1$ models the acceleration of the model depending on the relative change in speed.
-
-Modeling of changes to movement and facing directions are added.
+Here $\param_0$ \kenny{No superscript? why?}\magnus{To avoid "noise". But probably just confusing to omit}\kenny{I agree, seems we can simplify notation many places by removing the dimension superscript.} models planning of the target speed depending on the current angular speed and the required change to movement direction. $\param_1$ models the acceleration of the model depending on the relative change in speed.
+%
+Modeling of changes to movement and facing directions are computed next. \kenny{fix spring notation}
 \begin{subequations}
 \begin{align}
     \move_{d+1}&\leftarrow\spring(\move_d,\controlmove,\mapt(\speed_{d},\diffmove, \param_2^9),\dt)\\ 
@@ -184,41 +193,52 @@ Modeling of changes to movement and facing directions are added.
 \end{align}
 \end{subequations}
 Here $\param_2$ and $\param_3$ model planning of movement and facing direction dependent on the current speed and facing values and the differences to the control targets.
-The mapping to evaluation space $\model(\goals^{8})\rightarrow\mathcal{R}^{3t}$ is done by performing $t$ updates to the state and extracting $\pos$ and $\facing$ at each update, and is varied by changes to $\paramm$. The process is illustrated in Fig. \ref{fig:control:modelflow}. 
+%
+The mapping to evaluation space $\model(\paramm, \goals^{8}) \rightarrow \mathcal{R}^{3t}$ is done by performing $t$ updates to the state and extracting $\pos$ and $\facing$ at each update, and quality and style can be controlled by changes to $\paramm$. \kenny{Current practice in game production tune such parameters by hand.} The process is illustrated in Fig. \ref{fig:control:modelflow}. 
 \begin{figure}
     \centering
     \includegraphics[width=0.5\columnwidth]{img/model_flow.png}
-    \caption{Movement Model flow. White and grey background indicate values in the Control Genome and generated by the Movement Model respectively.}
+    \caption{Movement Model update computation for generating the evaluation space. White and grey background indicate values in the Control Genome and generated by the Movement Model respectively. \kenny{Observe the recursive forward evaluation nature in the update.}}
     \label{fig:control:modelflow}
 \end{figure}
 
-An analytical model like this can be of great practical use to the game developers. The parameters have direct links to relatable properties in the animation which makes it easier to tweak the behavior of the model. On the other hand, the analytical approach requires that the designers are able to adequately model the complexity of the movement. When this is not the case, we can apply machine learning techniques to discover latent properties of our animation set.  
-
+An analytical model like this can be of great practical use to the game developers. The parameters have direct links to explainable properties in the animation which makes it easier to tweak the behavior of the model. On the other hand, the analytical approach requires that the designers are able to adequately model the complexity of the movement. 
+%
+\kenny{The next sentence fells out of place? Are you talking about what people are doing or what we want to do?}
+When this is not the case, we can apply machine learning techniques to discover latent properties of our animation set. % 
 One approach is to extract a limited latent variable set using a dense neural network and then feed the latent variables to a set a primitives which are weighted to give the final output. 
 Alternatively, we could apply a hybrid approach by discovering correlations in the data by automated statistical analysis, but still allow the designer to setup the primitives and chose which parameters should be used. 
+\kenny{If what was described above is current practice then I am missing some citations for it as well as some arguments/descriptions of why it is not clever and why what we are doing is better?}
 
-Finally we note that multiple local Movement Models can be easily combined. Transitions between models can be established using the same primitives. In practice it is often sufficient to use a single 1D blend. For instance the shift between 'run' and 'walk', which could require individual models, is usually distinct and of limited complexity and duration. 
+Finally we note that multiple local Movement Models can be easily combined. Transitions between models can be established using the same primitives. In practice we find it is often sufficient to use a single 1D blend \kenny{This statement/section may promise an experiment to prove it}. For instance the shift between 'run' and 'walk', which could require individual models, is usually distinct and of limited complexity and duration. 
 
 \subsection{Motion Alignment}
 Even simple animations contain details that makes it difficult to extract a reduced Control Genome. A recording of a straight walk does not contain a straight line in the bone movements of the subject. Projection of the hip bone or center of mass to the ground plane has cyclical components due to the nature of human locomotion. Additionally, the subject might drift on and off the instructed straight path. We need complex Control Genomes to model such details.
 Instead we align animations in a 2-step approach where \textit{Trajectory Estimation} is followed by \textit{Drift Correction}. A straight walk should then produce as segment of mostly straight curves, which are rotated slightly to produce a single straight trajectory. The animation can then be described by a further reduced Control Genome of just a single direction.
-\subsubsection{\bf Trajectory Estimation}
-It is common to extract trajectories by filtering bone position and projecting to the ground plane. Usually a temporal smoothing is applied to either the hip [ref] or and estimated center of mass [ref]. In some cases the filter is made context aware to prevent masking of low frequency details in turning movements. We propose an alternative approach where foot contacts are used a guiding points. Given that environment contacts is used to change movement direction, it seems natural the trajectory information can be extracted from contact analysis. We show that this approach yields trajectories that are more stable and corresponds better to intuitively observable trajectory of an animation than what is produced by bone filtering. \magnus{Also required no tuning of a smoothing filter} Although similar techniques have been described before [ref] we have not seen the approach used for trajectory estimation.
+
+%\subsubsection{\bf Trajectory Estimation}
+It is common to extract trajectories by filtering bone position and projecting to the ground plane. Usually a temporal smoothing is applied to either the hip [ref] or an estimated center of mass [ref]. In some cases the filter is made context aware to prevent masking of low frequency details in turning movements. We propose an alternative approach where foot contacts are used as guiding points. Given that environment contacts is used to change movement direction, it seems natural the trajectory information can be extracted from contact analysis. We show that this approach yields trajectories that are more stable and corresponds better to intuitively observable trajectory of an animation than what is produced by bone filtering \magnus{Also required no tuning of a smoothing filter}\kenny{Make sure we have experiments to prove claims and compare contact-trajectories to filtering trajectories. It would be nice to make figure references here, as seen in Figure XX}.
+%
+Although similar techniques have been described before [ref] we have not seen the approach used for trajectory estimation.
 Contacts are detected using a height/velocity heuristic for the foot bones. A preliminary line is traced by connecting center point between adjacent right-left foot contact pairs. At each contact point we locate synchronization points on the preliminary line that is closest to hip bone position at the corresponding time. Trajectory samples are evenly spaced between synchronization points at a rate controlled by animation frame distances between the associated hip positions. The process is illustrated in Fig. \ref{fig:method:trajectory}. 
 \begin{figure}
     \centering
     \includegraphics[width=1\columnwidth]{img/trajectory.png}
-    \caption{Trajectory estimation}
+    \caption{Trajectory estimation from center of feet positions. Observe how the mid-points between feet center points generate a more straight trajectory compared to the filtered root motion that oscillates.}
     \label{fig:method:trajectory}
 \end{figure}
-\subsubsection{\bf Drift Correction} 
-We apply the concept of adjustment curves by distributing knots along the trajectory. Each knot is associated with a rotation and per frame values are interpolated along the curve to ensure smooth changes. The adjustment curve is applied by accumulating rotations along the entire animation, so that an adjustment rotation at frame $n$ influences all frames $>n$. An example in shown in Fig. \ref{fig:method:adjustment}. In this work we only perform drift adjustments on straight animation segments, ie. coming into a turn and coming out of a turn, while the turn itself is left unchanged. By minimizing the adjustment knot value against the error between the adjusted trajectory segment and a least squares linear fit. 
+
+%\subsubsection{\bf Drift Correction} 
+We apply the concept of adjustment curves by distributing knots \kenny{Knots? This is unclear to me? Knots are often weights, one has data-points and control points, the knots affect how much the control points control the curve, points on the curve are data-points? There is some terminoogy that is a bit off here?} along the trajectory. Each knot is associated with a rotation and per frame values are interpolated along the curve to ensure smooth changes. The adjustment curve is applied by accumulating rotations along the entire animation, so that an adjustment rotation at frame $n$ influences all frames $>n$. An example in shown in Fig. \ref{fig:method:adjustment}. In this work we only perform drift adjustments on straight animation segments, ie. coming into a turn and coming out of a turn, while the turn itself is left unchanged. By minimizing the adjustment knot value against the error between the adjusted trajectory segment and a least squares linear fit. 
 \begin{figure}
     \centering
     \includegraphics[width=0.5\columnwidth]{img/adjustmentcurve.png}
     \caption{Adjustment Curve}
     \label{fig:method:adjustment}
 \end{figure}
+
+
+
 
 \subsection{Optimization}
 When the Movement Genome, Movement Model and the alignment and filtering procedures have been defined, we face an optimization problem consisting of 100s of parameters and many local minima. Fig ?? illustrates how the parameters are distributed across the full system. \magnus{Missing: Genomes can be slightly modified. Changes are in $\theta_G$ which needs to be defined}.
