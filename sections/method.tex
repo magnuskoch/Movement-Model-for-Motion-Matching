@@ -1,4 +1,4 @@
-\section{Optimal Control Genome Method}
+`\section{Optimal Control Genome Method}
 \begin{figure*}
     \centering
     \includegraphics[width=0.75\linewidth]{img/overview}
@@ -185,13 +185,7 @@ Our Movement model update is constructed by first computing  changes related to 
 Here $\param_0$ \kenny{No superscript? why?}\magnus{To avoid "noise". But probably just confusing to omit}\kenny{I agree, seems we can simplify notation many places by removing the dimension superscript.} models planning of the target speed depending on the current angular speed and the required change to movement direction. $\param_1$ models the acceleration of the model depending on the relative change in speed.
 %
 Modeling of changes to movement and facing directions are computed next. \kenny{fix spring notation}
-\begin{subequations}
-\begin{align}
-    \move_{d+1}&\leftarrow\spring(\move_d,\controlmove,\mapt(\speed_{d},\diffmove, \param_2^9),\dt)\\ 
-    \facing_{d+1}&\leftarrow\spring(\facing_d,\controlface,\mapt(\speed_{d},\difffacing, \param_3^9),\dt)\\
-    \pos_{d+1}&\leftarrow{}\pos_d+\speed_{d}(\cos{\move_d},\sin{\move_d})
-\end{align}
-\end{subequations}
+y
 Here $\param_2$ and $\param_3$ model planning of movement and facing direction dependent on the current speed and facing values and the differences to the control targets.
 %
 The mapping to evaluation space $\model(\paramm, \goals^{8}) \rightarrow \mathcal{R}^{3t}$ is done by performing $t$ updates to the state and extracting $\pos$ and $\facing$ at each update, and quality and style can be controlled by changes to $\paramm$. \kenny{Current practice in game production tune such parameters by hand.} The process is illustrated in Fig. \ref{fig:control:modelflow}. 
@@ -213,11 +207,22 @@ Alternatively, we could apply a hybrid approach by discovering correlations in t
 Finally we note that multiple local Movement Models can be easily combined. Transitions between models can be established using the same primitives. In practice we find it is often sufficient to use a single 1D blend \kenny{This statement/section may promise an experiment to prove it}. For instance the shift between 'run' and 'walk', which could require individual models, is usually distinct and of limited complexity and duration. 
 
 \subsection{Motion Alignment}
-Even simple animations contain details that makes it difficult to extract a reduced Control Genome. A recording of a straight walk does not contain a straight line in the bone movements of the subject. Projection of the hip bone or center of mass to the ground plane has cyclical components due to the nature of human locomotion. Additionally, the subject might drift on and off the instructed straight path. We need complex Control Genomes to model such details.
-Instead we align animations in a 2-step approach where \textit{Trajectory Estimation} is followed by \textit{Drift Correction}. A straight walk should then produce as segment of mostly straight curves, which are rotated slightly to produce a single straight trajectory. The animation can then be described by a further reduced Control Genome of just a single direction.
+To fit a Movement Model and Control Genome pair we project reference animations to evaluation space by constructing $\edit$ as a 2 step function where $\trajest$:\textit{Trajectory Estimation} is followed by $\driftcor$:\textit{Drift Correction}. Using similar convention as in the previous section we map animations of $t$ frames to evaluation space. 
+\begin{subequations}
+\begin{align}
+    \edit(\parame,\anim_{t}^{\dimas})&:\driftcor(\parame,\trajest(\anim_t)\\
+    \trajest&:R^{\dimas\times{t}} \rightarrow  R^{3t}\\
+    \driftcor&:R^{3t} \rightarrow R^{3t}
+\end{align}
+\end{subequations}
+Notice that only $\driftcor$ is parameterized.
 
-%\subsubsection{\bf Trajectory Estimation}
-It is common to extract trajectories by filtering bone position and projecting to the ground plane. Usually a temporal smoothing is applied to either the hip [ref] or an estimated center of mass [ref]. In some cases the filter is made context aware to prevent masking of low frequency details in turning movements. We propose an alternative approach where foot contacts are used as guiding points. Given that environment contacts is used to change movement direction, it seems natural the trajectory information can be extracted from contact analysis. We show that this approach yields trajectories that are more stable and corresponds better to intuitively observable trajectory of an animation than what is produced by bone filtering \magnus{Also required no tuning of a smoothing filter}\kenny{Make sure we have experiments to prove claims and compare contact-trajectories to filtering trajectories. It would be nice to make figure references here, as seen in Figure XX}.
+
+Even simple animations contain details that makes it difficult to extract a reduced Control Genome. A recording of a straight walk does not contain a straight line in the bone movements of the subject. Projection of the hip bone or center of mass to the ground plane has cyclical components due to the nature of human locomotion. Additionally, the subject might drift on and off the instructed straight path. We need complex Control Genomes to model such details. 
+Informally $\edit$ extracts an idealized movement path from animations by removing noise and applying slight corrections. Ie. a straight walk is estimated as a sequence of local line segments, which are then corrected to produce a single straight trajectory. The animation can now be described by a further reduced Control Genome of just a single direction.
+
+\subsubsection{\bf Trajectory Estimation}
+It is common to extract trajectories by filtering bone positions and projecting to the ground plane. Usually a temporal smoothing is applied to either the hip [ref] or an estimated center of mass [ref]. In some cases the filter is made context aware to prevent masking of low frequency details in turning movements. We propose an alternative approach where foot contacts are used as guiding points. Given that environment contacts is used to change movement direction, it seems natural that trajectory information can be extracted from contact analysis. We show that this approach yields trajectories that are more stable and corresponds better to intuitively observable trajectory of an animation than what is produced by bone filtering \magnus{Also required no tuning of a smoothing filter}\kenny{Make sure we have experiments to prove claims and compare contact-trajectories to filtering trajectories. It would be nice to make figure references here, as seen in Figure XX}.
 %
 Although similar techniques have been described before [ref] we have not seen the approach used for trajectory estimation.
 Contacts are detected using a height/velocity heuristic for the foot bones. A preliminary line is traced by connecting center point between adjacent right-left foot contact pairs. At each contact point we locate synchronization points on the preliminary line that is closest to hip bone position at the corresponding time. Trajectory samples are evenly spaced between synchronization points at a rate controlled by animation frame distances between the associated hip positions. The process is illustrated in Fig. \ref{fig:method:trajectory}. 
@@ -228,8 +233,14 @@ Contacts are detected using a height/velocity heuristic for the foot bones. A pr
     \label{fig:method:trajectory}
 \end{figure}
 
-%\subsubsection{\bf Drift Correction} 
-We apply the concept of adjustment curves by distributing knots \kenny{Knots? This is unclear to me? Knots are often weights, one has data-points and control points, the knots affect how much the control points control the curve, points on the curve are data-points? There is some terminoogy that is a bit off here?} along the trajectory. Each knot is associated with a rotation and per frame values are interpolated along the curve to ensure smooth changes. The adjustment curve is applied by accumulating rotations along the entire animation, so that an adjustment rotation at frame $n$ influences all frames $>n$. An example in shown in Fig. \ref{fig:method:adjustment}. In this work we only perform drift adjustments on straight animation segments, ie. coming into a turn and coming out of a turn, while the turn itself is left unchanged. By minimizing the adjustment knot value against the error between the adjusted trajectory segment and a least squares linear fit. 
+\subsubsection{\bf Drift Correction} 
+We apply adjustment curves by distributing adjustment keyframes along the trajectory. Each keyframe is associated with a rotation and per frame values are interpolated along the curve to ensure smooth changes. The adjustment curve is applied by accumulating rotations along the entire animation, so that an adjustment rotation at frame $n$ influences all frames $>n$. An example in shown in Fig. \ref{fig:method:adjustment}. 
+
+Adjustment curves can be used as a fitting procedure with $argmin$
+
+In this work we only perform drift adjustments on straight animation segments, ie. coming into a turn and coming out of a turn, while the turn itself is left unchanged. By minimizing the adjustment knot value against the error between the adjusted trajectory segment and a least squares linear fit. 
+
+We do two types: Make lines straighter by optimizing against error of linear least sqaures fit line. And by optimizin against error againdt other trajecotry
 \begin{figure}
     \centering
     \includegraphics[width=0.5\columnwidth]{img/adjustmentcurve.png}
@@ -238,9 +249,43 @@ We apply the concept of adjustment curves by distributing knots \kenny{Knots? Th
 \end{figure}
 
 
-
+\magnus{Section should end by defining W}
 
 \subsection{Optimization}
+
+
+\begin{itemize}
+    \item {\bf Aligment}
+    \item {\bf Movement model fitting}
+    \item {\bf Post Alignment}
+\end{itemize}
+
+
+We use autodiff features of pytorch.
+
+Primitives continuous
+
+
+Pre alignment. Ignore turns. Straight segment are applied a least squares linear regression.
+
+Control genome estimation 
+    Estimate rought direction change points in animation (Ie where we see change) Use tangents. First order diffs and fitted linear thing, when avaialb.e
+
+Movement Model fit.
+    L2 regularization of parameters, but only if they have gradient. Data might not cover the entire parameter space. Dont want optimization on onused parameters.. General construct is parameter-scale * parameter. Scale is constant.
+    Initialize model to first control genome.
+
+
+    Control Genommes direction and times and can be adjusted.
+        Tanh activation to control change in genome direction
+
+
+Post alignments. 
+    Adjustment curve at fixed interval. Destructive to animation. Gives meassure of quality of fit. It is difficult to quantify the amount of unrealisme introduced due to the procedure, so we instead refer to the accompyining video as a supplement to the plots. 
+
+
+
+
 When the Movement Genome, Movement Model and the alignment and filtering procedures have been defined, we face an optimization problem consisting of 100s of parameters and many local minima. Fig ?? illustrates how the parameters are distributed across the full system. \magnus{Missing: Genomes can be slightly modified. Changes are in $\theta_G$ which needs to be defined}.
 
 The dimensionality of the parameter space makes it infeasible to use straight forward techniques such as finite differences. We attack the problem by using auto differentiation with PyTorch for the optimization procedure. Having the gradients available we can use line search techniques such as Gradient Descent or Stochastic Gradient Descent which is available in PyTorch.
@@ -250,3 +295,7 @@ To use a global learning rate, we normalize the range of all parameters and appl
 L1 and L2 regularization is applied to most parameters to avoid 'oscillating' interpolations between extreme knot values which can be difficult to interpret and modify for a human. Similar regularization is applied to $\theta_a$ and $\theta_G$ where large values implies divergence from the ground truth present in the Genomes and reference animation.
 
 Auto differentiation requires continuity across the parameters space, and some care must be taken to achieve this. Specifically we ensure that our primitive function are continuous and use leaky relu outside valid ranges to support correct derivates here. 
+
+
+We have knots in normalized range. Multiply with constant. Makes regularization and learning rate work
+'
