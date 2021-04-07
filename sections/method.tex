@@ -1,4 +1,4 @@
-`\section{Optimal Control Genome Method}
+\section{Optimal Control Genome Method}
 \begin{figure*}
     \centering
     \includegraphics[width=0.75\linewidth]{img/overview}
@@ -234,13 +234,27 @@ Contacts are detected using a height/velocity heuristic for the foot bones. A pr
 \end{figure}
 
 \subsubsection{\bf Drift Correction} 
-We apply adjustment curves by distributing adjustment keyframes along the trajectory. Each keyframe is associated with a rotation and per frame values are interpolated along the curve to ensure smooth changes. The adjustment curve is applied by accumulating rotations along the entire animation, so that an adjustment rotation at frame $n$ influences all frames $>n$. An example in shown in Fig. \ref{fig:method:adjustment}. 
+We apply adjustment curves by distributing $\parame,$ adjustment keyframes along the trajectory. With high $\counte$-values adjustment values change frequently. By decreasing $\counte$ we achieve smoother adjustment. Each keyframe is associated with a rotation and per frame values are interpolated along the curve to ensure smooth changes. The adjustment curve is applied by accumulating rotations along the entire animation, so that an adjustment rotation at frame $n$ influences all frames $>n$. An example in shown in Fig. \ref{fig:method:adjustment}. 
 
-Adjustment curves can be used as a fitting procedure with $argmin$
+Adjustment curves can align evaluation space vectors $v_0,v_1\in R^{3t}$ by an optimization
+\begin{subequations}
+\begin{align}
+    \arg\min_{\parame}{
+        \frac{1}{2}|v_0-\driftcor(\parame,v_1)|^2
+    }
+\end{align}
+\end{subequations}
+In the Movement Model fitting (\ref{eq:optim:single}) $\counte$ is set so adjustments keyframes are distributed at 2Hz. 
 
-In this work we only perform drift adjustments on straight animation segments, ie. coming into a turn and coming out of a turn, while the turn itself is left unchanged. By minimizing the adjustment knot value against the error between the adjusted trajectory segment and a least squares linear fit. 
-
-We do two types: Make lines straighter by optimizing against error of linear least sqaures fit line. And by optimizin against error againdt other trajecotry
+For motion alignment we optimize to fit $v \in R^{3t}$ against a linear least squares fit.
+\begin{subequations}
+\begin{align}
+    \arg\min_{\parame}{
+        \frac{1}{2}|\mathcal{LLS}(v)-\driftcor(\omega\parame,v_1)|^2
+    }
+\end{align}
+\end{subequations}
+The procedure only works for segments of the animation that are almost straight. We use the heuristic to do local alignments guided by Control Genome changes. Each change triggers a new local alignment, and $\omega$ is a weight vector used to disable alignment close to the local end points. In this case the keyframes are distributed only at 1Hz. 
 \begin{figure}
     \centering
     \includegraphics[width=0.5\columnwidth]{img/adjustmentcurve.png}
