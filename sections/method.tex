@@ -234,9 +234,9 @@ Contacts are detected using a height/velocity heuristic for the foot bones. A pr
 \end{figure}
 
 \subsubsection{\bf Drift Correction} 
-We apply adjustment curves by distributing $\parame,$ adjustment keyframes along the trajectory. With high $\counte$-values adjustment values change frequently. By decreasing $\counte$ we achieve smoother adjustment. Each keyframe is associated with a rotation and per frame values are interpolated along the curve to ensure smooth changes. The adjustment curve is applied by accumulating rotations along the entire animation, so that an adjustment rotation at frame $n$ influences all frames $>n$. An example in shown in Fig. \ref{fig:method:adjustment}. 
+We apply adjustment curves by distributing $\parame,$ adjustment keyframes along the trajectory. With high $\counte$-values adjustment values change frequently due to the higher number of key frames. By decreasing $\counte$ we achieve smoother adjustment. Each keyframe is associated with a rotation and per frame values are interpolated along the curve to ensure smooth changes. The adjustment curve is applied by accumulating rotations along the entire animation, so that an adjustment rotation at frame $n$ influences all frames $>n$. An example in shown in Fig. \ref{fig:method:adjustment}. 
 
-Adjustment curves can align evaluation space vectors $v_0,v_1\in R^{3t}$ by an optimization
+Adjustment curves can align evaluation space vectors (trajectories) $v_0,v_1\in R^{3t}$ by an optimization
 \begin{subequations}
 \begin{align}
     \arg\min_{\parame}{
@@ -244,9 +244,9 @@ Adjustment curves can align evaluation space vectors $v_0,v_1\in R^{3t}$ by an o
     }
 \end{align}
 \end{subequations}
-In the Movement Model fitting (\ref{eq:optim:single}) $\counte$ is set so adjustments keyframes are distributed at 2Hz. 
+We apply such an alignment as a post processing step in the optimization procedure. In this case adjustments keyframes are distributed at 2Hz. 
 
-For motion alignment we optimize to fit $v \in R^{3t}$ against a linear least squares fit.
+For Drift Correction we optimize to fit $v \in R^{3t}$ against a linear least squares fit.
 \begin{subequations}
 \begin{align}
     \arg\min_{\parame}{
@@ -254,7 +254,7 @@ For motion alignment we optimize to fit $v \in R^{3t}$ against a linear least sq
     }
 \end{align}
 \end{subequations}
-The procedure only works for segments of the animation that are almost straight. We use the heuristic to do local alignments guided by Control Genome changes. Each change triggers a new local alignment, and $\omega$ is a weight vector used to disable alignment close to the local end points. In this case the keyframes are distributed only at 1Hz. 
+We apply the procedure to local segments of the animation that are almost straight. Straight segments are identified as regions between neighboring Control Genome changes, where $\omega$ is a weight vector used to disable alignment close to the local end points. In this case the keyframes are distributed only at 1Hz. The heuristic works well for animations consisting of turns and straight segments, but it is quite brittle and needs careful animation dependent tuning of the weights to avoid unwanted straightening of curved sections.
 \begin{figure}
     \centering
     \includegraphics[width=0.5\columnwidth]{img/adjustmentcurve.png}
@@ -262,54 +262,46 @@ The procedure only works for segments of the animation that are almost straight.
     \label{fig:method:adjustment}
 \end{figure}
 
-
-\magnus{Section should end by defining W}
-
 \subsection{Optimization}
-
-
+We use a multi step optimization consisting of three independent passes. The procedure takes a reference animation and a Movement Model as input. Control Genomes are annotated by hand or generated automatically. We use the latter approach. Parameters are fitted locally to each Control Genome and associated animation segments in S. The locally fitted models are combined in a final pass. The Control Genome granularity can be increased if the combined model exhibits poor behavior.
 \begin{itemize}
-    \item {\bf Aligment}
-    \item {\bf Movement model fitting}
-    \item {\bf Post Alignment}
+    \item {\bf{Step 1: Trajectory Estimation \& LLS Alignment}} is applied to the input animation. The output is an evaluation space vector. Control Genomes are generated from the vector using a heuristic where entries are added when the vector tangent changes above a threshold. The input animation is updated to use the estimated trajectory.\magnus{Maybe figure ?}
+    \item {\bf{Step 2: Movement model fitting}} optimizes the parameters of the Movement Model and Control Genome adjustments to fit the generated evaluation space vector. Control Genomes are adjusted to allow wiggle room in the timings and directions.
+    \item {\bf{Step 3: Model combination \& Post Alignment}} uses adjustment curves to fit the reference animation to movement produced by the combined Movemement Model. Depending on the density of adjustment keyframes this step decreases animation quality. The sum of adjustment keyframes values can be used as an indicator for the accuracy of the previous fitting. We find that metrics for evaluation of animation quality are hard to establish, and refer to the accompanying video for assessment of fit quality as a supplement to error plots.
 \end{itemize}
 
 
-We use autodiff features of pytorch.
+\begin{algorithm}
+    \SetAlgoLined
+    \KwIn{$A$: Reference animations, $M$: Movement Model}
+    $\theta^{*}_{M} \leftarrow$ initialize global model parameters\\
+    $T\in R^{3t} \leftarrow \{A\}$, estimate trajectory\\
+    $S \leftarrow \{T\}$, extract genome/segment map\\
+    \ForEach{$\{G,seg\} \in S$} {
+        $\theta_{M} \leftarrow$ initialize local model parameters\\
+        $\theta_{G} \leftarrow$ initialize Genome adjustments\\
+        $\nabla{\theta} \leftarrow \nabla{\theta_{seg}},\nabla{\theta_{G}}$, initialize gradients\\
+        $optim \leftarrow$ initialize optimizer\\
+        $T_{seg} \leftarrow \{T,seg\}$, get animation segment\\
+        $T_{\edit} \leftarrow \{G,T_{seg}\}$, apply drift correction\\
+        \For{optimizer steps}{
+            $T_M \leftarrow \{M,G,\theta_{seg}\}$, unroll Movement Model\\
+            $loss \leftarrow \{T_M,T_{seg}\}$, MSELoss of modeled movement\\
+            \For{$\nabla\theta_i != 0 \in \nabla\theta$} {
+                $loss += \{\theta_i\}$, add L2 regularization\\
+            }
+            $\nabla\theta \leftarrow loss$, backtrack\\
+            $\theta_M,\theta_G \leftarrow \nabla\theta$, gradient descent\\
+        }
+        $S \leftarrow \{\theta_G\}$, store genome adjustments\\
+        $\theta^{*}_{M} \leftarrow \{\theta_G$\}, store model parameters
+    }
+    $A \leftarrow \{M,G \in S,\theta^{*}_{M}\}$, align full animation to model fit 
+    \caption{Fitting Procedure}\label{algo:optim}
+    \end{algorithm}
+ We use PyTorch auto differentiation with gradient descent for the implementation. The procedure is shown in Algorithm. \ref{algo:optim}. Good convergence requires continuous gradients across the parameter space. We use branchless programming techniques and PyTorch constructs for non-continuous functions. In the implementation of movement primitives, absolute() is used to guard against negative parameters, and GreaterThan/LessThan() for branchless if statements. While discontinuities are introduced, we find that the optimization is still able to arrive at expected minima, probably because the discontinuities lie between unrelated areas of the parameter space.
 
-Primitives continuous
+To use a global learning rate for the optimizer, we normalize the range of all parameters and apply fixed constant scalings. This is easily doable since most parameters have direct physical counter parts such as velocity, turn angles etc. Scale values can then be identified by doing a pre-pass over the animation. This in turn limits the impact of local minima, as the optimization can be given plausible initialization values.
 
+L2 parameter regularization is applied to avoid interpolations between extreme parameter values within the movement primitives, which can be difficult to interpret and modify for a human. Parameters with zero gradients dare not activated by the reference animation, and regularization is disabled to avoid loss decrease as a result of decreasing unused parameters.
 
-Pre alignment. Ignore turns. Straight segment are applied a least squares linear regression.
-
-Control genome estimation 
-    Estimate rought direction change points in animation (Ie where we see change) Use tangents. First order diffs and fitted linear thing, when avaialb.e
-
-Movement Model fit.
-    L2 regularization of parameters, but only if they have gradient. Data might not cover the entire parameter space. Dont want optimization on onused parameters.. General construct is parameter-scale * parameter. Scale is constant.
-    Initialize model to first control genome.
-
-
-    Control Genommes direction and times and can be adjusted.
-        Tanh activation to control change in genome direction
-
-
-Post alignments. 
-    Adjustment curve at fixed interval. Destructive to animation. Gives meassure of quality of fit. It is difficult to quantify the amount of unrealisme introduced due to the procedure, so we instead refer to the accompyining video as a supplement to the plots. 
-
-
-
-
-When the Movement Genome, Movement Model and the alignment and filtering procedures have been defined, we face an optimization problem consisting of 100s of parameters and many local minima. Fig ?? illustrates how the parameters are distributed across the full system. \magnus{Missing: Genomes can be slightly modified. Changes are in $\theta_G$ which needs to be defined}.
-
-The dimensionality of the parameter space makes it infeasible to use straight forward techniques such as finite differences. We attack the problem by using auto differentiation with PyTorch for the optimization procedure. Having the gradients available we can use line search techniques such as Gradient Descent or Stochastic Gradient Descent which is available in PyTorch.
-
-To use a global learning rate, we normalize the range of all parameters and apply fixed constant scaling. This is easily doable since most parameters have direct physical counter parts such as velocity, turn angles etc. Scale values can then be identified by doing a pre-pass over the animation. This in turn limits the impact of local minima, as the optimization can be given plausible initialization values.
-
-L1 and L2 regularization is applied to most parameters to avoid 'oscillating' interpolations between extreme knot values which can be difficult to interpret and modify for a human. Similar regularization is applied to $\theta_a$ and $\theta_G$ where large values implies divergence from the ground truth present in the Genomes and reference animation.
-
-Auto differentiation requires continuity across the parameters space, and some care must be taken to achieve this. Specifically we ensure that our primitive function are continuous and use leaky relu outside valid ranges to support correct derivates here. 
-
-
-We have knots in normalized range. Multiply with constant. Makes regularization and learning rate work
-'
