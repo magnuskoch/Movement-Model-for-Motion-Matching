@@ -52,7 +52,7 @@ To avoid sharp trajectory changes on foot contacts we apply a gaussian filter wi
 \end{figure}
 We detect foot contacts by manual tuning of threshold values for speed and height of the feet. In our experience globally valid thresholds are easily found, since only a single start-contact point is needed without great precision. Using the method previously described trajectories are estimated from the contacts. Fig. \ref{fig:results:trajectory_estimation} shows an example of an estimated trajectory using a right turn followed by a left turn. A global smoothing removes the step transitions especially visible in the velocity plot. Notice that this is unrelated to traditional hip smoothing which requires carefully tuned and modulating parameters as described in [??]. The straight walk in Fig. \ref{fig:results:trajectory_straight} still contains some walk cycle dependent artifacts using our method, but high frequency details are removed from direction and speed, which enables us to apply adjustment curves without masking away needed details. \magnus{oscillating effect can be minimized by adjusting uniformly over pairs of steps. Also double check if this is actually the case}
 
-\section{Movement Model Fitting}
+\subsection{Movement Model Fitting}
 \subsubsection{Automated Control Genome extraction}
 Automated genome extraction is shown in Fig. \ref{fig:results:genome_extraction}.
 \begin{figure}
