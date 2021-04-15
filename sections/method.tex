@@ -208,11 +208,12 @@ Finally we note that multiple local Movement Models can be easily combined. Tran
 
 \subsection{Motion Alignment}
 To fit a Movement Model and Control Genome pair we project reference animations to evaluation space by constructing $\edit$ as a 2 step function where $\trajest$:\textit{Trajectory Estimation} is followed by $\driftcor$:\textit{Drift Correction}. Using similar convention as in the previous section we map animations of $t$ frames to evaluation space. 
+\kenny{$\anim_{t}^{\dimas}$ is used in $\edit$ but $\trajest$ takes only $\anim_{t}$ why is there not a superscript? or should superscript be removed all together?}
 \begin{subequations}
 \begin{align}
-    \edit(\parame,\anim_{t}^{\dimas})&:\driftcor(\parame,\trajest(\anim_t)\\
-    \trajest&:R^{\dimas\times{t}} \rightarrow  R^{3t}\\
-    \driftcor&:R^{3t} \rightarrow R^{3t}
+    \edit(\parame,\anim_{t}^{\dimas})&:\driftcor(\parame,\trajest(\anim_t)) \,,\\
+    \trajest&:R^{\dimas\times{t}} \rightarrow  R^{3t} \,,\\
+    \driftcor&:R^{3t} \rightarrow R^{3t} \,.
 \end{align}
 \end{subequations}
 Notice that only $\driftcor$ is parameterized.
@@ -235,7 +236,7 @@ Contacts are detected using a height/velocity heuristic for the foot bones. A pr
 \end{figure}
 
 \subsubsection{\bf Drift Correction} 
-We apply adjustment curves by distributing $\parame,$ adjustment keyframes along the trajectory. With high $\counte$-values adjustment values change frequently due to the higher number of key frames. By decreasing $\counte$ we achieve smoother adjustment. Each keyframe is associated with a rotation and per frame values are interpolated along the curve to ensure smooth changes. The adjustment curve is applied by accumulating rotations along the entire animation, so that an adjustment rotation at frame $n$ influences all frames $>n$. An example in shown in Fig. \ref{fig:method:adjustment}. 
+We apply adjustment curves by distributing $\parame,$ adjustment keyframes along the trajectory. With high $\counte$-values \kenny{It is not clear what $\counte$ is? } adjustment values change frequently due to the higher number of key frames. By decreasing $\counte$ we achieve smoother adjustment. Each keyframe is associated with a rotation and per frame values are interpolated along the curve to ensure smooth changes. The adjustment curve is applied by accumulating rotations along the entire animation, so that an adjustment rotation at frame $n$ influences all frames $>n$. An example in shown in Fig. \ref{fig:method:adjustment}. 
 
 Adjustment curves can align evaluation space vectors (trajectories) $v_0,v_1\in R^{3t}$ by an optimization
 \begin{subequations}
@@ -247,11 +248,11 @@ Adjustment curves can align evaluation space vectors (trajectories) $v_0,v_1\in 
 \end{subequations}
 We apply such an alignment as a post processing step in the optimization procedure. In this case adjustments keyframes are distributed at 2Hz. 
 
-For Drift Correction we optimize to fit $v \in R^{3t}$ against a linear least squares fit.
+For Drift Correction we optimize to fit $v \in R^{3t}$ against a linear least squares fit. \kenny{Is optimization not wrt to $v$? I think I am little confused, because I see two optimization problems? I think maybe you should just drop the first version?}
 \begin{subequations}
 \begin{align}
     \arg\min_{\parame}{
-        \frac{1}{2}|\mathcal{LLS}(v)-\driftcor(\omega\parame,v_1)|^2
+        \frac{1}{2}|\mathcal{LLS}(v)-\driftcor(\omega\,\parame,v_1)|^2
     }
 \end{align}
 \end{subequations}
@@ -266,7 +267,7 @@ We apply the procedure to local segments of the animation that are almost straig
 \subsection{Optimization}
 We use a multi step optimization consisting of three independent passes. The procedure takes a reference animation and a Movement Model as input. Control Genomes are annotated by hand or generated automatically. We use the latter approach. Parameters are fitted locally to each Control Genome and associated animation segments in S. The locally fitted models are combined in a final pass. The Control Genome granularity can be increased if the combined model exhibits poor behavior.
 \begin{itemize}
-    \item {\bf{Step 1: Trajectory Estimation \& LLS Alignment}} is applied to the input animation. The output is an evaluation space vector. Control Genomes are generated from the vector using a heuristic where entries are added when the vector tangent changes above a threshold. The input animation is updated to use the estimated trajectory.\magnus{Maybe figure ?}
+    \item {\bf{Step 1: Trajectory Estimation \& LLS Alignment}} is applied to the input animation. The output is an evaluation space vector. Control Genomes are generated from the vector using a heuristic where entries are added when the vector tangent changes above a threshold. The input animation is updated to use the estimated trajectory.\magnus{Maybe figure ?}\kenny{Yes, please}
     \item {\bf{Step 2: Movement model fitting}} optimizes the parameters of the Movement Model and Control Genome adjustments to fit the generated evaluation space vector. Control Genomes are adjusted to allow wiggle room in the timings and directions.
     \item {\bf{Step 3: Model combination \& Post Alignment}} uses adjustment curves to fit the reference animation to movement produced by the combined Movemement Model. Depending on the density of adjustment keyframes this step decreases animation quality. The sum of adjustment keyframes values can be used as an indicator for the accuracy of the previous fitting. We find that metrics for evaluation of animation quality are hard to establish, and refer to the accompanying video for assessment of fit quality as a supplement to error plots.
 \end{itemize}
@@ -304,5 +305,5 @@ We use a multi step optimization consisting of three independent passes. The pro
 
 To use a global learning rate for the optimizer, we normalize the range of all parameters and apply fixed constant scalings. This is easily doable since most parameters have direct physical counter parts such as velocity, turn angles etc. Scale values can then be identified by doing a pre-pass over the animation. This in turn limits the impact of local minima, as the optimization can be given plausible initialization values.
 
-L2 parameter regularization is applied to avoid interpolations between extreme parameter values within the movement primitives, which can be difficult to interpret and modify for a human. Parameters with zero gradients dare not activated by the reference animation, and regularization is disabled to avoid loss decrease as a result of decreasing unused parameters.
+L2 parameter regularization is applied to avoid interpolations between extreme parameter values within the movement primitives, which can be difficult to interpret and modify for a human. Parameters with zero gradients are not activated by the reference animation, and regularization is disabled to avoid loss decrease as a result of decreasing unused parameters.
 
