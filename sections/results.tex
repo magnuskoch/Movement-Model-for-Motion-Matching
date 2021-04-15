@@ -1,30 +1,48 @@
 \section{Experiments}
 
 NOTE: Video: SHow animation using capsule movement with simple exponential decay and original animations . Does not look nice. Then our solution
+
+
 \begin{figure}
     \centering
     \includegraphics[width=1.0\columnwidth]{img/movement_stats.png}
     \caption{An animation with 5 90 degree turns has complex changes to speed and angular speed.}
     \label{fig:results:trajectory_estimation}
 \end{figure}
+We recorded a series of animations with the XSens inertial sensor suit on 3 different actors. The raw sensor data was cleaned using post processing available in the XSens MVN Animate Pro software. We recorded movements typically seen in 3rd person computer games by following industry standard 'dance cards', which are lists of movements that in total covers the expected range of motion of the player character. This style of animation differs from unstructured animation by having clearly defined segments such as 'forward-run' or '$45^o$-degree-walk-turn'. In a production setting the dance cards animation will usually be carefully cleaned and aligned by hand, but since our method addresses exactly those steps we analyze the raw animation data. As seen in the video some artifacts are present in the source recordings due to the lack of clean up.
 
-A series of animations was recorded using the inertial sensor based XSens suit and a three human subjects. The raw sensor data was cleaned using the automatic post processing procedure available in the XSens MVN Animate Pro software application. Some artifacts remain.
-The movement set was inspired by the structure of locomotion sets used in game production, and contains turns at various angles follow by straight movements. The subject was instructed to keep the movement consistent and to follow the various movements closely. More complex movements types such as vaulting, cover or response to perturbations have not been examined. Fig. \ref{fig:results:trajectory_estimation} illustrates the complexity of 90 degree turns. 
+\subsection{Trajectory Estimation}
+We estimate trajectories by connecting foot contact center points as described earlier. Overall the method works well, and is robust to the movements seen in our animations. Examples of the estimated trajectories are plotted against ground projected hip movement in Fig. \ref{fig:results:estimatedtrajectory:examples} and the detected foot contacts are marked. While it is challenging to quantify the quality of the estimates we notice several desirable properties such as a lack of oscillations on straight segments and turn curves with tangents similar to the general direction of movement. Fig. \ref{fig:results:estimatedtrajectory:stats} further illustrates that changes in direction (as indicated by spikes in the angular velocity plot) show a clear pattern  which is not evident in the hip movement alone. As such the hip or center of mass movement can be seen as trajectories occluded by a noise component due to human locomotion characteristics. Notice how the hip movement shows repeated and opposite angular velocities for each foot contact, while our trajectories have either no changes or spikes without a pattern, where the latter indicates natural corrections done by the actor to stay on a straight line. 
+
+To avoid sharp trajectory changes on foot contacts we apply a gaussian filter with a constant standard deviation in a $0.1$ second window around each contact. This filtering is not applied to remove noise from the signal as in traditional trajectory estimation techniques and does not require any tuning as long as the window size is kept smaller than the distance between consecutive foot contacts. The effect is also shown in Fig.\ref{fig:results:estimatedtrajectory:stats}.   
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1.0\columnwidth]{img/estimated_trajectory_angular_velocity.png}
+    \caption{Some cass}
+    \label{fig:results:estimatedtrajectory:stats}
+\end{figure}
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\linewidth]{img/estimated_trajectory_examples.png}
+    \caption{Some cass}
+    \label{fig:results:estimatedtrajectory:examples}
+\end{figure*}
 
 \subsection{Movement Characteristics}
-\begin{figure}
-    \centering
-    \includegraphics[width=1.0\columnwidth]{img/trajectory_estimation.png}
-    \caption{Left plot shows hip movement cross back and forth between the estimated trajectory, and tangential directions sampled at individual positions hip give poor descriptions of the overall movement direction. Right plot show trajectories having more stable velocities.}
-    \label{fig:results:trajectory_estimation}
-\end{figure}
+% \begin{figure}
+%     \centering
+%     \includegraphics[width=1.0\columnwidth]{img/trajectory_estimation.png}
+%     \caption{Left plot shows hip movement cross back and forth between the estimated trajectory, and tangential directions sampled at individual positions hip give poor descriptions of the overall movement direction. Right plot show trajectories having more stable velocities.}
+%     \label{fig:results:trajectory_estimation}
+% \end{figure}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=1.0\columnwidth]{img/trajectory_estimation_smooth.png}
-    \caption{By interpolation frame delta across foot contact dependent section, we achieve a smoother sampling of the trajectory. The smoothing is visible in both the path and the velocities.}
-    \label{fig:results:trajectory_estimation_smooth}
-\end{figure}
+% \begin{figure}
+%     \centering
+%     \includegraphics[width=1.0\columnwidth]{img/trajectory_estimation_smooth.png}
+%     \caption{By interpolation frame delta across foot contact dependent section, we achieve a smoother sampling of the trajectory. The smoothing is visible in both the path and the velocities.}
+%     \label{fig:results:trajectory_estimation_smooth}
+% \end{figure}
 
 \begin{figure}
     \centering
