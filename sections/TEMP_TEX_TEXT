@@ -1,0 +1,19 @@
+
+To fit a model to the animations it is neceassry to extract an estimation of the movement exhibited by the animation. If we use the raw bone positions, we would need to model uneeded details, or have a model, that is constantly off by some error term, which is difficult to reason about.
+
+In data driven animation systems it is a common problem to extract the intended latent movement from the source animations. When a human walks forward, no single bone exhibits a pure forward movement. Usually the hip is projected to the ground plane, and smoothing is applied to give an estimate of the forward movement. The smoothing parameters needs to be adjusted to the oscillating patterns of themovement, and modulated specifically to individual segments of the movement such as sharp turns, to avoid unecassry filtering of lower frequency details.
+
+Instead, we propose to use foot contact events as guides for the intended movement in an animation. From a biomechanical viewpoint it is during contacts with the environment that trajectory changes can happen. It is reasonable to assume that contact points contain information about the direction of the movement.    
+
+We use a simple height/velocity scheme for the contact detection, and a distance threshold to filter adjacant contact points, which are assumed to be part of a single step. 
+Alternate interpolation between left and right foot steps to trace out a path. We apply a global smoothing to the path, which dies not need fine tuning, as all low frequency patterns have already been exckluded by the contact path.
+
+Oscillations can also be seen in the velocity patterns of movement. We compute the average position of the character at all contact points, and do a final sampling the contact path by maintaining regular intervals within each step. 
+
+Rotate capsule from ground up to center of character.
+
+The final result is a trajectory estimation that is smooth both with respect to displacement and velocity. 
+
+Most animation will still contain unwanted details, as a human walking straight will usually diverge over time. It is difficult to adjust for this using the raw trajectory, as we would then remove the small details. However our more coarse trajectory can be adjusted.
+
+We apply the adjustment to straight section of animation by optimizing an adjustment curve against a least squares line fit. The results of the adjustment in illustrated in fig ...
