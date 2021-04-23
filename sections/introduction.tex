@@ -1,5 +1,34 @@
 \section{Introduction}
-Realistic and responsive character animation is important for establishing immersion in computer games. The complexity of human movement makes it difficult to construct such an experience by hand. Instead we record reference data using motion capture, and construct animation synthesizer that stitch clips together, sample statistical models of the data, or learn control policies for physical models. 
+Realistic and responsive character animation is important for establishing immersion in computer games. The complexity of human movement makes it difficult to construct such an experience by hand. Instead we record reference data using motion capture and construct animation synthesizers that stitches clips together, samples inferred statistical models, or learns control policies for a physical model. Recent advances in both industry and research communities show a strong tendency towards complex closed systems guided by weak control signals. (use a spring to), (use a to).
+To our best knowledge it has not been investigated how to optimally construct and synchronize weak control signals to full body animation synthesizers. This is important for computer games. It is an industry standard to have a Gameplay Layer that controls changes to character position and a separate Animation Layer that tries to generate animations that matches the changes in positions. If there is a disconnect we might allow the animations to diverge from the gameplay movement, but this impact the types of game experiences that can be created. If this is not allowable, we see artifacts such as foot sliding and a general degradation of realism and quality.
+
+hjh
+
+
+
+
+and   the animation and gameplay code.
+
+Most games calculate changes to character position 
+
+in a gameplay layer which is kept completely isolated from the animation system. 
+
+
+and the animation layer which produces full body animation to match the movement  
+
+
+
+
+
+Most game implementations keep strict division between animation and gameplay systems, where the latter infers changes to character position from user input using what we will refer to as the \textit{Movement Model}. By concateniting a history and future predection , we generate trajectoris that can be used as weak control signal for the black box animation synthesizers. But we know have a problem. Signal is no longer weak. It is the exact movement of the charcter. Discrepancy will decrease quality. 
+
+Most games implement a self contained system to control character position independently 
+w a system to change character position based on user input. 
+
+In many game productions we have a logical to control the character position from user input. This signal is used as weak control for animation synthesizer. This is ok if we allow the system to drift away from our weak signal. But it becomes a problem if we want the system to precisly follow our guide. CAn be seen in many games. If responsiveness is important, we see lots of sliding (disconnect between movement model and animation synthsizer.)
+
+
+Disconnect (animatjon and our knowledge of how the system will move)
 
 
 
