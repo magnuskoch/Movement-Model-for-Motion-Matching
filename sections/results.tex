@@ -32,19 +32,15 @@ To avoid sharp trajectory changes on foot contacts we apply a gaussian filter wi
 
 
 \subsection{Control Genome extraction and movement alignment}
-Our animations are based on dance cards with clearly defined regions and repeating straight-turning-straight segments. Turns are in the range from $0^o-180^o$ and we captured a variation of both walking and running from our 3 actors. The clear patterns makes it easy to extract reduced Control Genomes where an initial position and velocity pair is combined with a forward and turning control direction at two distinct time steps. We use an automated procedure to extract Control Genomes as illustrated in Fig.      
+Our animations are based on dance cards with clearly defined regions and repeating straight-turning-straight segments. Turns are in the range from $0^o-180^o$ and we captured a variation of both walking and running from our 3 actors. The clear patterns makes it easy to extract reduced control genomes where an initial position and velocity pair is combined with directions offset in time. Fig. \ref{fig:results:genome_extraction} illustrates how a control genome is extracted from a single left turn using a simple heuristic. If more complex animations are used we imagine that statistics of recorded stick movements during gameplay or manual annotation could be used to construct control genomes. 
 \begin{figure}
     \centering
     \includegraphics[width=1.0\columnwidth]{img/genome_extract.png}
     \caption{Control Genome is extracted from an animation where the actor runs forward then does a left turn and runs straight again. We extract an initial position, velocity and facing direction at the positions of the turquise arrow. And then control direction and time offsets at the position of the both the turquise aand purple arrow.}
     \label{fig:results:genome_extraction}
 \end{figure}
-After genome extraction we do alignment of almost straight section. If section are not straight artifacts are introduced (show whap happens if alignments are done directly on hips (remove details))
 
-
-\subsection{Movement Characteristics}
-\magnus{Control genomes are easy to deduce because we use dance card style animations. Usually move straight - perform singke change in direction - move straight. Natural to say that genome has three entries. Starten position/velocity and two directions}      
-\magnus{As control genomes approaches animation we end up getting a perfect fit. }
+After genome extraction we defined straight animation sections to begin when the animation velocity is parallel with the current control genome direction, and end when a new direction is encountered as previously described. Each straight segment is fitted to remove minor divergences from the straight line.
 % \begin{figure}
 %     \centering
 %     \includegraphics[width=1.0\columnwidth]{img/movement_stats.png}
@@ -71,73 +67,83 @@ After genome extraction we do alignment of almost straight section. If section a
 %     \caption{}
 %     \label{fig:results:trajectory_straight}
 % \end{figure}
-We detect foot contacts by manual tuning of threshold values for speed and height of the feet. In our experience globally valid thresholds are easily found, since only a single start-contact point is needed without great precision. Using the method previously described trajectories are estimated from the contacts. Fig. \ref{fig:results:trajectory_estimation} shows an example of an estimated trajectory using a right turn followed by a left turn. A global smoothing removes the step transitions especially visible in the velocity plot. Notice that this is unrelated to traditional hip smoothing which requires carefully tuned and modulating parameters as described in [??]. The straight walk in Fig. \ref{fig:results:trajectory_straight} still contains some walk cycle dependent artifacts using our method, but high frequency details are removed from direction and speed, which enables us to apply adjustment curves without masking away needed details. \magnus{oscillating effect can be minimized by adjusting uniformly over pairs of steps. Also double check if this is actually the case}
-
 \subsection{Movement Model Fitting}
-\subsubsection{Automated Control Genome extraction}
-Automated genome extraction is shown in Fig. \ref{fig:results:genome_extraction}.
-\subsubsection{Alignment}
-\subsubsection{Fitting}
+We performed local fittings on our animations using control genomes with 2-5 changes in direction. The optimization was performed using PyTorch and the Adagrad optimizer with a learning rate of 0.1. Convergence rates are shown in Fig. [??] and visual examples in Fig. \ref{fig:results:engine_view} and the supplied video material. Our model is able to reproduce relatively complex motion planning such as a gradual slow down in speed before starting to rotate during a $180^o$ turn and two phase accelerations during softer turns using only 17 adjustable parameters. 
 
-\subsection{Global Fitting}
 
+
+As more direction are added the error accumulates along the path, 
 \begin{figure}
     \centering
-    \includegraphics[width=1.0\columnwidth]{img/locomotion mode.png}
-    \caption{}
-    \label{fig:results:locomotion_mode}
+    \includegraphics[width=1.0\columnwidth]{img/engine_view.png}
+    \caption{OMG}
+    \label{fig:results:engine_view}
 \end{figure}
 
+% \subsubsection{Automated Control Genome extraction}
+% Automated genome extraction is shown in Fig. \ref{fig:results:genome_extraction}.
+% \subsubsection{Alignment}
+% \subsubsection{Fitting}
+
+% \subsection{Global Fitting}
+
+% \begin{figure}
+%     \centering
+%     \includegraphics[width=1.0\columnwidth]{img/locomotion mode.png}
+%     \caption{}
+%     \label{fig:results:locomotion_mode}
+% \end{figure}
 
 
-\section{Video Notes}
 
-\subsubsection{Purpose}
-Illustrate the problem we wish to solve using 1-2 video examples.
-\subsubsection{Content}
-Show that basic animations have complex root motions that are difficult to replicate using standard 'weak control signal' (splines, springs). 
-Show that trivial approaches (smoothing) does not solve problem in convincing way.
-\paragraph{Videos}
-\begin{itemize}
-    \item Show character moving straight and in curves. Trace complex root motion. Highlight the presence of both high and low frequency information in the plot.
-    \item Show character running straight with smoothed trajectory. Highlight problems. Show turning characters and illustrate how superficially 'identical' turns are actually very different.
-\end{itemize}
-\paragraph{Figures}
-\begin{itemize}
-    \item Plots of trajectory and weak control signal paths.
-    \item Plots of smoothing effects
-\end{itemize}
+% \section{Video Notes}
 
-\subsubsection{Draft}
-Final text
+% \subsubsection{Purpose}
+% Illustrate the problem we wish to solve using 1-2 video examples.
+% \subsubsection{Content}
+% Show that basic animations have complex root motions that are difficult to replicate using standard 'weak control signal' (splines, springs). 
+% Show that trivial approaches (smoothing) does not solve problem in convincing way.
+% \paragraph{Videos}
+% \begin{itemize}
+%     \item Show character moving straight and in curves. Trace complex root motion. Highlight the presence of both high and low frequency information in the plot.
+%     \item Show character running straight with smoothed trajectory. Highlight problems. Show turning characters and illustrate how superficially 'identical' turns are actually very different.
+% \end{itemize}
+% \paragraph{Figures}
+% \begin{itemize}
+%     \item Plots of trajectory and weak control signal paths.
+%     \item Plots of smoothing effects
+% \end{itemize}
 
-\subsection{Fitting Movement Model}
-\subsubsection{Purpose} Show that we are able to solve problem using 3-5 video examples (didactic).
-Show how various models can be fitted to data (that has itself been adjusted). 
-\begin{itemize}
-    \item Straight movement. Walk and run. 
-    \item Multiple straight movements. Walk and run. 
-    \item 180.
-    \item Multiple 180s.
-    \item Banking
-    \item Multiple banking
-    \item 45 turn
-    \item Multiple 45 turn
-    \item 90 turn
-    \item Multiple 90 turn
-    \item Mixed modes
-\end{itemize}
-Additionally we could look at animations published by ubisoft.\url{https://github.com/ubisoft/Ubisoft-LaForge-Animation-Dataset}
+% \subsubsection{Draft}
+% Final text
+
+% \subsection{Fitting Movement Model}
+% \subsubsection{Purpose} Show that we are able to solve problem using 3-5 video examples (didactic).
+% Show how various models can be fitted to data (that has itself been adjusted). 
+% \begin{itemize}
+%     \item Straight movement. Walk and run. 
+%     \item Multiple straight movements. Walk and run. 
+%     \item 180.
+%     \item Multiple 180s.
+%     \item Banking
+%     \item Multiple banking
+%     \item 45 turn
+%     \item Multiple 45 turn
+%     \item 90 turn
+%     \item Multiple 90 turn
+%     \item Mixed modes
+% \end{itemize}
+% Additionally we could look at animations published by ubisoft.\url{https://github.com/ubisoft/Ubisoft-LaForge-Animation-Dataset}
 
 
-\subsection{Global Fitting}
+% \subsection{Global Fitting}
 
-\subsection{Application}
-\subsubsection{Purpose} Show that our solution has interesting applications using 3-5 video examples (eye candy).
-Replace standard control signal with our model.
-\begin{itemize}
-    \item{Replay animations to illustrate correct root motion}
-    \item{Use with motion matching} exponential decay = uttner, Holden Spring damper Kermse 2004].
-    \item{use generative neural network} Can we avoid floating character ?
-\end{itemize}
+% \subsection{Application}
+% \subsubsection{Purpose} Show that our solution has interesting applications using 3-5 video examples (eye candy).
+% Replace standard control signal with our model.
+% \begin{itemize}
+%     \item{Replay animations to illustrate correct root motion}
+%     \item{Use with motion matching} exponential decay = uttner, Holden Spring damper Kermse 2004].
+%     \item{use generative neural network} Can we avoid floating character ?
+% \end{itemize}
 
