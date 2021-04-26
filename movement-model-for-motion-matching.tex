@@ -15,47 +15,47 @@
 
 \maketitle
 
-\section{meta}
-\subsection{Method section}
-\begin{itemize}
-    \item Describe animations, annotated control -> genomes.
-    \item Describe model. A what can influence movement ? Velocity. Angular Velocity. Sharpness of desired turn. Style (run etc). Movement templates that react to this, and return updated parameters. Position, and orientation. Rest can be derived.
-    \item Initialize optimization with sane values from physics.
-\end{itemize}
+% \section{meta}
+% \subsection{Method section}
+% \begin{itemize}
+%     \item Describe animations, annotated control -> genomes.
+%     \item Describe model. A what can influence movement ? Velocity. Angular Velocity. Sharpness of desired turn. Style (run etc). Movement templates that react to this, and return updated parameters. Position, and orientation. Rest can be derived.
+%     \item Initialize optimization with sane values from physics.
+% \end{itemize}
 
-\subsection{Elevator Pitch A,}
-It is often necessary for developers of interactive applications to understand the coverage (range of motions) available in an animation database or generative animation system. It has been customary to conceptualize coverage as the degree to which a system is able to achieve pre-defined tasks, such as walking from A to B, following a curve etc. We propose an alternative approach where tasks are extracted from the animations themselves in the form of \textit{Control Genomes}, which are parsed by a parametric \textit{Movement Model} to generate movement. The parameters of the Movement Model are fitted for correspondence between the generated movement and the reference animation system. By inspecting the detected Control Genomes and feeding synthetic Control Genomes to the fitted Movement Model, the user is provided a condensed view of the often chaotic details in larger animation sets. This view of coverage is pragmatic as the Movement Model will generally not be able to capture all the variations in the animations. As such we will treat coverage as the identification of stereotypical patterns within the animations.   
-\\\\ 
-We could use a car as example. Currently we would ask, can the car drive from A to B in 5 minutes?. It seems the user pressing the speed continuously. This is our genome. Now we assume that the model is simple acceleration plus wind resistance. We fit the parameters of that model to best describe the movement we have been provided. \\ Previous work should include animation research from the 00s as well as physical simulation / control signal stuff.  
-\subsection{Contributions}
-\begin{itemize}
-    \item Idea to describe coverage through a model that reacts to control genomes.
-    \item Idea to annotate with control signal. Authored fitting
-    \item Description of model for plane locomotion.
-    \item Procedure to fit model under non destructive alterations of animations.
-\end{itemize}
-\subsection{Applications}
-\begin{itemize}
-    \item Analytical tool for animators.
-    \item Displacement of character in computer games. In-place animation played on top.
-    \item Control input to data driven systems such as motion matching or generative neural networks.
-\end{itemize}
-
-
-Argument for movement model project: The 'weak control signal' \url{https://www.youtube.com/watch?v=jw0_aBPROGA}, is used to move capsule. So it is important that it fits animations as it provides the root motion.
+% \subsection{Elevator Pitch A,}
+% It is often necessary for developers of interactive applications to understand the coverage (range of motions) available in an animation database or generative animation system. It has been customary to conceptualize coverage as the degree to which a system is able to achieve pre-defined tasks, such as walking from A to B, following a curve etc. We propose an alternative approach where tasks are extracted from the animations themselves in the form of \textit{Control Genomes}, which are parsed by a parametric \textit{Movement Model} to generate movement. The parameters of the Movement Model are fitted for correspondence between the generated movement and the reference animation system. By inspecting the detected Control Genomes and feeding synthetic Control Genomes to the fitted Movement Model, the user is provided a condensed view of the often chaotic details in larger animation sets. This view of coverage is pragmatic as the Movement Model will generally not be able to capture all the variations in the animations. As such we will treat coverage as the identification of stereotypical patterns within the animations.   
+% \\\\ 
+% We could use a car as example. Currently we would ask, can the car drive from A to B in 5 minutes?. It seems the user pressing the speed continuously. This is our genome. Now we assume that the model is simple acceleration plus wind resistance. We fit the parameters of that model to best describe the movement we have been provided. \\ Previous work should include animation research from the 00s as well as physical simulation / control signal stuff.  
+% \subsection{Contributions}
+% \begin{itemize}
+%     \item Idea to describe coverage through a model that reacts to control genomes.
+%     \item Idea to annotate with control signal. Authored fitting
+%     \item Description of model for plane locomotion.
+%     \item Procedure to fit model under non destructive alterations of animations.
+% \end{itemize}
+% \subsection{Applications}
+% \begin{itemize}
+%     \item Analytical tool for animators.
+%     \item Displacement of character in computer games. In-place animation played on top.
+%     \item Control input to data driven systems such as motion matching or generative neural networks.
+% \end{itemize}
 
 
-\subsection{Elevator Pitch B}
-In game development it is a common construct to have character position driven by a simple algorithmic model that responds to player input.
-\\ 
-In-place animations are then played at the position given by the model at any given time.
-\\
-If the model movement matches poorly with the movement in the animations, the character will appear to float.
-\\
-We propose a general \textit{Movement Model} and optimization framework that ensures synchronization between animations and model. 
+% Argument for movement model project: The 'weak control signal' \url{https://www.youtube.com/watch?v=jw0_aBPROGA}, is used to move capsule. So it is important that it fits animations as it provides the root motion.
 
-\subsection{Verification}
-Remove root motion from animation. Replay in-place animation on top of movement model. If there is no sliding, we have a perfect match.
+
+% \subsection{Elevator Pitch B}
+% In game development it is a common construct to have character position driven by a simple algorithmic model that responds to player input.
+% \\ 
+% In-place animations are then played at the position given by the model at any given time.
+% \\
+% If the model movement matches poorly with the movement in the animations, the character will appear to float.
+% \\
+% We propose a general \textit{Movement Model} and optimization framework that ensures synchronization between animations and model. 
+
+% \subsection{Verification}
+% Remove root motion from animation. Replay in-place animation on top of movement model. If there is no sliding, we have a perfect match.
 
 \input{sections/introduction}
 \input{sections/related_work}
