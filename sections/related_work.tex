@@ -1,8 +1,23 @@
 \section{Related work}
+The complexity of human movement is evident in character animation research where generality is rare and it is often necessary to develop tailor made solutions for different types of tasks. Our work relates most directly to path following task as in \citep{lee10}, \citep{holden.16} where a detailed movement is specified by the user and tracked by the animation synthesizer, but is in principle generally applicable. In these systems we often find analogies to movement models whenever high level user input from mouse or gamepad is projected into task specifications such as a series of game coordinates to specify a path. There is a necessary tradeoff between the quality of the synthesizer animation and the accuracy of the tracking which is often exposed as an adjustable parameter.
 
-Generatetive neural networks Weak Control Signals
-    Starke use weak signal and input noise. More noise, better animation, and less control.
+% \subsection{Motion matching and animation graphs}
+% Classical graph based animation systems such as \citep{treuille07} have users draw directories as control signal for path following task. Here the mapping from abstract control space, ie. 'turn right', to a motion plan is entirely up to the user. This bypasses the need for a movement model, at the cost of reduced quality when the users requests paths that are not present in the animation data.
 
+
+
+
+\subsection{Generative models (neural networks)}
+
+% \citep{lee10} has a reward function that track the error between desired aand current direciont
+
+% Generatetive neural networks Weak Control Signals
+%     Starke use weak signal and input noise. More noise, better animation, and less control.
+
+%     \citep{lee18} supplies a distant control target target such as a final position, and combined with a attributes such as 'straight' to guide the movement.
+
+Graph based approach 
+    Hodgins, motion fragments
 
 Control Theory
 

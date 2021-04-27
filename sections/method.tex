@@ -1,18 +1,18 @@
-\section{Optimal Control Genome Method}
+\section{Control Genomes}
 \begin{figure}
     \centering
     \includegraphics[width=1\columnwidth]{img/overview}
     \caption{System overviews}
     \label{fig:movement:overview}
 \end{figure}
-Human movement is a complex interplay between intentions within the brain and the physical environment. The thought to 'walk-forward' triggers and array of intractable optimizations. \kenny{A movement model in computer games can be explained as a process that that mimics this human though process.} 
+Human movement is a complex interplay between intentions within the brain and the physical environment. The thought to 'walk-forward' triggers an array of intractable optimizations. A movement model is similar when high level gamepad input is mapped to low level control signals. We notice that if no restrictions are imposed to the granularity of the high level signal, it can in the limit approach the low level signal we wish to model. In this perspective the modeling task is ill-posed, and we suggest control genomes as a method to regularize the task by formalizing the complexity of the high level input signal.   
 
-In the following we will introduce a method for synchronization between a Movement Model and a set of animations given Control Genomes. There are 4 main parts to the method. 
+In the following we will introduce an end-to-end method for synchronization between a movement model and a set of reference animations using control genomes. There are 4 main parts to the method. 
 \begin{itemize}
-    \item \textbf{Control Genomes} extracted from animations.
-    \item \textbf{Movement Model} that generates a movement given Control Genomes.
-    \item \textbf{Animation Alignment} and filtering. 
-    \item \textbf{Optimization procedure} that fits exposed parameters of all the above systems to minimize the difference between the Movement Model- and animation trajectories.
+    \item \textbf{Control genomes} extracted from animations.
+    \item \textbf{Movement model} that generates a movement given Control Genomes.
+    \item \textbf{Trajectory estimation} and alignment of reference animations to avoid modeling unwanted details. 
+    \item \textbf{Optimization procedure} to fit exposed parameters of all the above systems to minimize the difference between the movement model and the reference animation.
 \end{itemize}
 Figure \ref{fig:movement:overview} illustrates the definitions and concepts of a movement model.
 

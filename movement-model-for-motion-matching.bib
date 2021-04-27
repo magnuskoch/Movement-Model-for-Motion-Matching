@@ -18,18 +18,14 @@ numpages = {11},
 keywords = {physically based animation, real-time graphics, reinforcement learning, motion capture}
 }
 
-      
-
-
-
 @article{kermse.04,
 author = {Andrew Kermse},
 title = {Game Programming Gems 4},
 year = {2004},
-numpages = {95-101},
+numpages = {95-101}
 }
 
-@article{holden.ea16,
+@article{holden.16,
 author = {Holden, Daniel and Saito, Jun and Komura, Taku},
 title = {A Deep Learning Framework for Character Motion Synthesis and Editing},
 year = {2016},
@@ -69,6 +65,13 @@ numpages = {13},
 keywords = {human motion, neural networks, character animation, character control, deep learning, locomotion}
 }
 
+@article{holden18,
+  title={Character Control with Neural Networks and Machine Learning.},
+  author={Daniel Holden},
+  journal = {Proc. of GDC 2018},
+  year={2018}
+}
+
 @article{holden.ea20,
 author = {Holden, Daniel and Kanoun, Oussama and Perepichka, Maksym and Popa, Tiberiu},
 title = {Learned Motion Matching},
@@ -88,6 +91,48 @@ articleno = {53},
 numpages = {13},
 keywords = {motion matching, neural networks, animation, generative models, character animation}
 }
+
+@article{lee10,
+author = {Lee, Yongjoon and Wampler, Kevin and Bernstein, Gilbert and Popovi\'{c}, Jovan and Popovi\'{c}, Zoran},
+title = {Motion Fields for Interactive Character Locomotion},
+year = {2010},
+issue_date = {December 2010},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {29},
+number = {6},
+issn = {0730-0301},
+url = {https://doi.org/10.1145/1882261.1866160},
+doi = {10.1145/1882261.1866160},
+abstract = {We propose a novel representation of motion data and control that enables characters with both highly agile responses to user input and natural handling of arbitrary external disturbances. The representation organizes motion data as samples in a high dimensional generalization of a vector field we call a 'motion field'. Our runtime motion synthesis mechanism freely 'flows' in the motion field and is capable of creating novel and natural motions that are highly-responsive to the real time user input, and generally not explicitly specified in the data.},
+journal = {ACM Trans. Graph.},
+month = dec,
+articleno = {138},
+numpages = {8},
+keywords = {animation, data-driven animation, motion representation}
+}
+
+
+@article{lee18,
+author = {Lee, Kyungho and Lee, Seyoung and Lee, Jehee},
+title = {Interactive Character Animation by Learning Multi-Objective Control},
+year = {2018},
+issue_date = {November 2018},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {37},
+number = {6},
+issn = {0730-0301},
+url = {https://doi.org/10.1145/3272127.3275071},
+doi = {10.1145/3272127.3275071},
+abstract = {We present an approach that learns to act from raw motion data for interactive character animation. Our motion generator takes a continuous stream of control inputs and generates the character's motion in an online manner. The key insight is modeling rich connections between a multitude of control objectives and a large repertoire of actions. The model is trained using Recurrent Neural Network conditioned to deal with spatiotemporal constraints and structural variabilities in human motion. We also present a new data augmentation method that allows the model to be learned even from a small to moderate amount of training data. The learning process is fully automatic if it learns the motion of a single character, and requires minimal user intervention if it deals with props and interaction between multiple characters.},
+journal = {ACM Trans. Graph.},
+month = dec,
+articleno = {180},
+numpages = {10},
+keywords = {deep learning, multi-objective control, interactive motion control, recurrent neural network, character animation, motion grammar}
+}
+
 
 @article{peng17,
   title={DeepLoco: Dynamic Locomotion Skills Using Hierarchical Deep Reinforcement Learning},
@@ -117,6 +162,23 @@ month = jul,
 articleno = {54},
 numpages = {14},
 keywords = {character animation, human motion, deep learning, character control, character interactions, neural networks}
+}
+
+@inproceedings{treuille07,
+author = {Treuille, Adrien and Lee, Yongjoon and Popovi\'{c}, Zoran},
+title = {Near-Optimal Character Animation with Continuous Control},
+year = {2007},
+isbn = {9781450378369},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/1275808.1276386},
+doi = {10.1145/1275808.1276386},
+abstract = {We present a new approach to realtime character animation with interactive control. Given a corpus of motion capture data and a desired task, we automatically compute near-optimal controllers using a low-dimensional basis representation. We show that these controllers produce motion that fluidly responds to several dimensions of user control and environmental constraints in realtime. Our results indicate that very few basis functions are required to create high-fidelity character controllers which permit complex user navigation and obstacle-avoidance tasks.},
+booktitle = {ACM SIGGRAPH 2007 Papers},
+pages = {7–es},
+keywords = {optimal control, human animation, motion with constraints},
+location = {San Diego, California},
+series = {SIGGRAPH '07}
 }
 
 @article{Zhang18,
