@@ -1,20 +1,43 @@
 \section{Related work}
-The complexity of human movement is evident in character animation research where generality is rare and it is often necessary to develop tailor made solutions for different types of tasks. Our work relates most directly to path following task as in \citep{lee10}, \citep{holden.16} where a detailed movement is specified by the user and tracked by the animation synthesizer, but is in principle generally applicable. In these systems we often find analogies to movement models whenever high level user input from mouse or gamepad is projected into task specifications such as a series of game coordinates to specify a path. There is a necessary tradeoff between the quality of the synthesizer animation and the accuracy of the tracking which is often exposed as an adjustable parameter.
+The complexity of human movement is evident in character animation research where general solutions are rare and it is often necessary to develop tailor made solutions for different types of tasks. Our work relates most directly to path following task as in \citep{lee10}, \citep{holden.16} where a detailed movement is specified by the user and tracked by the animation synthesizer. Our approach is in principle generally applicable, but we restrict ourselves to path following. In these systems we often find analogies to movement models whenever high level user input from mouse or gamepad is projected into task specifications such as a series of game coordinates to specify a path. There is a necessary tradeoff between the quality of the synthesizer animation and the accuracy of the tracking which is often exposed as an adjustable parameter.
 
-% \subsection{Motion matching and animation graphs}
-% Classical graph based animation systems such as \citep{treuille07} have users draw directories as control signal for path following task. Here the mapping from abstract control space, ie. 'turn right', to a motion plan is entirely up to the user. This bypasses the need for a movement model, at the cost of reduced quality when the users requests paths that are not present in the animation data.
+\subsection{User input smoothing}
+Counterparts to our movement model concept are found in both industry and research settings whenever a user input is translated to a path that is either tracked by an animation synthesizer or used to explicitly position the character.
+
+For the industry setting the division between gameplay and animation layers described by \citep{holden18} is reflected in state of the art tools such as Unreal Engine and Unity. Both expose animation systems with the ability to toggle root motion for animation clips. In our experience root motion is primarily used for static content such as cinematics. In interactive gameplay characters move using ad hoc systems analogous to the movement model with in-place animations played on top. Character movement is controlled by transitioning towards the direction supplied by the user using an assortment of smoothing techniques such as lerp, exponential decay or damped springs as seen in \citep{buttner20} and \citep{holden21}.
+
+In research a similar approach is often found as in \citep{mccann07}, \citep{holden.16}, \citep{Zhang18} and \citep{startke20}. The latter augments a smoothed user input by projection to a lower level control space similar to trajectories found in the reference animations, which illustrates the discrepancy between the weak control signal and the synthesize motion common to these methods. A compromise is struck by either allowing the synthesized motion to diverge from the control signal or accepting visual artifacts.
+
+\subsection{Explicit low level control}
+Offline system are not restricted to a mapping between high level user input and a low level control signals. In \citep{treuille07} complete movements path are supploed by the user.
+
+\subsection{Reward function optimization}
+Abstract. No real movement model .
+\citep{kovar02} has as an abstract error function that is solved optimally.
+\citep{lee10} has a reward function that track the error between desired aand current direciont
+\citep{lee18} supplies a distant control target target such as a final position, and combined with a attributes such as 'straight' to guide the movement.
+Robotics in here ?
+
+\subsection{Animation coverage}
+Movement model is like a model to represent the coverage of the animation system, in a format that is simpler than the animations themselves. Ectract trajectories from animation (Buttner), train model to convert (Local phase thing). 
+
+\subsection{Function approximation}
+
+
+\subsection{Motion matching and animation graphs}
+Classical graph based animation systems such as \citep{treuille07} have users draw directories as control signal for path following task. Here the mapping from abstract control space, ie. 'turn right', to a motion plan is entirely up to the user. This bypasses the need for a movement model, at the cost of reduced quality when the users requests paths that are not present in the animation data.
 
 
 
 
 \subsection{Generative models (neural networks)}
+\citep{kovar02} has as an abstract error function that is solved optimally.
+\citep{lee10} has a reward function that track the error between desired aand current direciont
 
-% \citep{lee10} has a reward function that track the error between desired aand current direciont
+Generatetive neural networks Weak Control Signals
+    Starke use weak signal and input noise. More noise, better animation, and less control.
 
-% Generatetive neural networks Weak Control Signals
-%     Starke use weak signal and input noise. More noise, better animation, and less control.
-
-%     \citep{lee18} supplies a distant control target target such as a final position, and combined with a attributes such as 'straight' to guide the movement.
+    \citep{lee18} supplies a distant control target target such as a final position, and combined with a attributes such as 'straight' to guide the movement.
 
 Graph based approach 
     Hodgins, motion fragments
