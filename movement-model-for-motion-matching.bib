@@ -1,5 +1,9 @@
-
-
+@article{kermse.04,
+author = {Andrew Kermse},
+title = {Game Programming Gems 4},
+year = {2004},
+numpages = {95-101},
+}
 
 @article{holden.ea16,
 author = {Holden, Daniel and Saito, Jun and Komura, Taku},
@@ -40,4 +44,46 @@ articleno = {42},
 numpages = {13},
 keywords = {human motion, neural networks, character animation, character control, deep learning, locomotion}
 }
+
+@article{holden.ea20,
+author = {Holden, Daniel and Kanoun, Oussama and Perepichka, Maksym and Popa, Tiberiu},
+title = {Learned Motion Matching},
+year = {2020},
+issue_date = {July 2020},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {39},
+number = {4},
+issn = {0730-0301},
+url = {https://doi.org/10.1145/3386569.3392440},
+doi = {10.1145/3386569.3392440},
+abstract = {In this paper we present a learned alternative to the Motion Matching algorithm which retains the positive properties of Motion Matching but additionally achieves the scalability of neural-network-based generative models. Although neural-network-based generative models for character animation are capable of learning expressive, compact controllers from vast amounts of animation data, methods such as Motion Matching still remain a popular choice in the games industry due to their flexibility, predictability, low preprocessing time, and visual quality - all properties which can sometimes be difficult to achieve with neural-network-based methods. Yet, unlike neural networks, the memory usage of such methods generally scales linearly with the amount of data used, resulting in a constant trade-off between the diversity of animation which can be produced and real world production budgets. In this work we combine the benefits of both approaches and, by breaking down the Motion Matching algorithm into its individual steps, show how learned, scalable alternatives can be used to replace each operation in turn. Our final model has no need to store animation data or additional matching meta-data in memory, meaning it scales as well as existing generative models. At the same time, we preserve the behavior of Motion Matching, retaining the quality, control, and quick iteration time which are so important in the industry.},
+journal = {ACM Trans. Graph.},
+month = jul,
+articleno = {53},
+numpages = {13},
+keywords = {motion matching, neural networks, animation, generative models, character animation}
+}
+
+@article{startke20,
+author = {Starke, Sebastian and Zhao, Yiwei and Komura, Taku and Zaman, Kazi},
+title = {Local Motion Phases for Learning Multi-Contact Character Movements},
+year = {2020},
+issue_date = {July 2020},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {39},
+number = {4},
+issn = {0730-0301},
+url = {https://doi.org/10.1145/3386569.3392450},
+doi = {10.1145/3386569.3392450},
+abstract = {Training a bipedal character to play basketball and interact with objects, or a quadruped character to move in various locomotion modes, are difficult tasks due to the fast and complex contacts happening during the motion. In this paper, we propose a novel framework to learn fast and dynamic character interactions that involve multiple contacts between the body and an object, another character and the environment, from a rich, unstructured motion capture database. We use one-on-one basketball play and character interactions with the environment as examples. To achieve this task, we propose a novel feature called local motion phase, that can help neural networks to learn asynchronous movements of each bone and its interaction with external objects such as a ball or an environment. We also propose a novel generative scheme to reproduce a wide variation of movements from abstract control signals given by a gamepad, which can be useful for changing the style of the motion under the same context. Our scheme is useful for animating contact-rich, complex interactions for real-time applications such as computer games.},
+journal = {ACM Trans. Graph.},
+month = jul,
+articleno = {54},
+numpages = {14},
+keywords = {character animation, human motion, deep learning, character control, character interactions, neural networks}
+}
+
+  
 
