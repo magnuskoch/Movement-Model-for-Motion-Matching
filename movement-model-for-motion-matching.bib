@@ -17,6 +17,12 @@ articleno = {206},
 numpages = {11},
 keywords = {physically based animation, real-time graphics, reinforcement learning, motion capture}
 }
+@article{buttner20,
+  author          = {Michael Buttner},
+  title           = {Kinematica: democratizing Motion Matching for character animation},
+  year            = {2020},
+  url             = {https://www.youtube.com/watch?v=TlIWPS2Wzac}
+}
 
 @article{kermse.04,
 author = {Andrew Kermse},
@@ -92,6 +98,33 @@ numpages = {13},
 keywords = {motion matching, neural networks, animation, generative models, character animation}
 }
 
+@article{holden21,
+  author          = {Daniel Holden},
+  title           = {http://theorangeduck.com/page/spring-roll-call},
+  url             = {http://theorangeduck.com/page/spring-roll-call},
+}
+
+@article{kovar02,
+author = {Kovar, Lucas and Gleicher, Michael and Pighin, Fr\'{e}d\'{e}ric},
+title = {Motion Graphs},
+year = {2002},
+issue_date = {July 2002},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {21},
+number = {3},
+issn = {0730-0301},
+url = {https://doi.org/10.1145/566654.566605},
+doi = {10.1145/566654.566605},
+abstract = {In this paper we present a novel method for creating realistic, controllable motion. Given a corpus of motion capture data, we automatically construct a directed graph called a motion graph that encapsulates connections among the database. The motion graph consists both of pieces of original motion and automatically generated transitions. Motion can be generated simply by building walks on the graph. We present a general framework for extracting particular graph walks that meet a user's specifications. We then show how this framework can be applied to the specific problem of generating different styles of locomotion along arbitrary paths.},
+journal = {ACM Trans. Graph.},
+month = jul,
+pages = {473–482},
+numpages = {10},
+keywords = {motion capture, motion synthesis, animation with constraints}
+}
+
+
 @article{lee10,
 author = {Lee, Yongjoon and Wampler, Kevin and Bernstein, Gilbert and Popovi\'{c}, Jovan and Popovi\'{c}, Zoran},
 title = {Motion Fields for Interactive Character Locomotion},
@@ -133,6 +166,22 @@ numpages = {10},
 keywords = {deep learning, multi-objective control, interactive motion control, recurrent neural network, character animation, motion grammar}
 }
 
+@inproceedings{mccann07,
+author = {McCann, James and Pollard, Nancy},
+title = {Responsive Characters from Motion Fragments},
+year = {2007},
+isbn = {9781450378369},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/1275808.1276385},
+doi = {10.1145/1275808.1276385},
+abstract = {In game environments, animated character motion must rapidly adapt to changes in player input - for example, if a directional signal from the player's gamepad is not incorporated into the character's trajectory immediately, the character may blithely run off a ledge. Traditional schemes for data-driven character animation lack the split-second reactivity required for this direct control; while they can be made to work, motion artifacts will result. We describe an on-line character animation controller that assembles a motion stream from short motion fragments, choosing each fragment based on current player input and the previous fragment. By adding a simple model of player behavior we are able to improve an existing reinforcement learning method for precalculating good fragment choices. We demonstrate the efficacy of our model by comparing the animation selected by our new controller to that selected by existing methods and to the optimal selection, given knowledge of the entire path. This comparison is performed over real-world data collected from a game prototype. Finally, we provide results indicating that occasional low-quality transitions between motion segments are crucial to high-quality on-line motion generation; this is an important result for others crafting animation systems for directly-controlled characters, as it argues against the common practice of transition thresholding.},
+booktitle = {ACM SIGGRAPH 2007 Papers},
+pages = {6–es},
+keywords = {character control, motion generation, motion graphs},
+location = {San Diego, California},
+series = {SIGGRAPH '07}
+}
 
 @article{peng17,
   title={DeepLoco: Dynamic Locomotion Skills Using Hierarchical Deep Reinforcement Learning},
