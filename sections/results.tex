@@ -70,6 +70,8 @@ After genome extraction we defined straight animation sections to begin when the
 \subsection{Movement Model Fitting}
 We performed local fittings on our animations using control genomes with 2-5 changes in direction. The optimization was performed using PyTorch and the Adagrad optimizer with a learning rate of 0.1. Convergence rates are shown in Fig. [??] and visual examples in Fig. \ref{fig:results:engine_view} and the supplied video material. Our model is able to reproduce relatively complex motion planning such as a gradual slow down in speed before starting to rotate during a $180^o$ turn and two phase accelerations during softer turns using only 17 adjustable parameters. 
 
+\magnus{Convergence, increase genome count}
+
 
 
 As more direction are added the error accumulates along the path, 
