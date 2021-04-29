@@ -8,14 +8,7 @@ For the industry setting the division between gameplay and animation layers desc
 
 In research a similar approach is often found as in \citep{mccann07}, \citep{holden.16}, \citep{Zhang18} and \citep{startke20}. The latter augments a smoothed user input by projection to a lower level control space similar to trajectories found in the reference animations, which illustrates the discrepancy between the weak control signal and the synthesize motion common to these methods. A compromise is struck by either allowing the synthesized motion to diverge from the control signal or accepting visual artifacts.
 
-A variant of this approach is found in \citep{treuille07} where an offline system tracks a path drawn by the user.
-
-\subsection{Reward function optimization}
-Abstract. No real movement model .
-\citep{kovar02} has as an abstract error function that is solved optimally.
-\citep{lee10} has a reward function that track the error between desired aand current direciont
-\citep{lee18} supplies a distant control target target such as a final position, and combined with a attributes such as 'straight' to guide the movement.
-Robotics in here ?
+A variant of this approach is found in \citep{treuille07} where an offline system tracks a path drawn by the user. In this case we have no movement model as the user input is exactly the low level control signal. Oppositely \citep{kovar02} use reward functions to provide less constrained control when the user specifies goals such has 'end position' that have no path requirements, and in \citep{lee18} 'straightness' and other stylistic traits contribute to similar rewards. In these cases the movement model is embedded in the animation synthesizes, but could be separated by augmenting the reward functions. Since high level tasks are used to allow the synthesizer some freedom, the specification is most often kept simple. A hybrid approach in \citep{lee10} track a control direction from the user with no explicit path but with a short horizon tending toward a path specification.
 
 \subsection{Motion planning and control theory}
 Convert high level task specification into low level control that makes system (robot (motion planning) or system of differential equations (control theory)) perform task.
