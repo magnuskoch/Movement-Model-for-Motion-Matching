@@ -8,8 +8,7 @@ For the industry setting the division between gameplay and animation layers desc
 
 In research a similar approach is often found as in \citep{mccann07}, \citep{holden.16}, \citep{Zhang18} and \citep{startke20}. The latter augments a smoothed user input by projection to a lower level control space similar to trajectories found in the reference animations, which illustrates the discrepancy between the weak control signal and the synthesize motion common to these methods. A compromise is struck by either allowing the synthesized motion to diverge from the control signal or accepting visual artifacts.
 
-\subsection{Explicit low level control}
-Offline system are not restricted to a mapping between high level user input and a low level control signals. In \citep{treuille07} complete movements path are supploed by the user.
+A variant of this approach is found in \citep{treuille07} where an offline system tracks a path drawn by the user.
 
 \subsection{Reward function optimization}
 Abstract. No real movement model .
@@ -18,21 +17,21 @@ Abstract. No real movement model .
 \citep{lee18} supplies a distant control target target such as a final position, and combined with a attributes such as 'straight' to guide the movement.
 Robotics in here ?
 
+\subsection{Motion planning and control theory}
+Convert high level task specification into low level control that makes system (robot (motion planning) or system of differential equations (control theory)) perform task.
+Here we have an unknown system and would like to figure out the control signal. Inverse problem of ours. We have the low level control signal and want to figure out a system that can reproduce that. High level task are users overal intention, move though city.
+
 \subsection{Animation coverage}
 Movement model is like a model to represent the coverage of the animation system, in a format that is simpler than the animations themselves. Ectract trajectories from animation (Buttner), train model to convert (Local phase thing). 
 
 \subsection{Function approximation}
 
+Dynamic movement models \ref{https://studywolf.wordpress.com/2013/11/16/dynamic-movement-primitives-part-1-the-basics/} have a pd control with another funciton to mimic robots actual behaviour. We move some of this into a model that is simple and can be inspected, and some of the complexity is handled by trajectory alignment and analysis. "Point attractor dynamics plus overlay with complex function".
 
 \subsection{Motion matching and animation graphs}
 Classical graph based animation systems such as \citep{treuille07} have users draw directories as control signal for path following task. Here the mapping from abstract control space, ie. 'turn right', to a motion plan is entirely up to the user. This bypasses the need for a movement model, at the cost of reduced quality when the users requests paths that are not present in the animation data.
 
 
-
-
-\subsection{Generative models (neural networks)}
-\citep{kovar02} has as an abstract error function that is solved optimally.
-\citep{lee10} has a reward function that track the error between desired aand current direciont
 
 Generatetive neural networks Weak Control Signals
     Starke use weak signal and input noise. More noise, better animation, and less control.
