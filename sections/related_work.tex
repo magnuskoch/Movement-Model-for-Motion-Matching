@@ -14,10 +14,7 @@ It is a complex task to design expressive controllers using smooth input attract
 A variant of user input attraction is found in \citep{treuille07} where an offline system tracks a path drawn by the user. In this case we have no movement model as the user input is exactly the low level control signal. Oppositely \citep{kovar02} use reward functions to provide less constrained control when the user specifies goals such has 'end position' that have no path requirements, and in \citep{lee18} 'straightness' and other stylistic traits contribute to similar rewards. In these cases the movement model is embedded in the animation synthesizes, but could be separated by augmenting the reward functions. Since high level tasks are used to allow the synthesizer some freedom, the specification is most often kept simple. A hybrid approach in \citep{lee10} track a control direction from the user with no explicit path but with a short horizon tending toward a path specification.
 
 \subsection{Motion planning and control theory}
-When a closed dynamical system exposes control input it is necessary to analyze how specific movements can be achieved. Motion planning explores manipulation of  mechanical systems like robots, while control theory use systems of differential equations. In both cases the task is to extract discrete control signals that performs a reference motion given an unknown closed system. This is inverse to the analysis of movement models, where we seek to replicate a closed system by examining discrete control (control genomes) and movement as seen in reference animations. 
-
-\subsection{Animation coverage}
-Movement model is like a model to represent the coverage of the animation system, in a format that is simpler than the animations themselves. Ectract trajectories from animation (Buttner), train model to convert (Local phase thing). 
+When a closed dynamical system exposes control input it is necessary to analyze how specific movements can be achieved using the available commands. Motion planning explores manipulation of mechanical systems like robots, while control theory examine systems of differential equations. In both cases the task is to extract discrete control signals that would makes a closed system follow a reference motion. This is inverse to the analysis of movement models, where we seek to replicate a closed system by examining relationships between fixed control signals (control genomes) and movement extracted from reference animations. 
 
 \subsection{Function approximation}
 
@@ -25,6 +22,9 @@ Dynamic movement models \ref{https://studywolf.wordpress.com/2013/11/16/dynamic-
 
 \subsection{Motion matching and animation graphs}
 Classical graph based animation systems such as \citep{treuille07} have users draw directories as control signal for path following task. Here the mapping from abstract control space, ie. 'turn right', to a motion plan is entirely up to the user. This bypasses the need for a movement model, at the cost of reduced quality when the users requests paths that are not present in the animation data.
+
+\subsection{Animation coverage}
+Movement model is like a model to represent the coverage of the animation system, in a format that is simpler than the animations themselves. Ectract trajectories from animation (Buttner), train model to convert (Local phase thing). 
 
 
 
