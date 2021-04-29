@@ -1,16 +1,30 @@
 \section{Related work}
-The complexity of human movement is evident in character animation research where general solutions are rare and it is often necessary to develop tailor made solutions for different types of tasks. Our work relates most directly to path following task as in \citep{lee10}, \citep{holden.16} where a detailed movement is specified by the user and tracked by the animation synthesizer. Our approach is in principle generally applicable, but we restrict ourselves to path following. In these systems we often find analogies to movement models whenever high level user input from mouse or gamepad is projected into task specifications such as a series of game coordinates to specify a path. There is a necessary tradeoff between the quality of the synthesizer animation and the accuracy of the tracking which is often exposed as an adjustable parameter.
+It is notoriously challenging to construct general models for human movement due to the complex interplay of planning and optimization processes at work, and it is often necessary to develop ad hoc solutions. Our work relates most closely to path following as in MOTIONMATCHINGREF, \citep{holden.16} or \citep{startke20} where movement is specified explicitly by the user and tracked by the animation synthesizer which is constructed from a set of reference animations. Such systems typically allow a discrepancy between the control signal and the path traced out by the generated animations or avoid the issue by adding more reference data for better coverage. Our method address this discrepancy as a pre-pass where a suitable movement model is found and reference animations are aligned, before being passed on to a secondary system.  
 
-\subsection{User input smoothing}
+We further motivate our work by noting that the division between gameplay and animation layers described by \citep{holden18} is reflected in state of the art industry tools such as Unreal Engine and Unity. Both expose animation systems with the ability to toggle root motion for animation clips. In our experience root motion is primarily used for static content such as cinematics, while dynamic gameplay relies on custom logic to provide changes in character position.
+
+
+
+In interactive gameplay characters move using ad hoc systems analogous to the movement model with in-place animations played on top. Character movement is controlled by transitioning towards the direction supplied by the user using an assortment of smoothing techniques such as lerp, exponential decay or damped springs as seen in \citep{buttner20} and \citep{holden21}.
+
+We also relate our method to research areas where high level controls are translated or used directly to drive an animation synthesizer. 
+
+\subsection{User input attractor}
+A smooth transition from the current state towards a user requested state   Current state towards a goals state, blend towards goals
+
+When discrete low frequency control signals are projected to a high frequency domain 
 Counterparts to our movement model concept are found in both industry and research settings whenever a user input is translated to a path that is either tracked by an animation synthesizer or used to explicitly position the character.
 
-For the industry setting the division between gameplay and animation layers described by \citep{holden18} is reflected in state of the art tools such as Unreal Engine and Unity. Both expose animation systems with the ability to toggle root motion for animation clips. In our experience root motion is primarily used for static content such as cinematics. In interactive gameplay characters move using ad hoc systems analogous to the movement model with in-place animations played on top. Character movement is controlled by transitioning towards the direction supplied by the user using an assortment of smoothing techniques such as lerp, exponential decay or damped springs as seen in \citep{buttner20} and \citep{holden21}.
 
 In research a similar approach is often found as in \citep{mccann07}, \citep{holden.16}, \citep{Zhang18} and \citep{startke20}. The latter augments a smoothed user input by projection to a lower level control space similar to trajectories found in the reference animations, which illustrates the discrepancy between the weak control signal and the synthesize motion common to these methods. A compromise is struck by either allowing the synthesized motion to diverge from the control signal or accepting visual artifacts.
 
 A variant of this approach is found in \citep{treuille07} where an offline system tracks a path drawn by the user. In this case we have no movement model as the user input is exactly the low level control signal. Oppositely \citep{kovar02} use reward functions to provide less constrained control when the user specifies goals such has 'end position' that have no path requirements, and in \citep{lee18} 'straightness' and other stylistic traits contribute to similar rewards. In these cases the movement model is embedded in the animation synthesizes, but could be separated by augmenting the reward functions. Since high level tasks are used to allow the synthesizer some freedom, the specification is most often kept simple. A hybrid approach in \citep{lee10} track a control direction from the user with no explicit path but with a short horizon tending toward a path specification.
 
+FOCUS ON HOW SOME SYSTEMS CANNOT BE USED FOR GAMES
+AADD data -> Redundancy. The data we want is clouded be data that we dont want.
+
 \subsection{Motion planning and control theory}
+[
 Convert high level task specification into low level control that makes system (robot (motion planning) or system of differential equations (control theory)) perform task.
 Here we have an unknown system and would like to figure out the control signal. Inverse problem of ours. We have the low level control signal and want to figure out a system that can reproduce that. High level task are users overal intention, move though city.
 
