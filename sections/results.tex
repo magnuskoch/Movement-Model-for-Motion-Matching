@@ -1,4 +1,5 @@
 \section{Experiments}
+\kenny{Where is convergence plots of optimization problem planned to go? Where is timings for solving optimization problem going to be? Actual if we can break down the timing into the different phases/stages of the method it would be better. Might be good to have performance stats of the real-time performance too (yes I know it is not going to be different from a motion field implementation, but still reviewers might ask for it)? Can we have time-laps of different characters into the paper as well?}
 % \begin{figure*}
 %     \centering
 %     \includegraphics[width=1.0\linewidth]{img/estimated_trajectory_examples.png}
@@ -12,7 +13,7 @@
     \caption{Top down view of 4 animation clips. Hip movement shows oscillations on straight paths and counter steering during turns. Estimated trajectories are cleaner and corresponds well with overall movements in the animations while excluding unnecessary details of to human locomotion characteristics.}
     \label{fig:results:estimatedtrajectory:examples}
 \end{figure}
-\magnus{NOTE: Video: SHow animation using capsule movement with simple exponential decay and original animations . Does not look nice. Then our solution}
+\magnus{NOTE: Video: SHow animation using capsule movement with simple exponential decay and original animations . Does not look nice. Then our solution} \kenny{Do you write somewhere that videos are actual in-game captures, so what you see is exactly what a game will deliver in terms of performance and motion quality? Might be good to make a point out of that we have done absolutely no post-processing of the data, it is really the raw-method that gives this quality.}
 We recorded a series of animations with the XSens inertial sensor suit on 3 different actors. The raw sensor data was cleaned using post processing available in the XSens MVN Animate Pro software. We recorded movements typically seen in 3rd person computer games by following industry standard 'dance cards', which are lists of movements that in total covers the expected range of motion of the player character. This style of animation differs from unstructured animation by having clearly defined segments such as 'forward-run' or '$45^o$-degree-walk-turn'. In a production setting the dance cards animation will usually be carefully cleaned and aligned by hand, but since our method addresses exactly those steps we analyze the raw animation data. As seen in the video some artifacts are present in the source recordings due to the lack of clean up.
 
 \subsection{Trajectory Estimation}
