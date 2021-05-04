@@ -37,7 +37,7 @@ Our animations are based on dance cards with clearly defined regions and repeati
 \begin{figure}
     \centering
     \includegraphics[width=1.0\columnwidth]{img/genome_extract.png}
-    \caption{Control Genome is extracted from an animation where the actor runs forward then does a left turn and runs straight again. We extract an initial position, velocity and facing direction at the positions of the turquise arrow. And then control direction and time offsets at the position of the both the turquise aand purple arrow.}
+    \caption{Control Genome is extracted from an animation where the actor runs forward then does a $180^o$ turn and runs straight again. The animation is segmented into parts of either straight (black) or complex (purple) movement as illustrated in the top right image. We replace turning sections, with the first entry from the proceeding straight section. Entries marked with a solid square contain repeated information and are extracted only once with a timestamp.}
     \label{fig:results:genome_extraction}
 \end{figure}
 
