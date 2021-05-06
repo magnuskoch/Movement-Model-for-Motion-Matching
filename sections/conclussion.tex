@@ -1,4 +1,10 @@
 \section{Discussion and Limitations}
+In this section we discuss some of the decisions behind our work including why we chose to use simple models composed of primitives, why we chose to do animation alignment and also how our method generalizes to other types of animation data. 
+
+\subsection{Model structure}
+Dense models such as fully connected neural networks or radial basis functions have time and again proved capable of leaning an impressive amount of details from diverse training data. It is a natural question why we chose to model plane locomotion using a much simpler model? First and foremost models in game a re stricyl bound by evaluation time. Secondly models react to usert inpiut; Complex modeld tend to behave differently on identical user input due to the heterofgenoues nate of animatopns. Our models react consistently to user input . This gives a stringer mapping between user input and on screen movement.
+
+
 We have presented a method to 
 
 We have demonstrzte thjat our model can fit to local segment, but a global fitting remains as a challenge.
@@ -15,7 +21,7 @@ More diverse animation tests.
 Issue: Depending on steping phase a turn might be faster or slower. For games we want the same reaction time.
 
 \section{Conclusion}
-We have presented a method for designing character controllers in computer games that react to user input and generate movement similar to reference animations. Since user control is not inherently restricted we use control genomes to ensure that complexity is either contained in movement models or entirely removed by animation alignment. We suggested a movement model for plane locomotion and applied our method to a set of dance card animations similar to those found in industry productions to demonstrate that auto differentiation can be used both for alignment and parameter estimation.  
+We have presented a method for designing character controllers in computer games that react to user input and generate movement similar to reference animations. Since user control is not inherently restricted we use control genomes to ensure that complexity is contained in movement models or entirely removed by animation alignment. We suggested a movement model for plane locomotion and applied our method to a set of dance card animations similar to those found in industry productions to demonstrate that auto differentiation can be used both for alignment and parameter estimation.  
 
 
 
