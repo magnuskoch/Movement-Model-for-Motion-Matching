@@ -27,7 +27,7 @@ To avoid sharp trajectory changes on foot contacts we apply a gaussian filter wi
 \begin{figure}
     \centering
     \includegraphics[width=1.0\columnwidth]{img/estimated_trajectory_angular_velocity.png}
-    \caption{Angular velocity profiles of 3 animation clips. Top: Straight movement. Center: Straight movement with more adjustments to stay on path. Bottom: A turn. Estimated trajectories show clear peaks and smaller integrals of angular velocities compared to projected hip movement. Positive and negative angular velocities indicate right and left steering respectively. The estimated trajectories of straight animations show clear localized adjustments to heading, while hip movement obfuscate details.\\The bottom plot also shows the effects of applying local smoothing around foot contacts.}
+    \caption{Angular velocity profiles of 2 animation clips. Top: Straight movement. Center: Same straight movement, but zoomed. Bottom: A turn. Estimated trajectories show clear peaks and smaller integrals of angular velocities compared to projected hip movement. Positive and negative angular velocities indicate right and left steering respectively. The estimated trajectories of straight animations show clear localized non-cyclic adjustments to heading, while hip movement obfuscate details.\\The bottom plot also shows the effects of applying local smoothing around foot contacts.}
     \label{fig:results:estimatedtrajectory:stats}
 \end{figure}
 
@@ -37,7 +37,7 @@ Our animations are based on dance cards with clearly defined regions and repeati
 \begin{figure}
     \centering
     \includegraphics[width=1.0\columnwidth]{img/genome_extract.png}
-    \caption{Control Genome is extracted from an animation where the actor runs forward then does a $180^o$ turn and runs straight again. The animation is segmented into parts of either straight (black) or complex (purple) movement as illustrated in the top right image. We replace turning sections, with the first entry from the proceeding straight section. Entries marked with a solid square contain repeated information and are extracted only once with a timestamp.}
+    \caption{Control Genome is extracted from an animation where the actor runs forward then does a $180^o$ turn and runs straight again. The animation is segmented into parts of either straight (black) or complex (green) movement as illustrated in the top right image. We replace turning sections, with the first entry from the proceeding straight section. Entries marked with a solid square contain repeated information and are extracted only once with a timestamp.}
     \label{fig:results:genome_extraction}
 \end{figure}
 
