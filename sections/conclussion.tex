@@ -8,31 +8,8 @@ Dense models such as fully connected neural networks or radial basis functions h
 Our simple model for plane locomotion works well for animations that resemble dance cards, where movements can be easily segmented into straight and turning parts. Additionally motion capture artists and animators have experience in keeping movement consistent in such recordings, which lessens the complexity of the modeling task. We have shown the advantage of aligning even simple dance cards animations, and one might ask how our method generalizes to reference animations where this is not possible due to the visual artifacts that would be introduced ? We might image animations with no straight segments at all that continuously shift direction or constant changes in movement speed and turns. While such characteristic are rare for interactive character control, this would pose a challenge. We suspect control genomes would be manually annotated to the animations which might not be practical, and the complexity of the movement models increased. In such cases it might prove more efficient to bypass the movement model entirely, but as we have described this might also not be possible due to the practicalities of game productions. In the end we perceive a general limitation in our method that required homogenous reference animations, but note that this is most likely the case for game development in general. 
 
 \subsection{Future work}
-tailor made optimization.
-
-Limitations: Thight correspondance, requires reasonably consistens animations,.
-
-
-
-First and foremost models in game a re stricyl bound by evaluation time. Secondly models react to usert inpiut; Complex modeld tend to behave differently on identical user input due to the heterofgenoues nate of animatopns. Our models react consistently to user input . This gives a stringer mapping between user input and on screen movement.
-If we consider what more complex models would contribute ...What would still be the advantage
-
-
-
-We have presented a method to 
-
-We have demonstrzte thjat our model can fit to local segment, but a global fitting remains as a challenge.
-
-heterogenous animation. Actor can choose to turn more abrubtly. We can fix some witha lignment, but this makes movementm unnatural. We can add more to conotrl genome but this conflicts with standard game pads and user capabilities. we can then use of method as a filter insted. Given a large database we filter stuff that is too different.
-
-
-We would like to extend our concept of control genomes. Can they be formalized even more ? Could we develop a set of heuristics to extract from animations in a more structured manner ? 
-We would like to investigate more primitive types. Further compare how different primitives can be used for various types of locomotion.
-
-More diverse animation tests.
-
-
-Issue: Depending on steping phase a turn might be faster or slower. For games we want the same reaction time.
+While we have shown our models can fit well to individual animation segments, it remains challenging to extract global models as the reference animations grow in size. There is an unavoidable challenge to model movement variations, but even the size can pose a challenge for our optimization that can become to slow for practical use. We would like to examine how alternative methods for gradient descent can acceleration the optimization. 
+Additionally our simple movement model for plane locomotion is not able to express the variation typically seen in animation when moving beyond tightly controlled dance cards. We would like examine in more detail, how primitives are best combined and if more types should be added.
 
 \section{Conclusion}
 We have presented a method for designing character controllers in computer games that react to user input and generate movement similar to reference animations. Since user control is not inherently restricted we use control genomes to ensure that complexity is contained in movement models or entirely removed by animation alignment. We suggested a movement model for plane locomotion and applied our method to a set of dance card animations similar to those found in industry productions to demonstrate that auto differentiation can be used both for alignment and parameter estimation.  
