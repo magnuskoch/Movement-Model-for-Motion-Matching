@@ -2,7 +2,21 @@
 In this section we discuss some of the decisions behind our work including why we chose to use simple models composed of primitives, why we chose to do animation alignment and also how our method generalizes to other types of animation data. 
 
 \subsection{Model structure}
-Dense models such as fully connected neural networks or radial basis functions have time and again proved capable of leaning an impressive amount of details from diverse training data. It is a natural question why we chose to model plane locomotion using a much simpler model? First and foremost models in game a re stricyl bound by evaluation time. Secondly models react to usert inpiut; Complex modeld tend to behave differently on identical user input due to the heterofgenoues nate of animatopns. Our models react consistently to user input . This gives a stringer mapping between user input and on screen movement.
+Dense models such as fully connected neural networks or radial basis functions have time and again proved capable of leaning an impressive amount of details from diverse training data. It is a natural question why we chose to model plane locomotion using a much simpler model? We point to main three reasons. Game developers have extremely tight CPU budgets an in our experience would only allocate microseconds for evaluation of movement models, which is not possible using heavier models. Secondly the black-box nature of especially neural networks makes is challenging to predict the characteristics of the synthesized movement which is important for level designers. And lastly we notice that complex model tend to suffer from a lack of consistency where identical inputs produce varying movement patterns depending on the current state of the characters such as step phases. This is natural and even wanted when the aim is only to model realistic animation, but in a game context the user expects a tight and consistent correspondence between input and on screen behavior. 
+
+\subsection{Generalization}
+Our simple model for plane locomotion works well for animations that resemble dance cards, where movements can be easily segmented into straight and turning parts. Additionally motion capture artists and animators have experience in keeping movement consistent in such recordings, which lessens the complexity of the modeling task. We have shown the advantage of aligning even simple dance cards animations, and one might ask how our method generalizes to reference animations where this is not possible due to the visual artifacts that would be introduced ? We might image animations with no straight segments at all that continuously shift direction or constant changes in movement speed and turns. While such characteristic are rare for interactive character control, this would pose a challenge. We suspect control genomes would be manually annotated to the animations which might not be practical, and the complexity of the movement models increased. In such cases it might prove more efficient to bypass the movement model entirely, but as we have described this might also not be possible due to the practicalities of game productions. In the end we perceive a general limitation in our method that required homogenous reference animations, but note that this is most likely the case for game development in general. 
+
+\subsection{Future work}
+tailor made optimization.
+
+Limitations: Thight correspondance, requires reasonably consistens animations,.
+
+
+
+First and foremost models in game a re stricyl bound by evaluation time. Secondly models react to usert inpiut; Complex modeld tend to behave differently on identical user input due to the heterofgenoues nate of animatopns. Our models react consistently to user input . This gives a stringer mapping between user input and on screen movement.
+If we consider what more complex models would contribute ...What would still be the advantage
+
 
 
 We have presented a method to 
