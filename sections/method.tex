@@ -49,8 +49,8 @@ We define two parametric projections, $\model$ and $\edit$, to a shared $\dimes$
 \mathcal{R}^{\dimes} \,,
 \end{align}
 where $\paramm$ and $\parame$ are free parameters to be optimized for later. We call $\mathcal{R}^{\dimes}$ an evaluation space and it will usually have a natural counterpart in the application such as the trajectory (position and orientation of character over time).
-u
-Intuitively $\model$ is a Movement Model capable of generating movement or more accurately an evaluation space representation from the control genomes. $\edit$ corresponds to the adjustment we allow our animations to undergo, such a smoothing or more advanced manipulation. The optimal parameters for a single control genome are found as the minimization of the L2-norm.
+
+Intuitively $\model$ is a movement model capable of generating movement or more accurately an evaluation space representation from the control genomes. $\edit$ corresponds to the adjustment we allow our animations to undergo, such a smoothing or more advanced manipulation. The optimal parameters for a single control genome are found as the minimization of the L2-norm.
 \begin{subequations}
 \begin{align}
     \gnorm(\paramm,\parame,\genome_i)
@@ -86,7 +86,7 @@ When we want constant parameters across the fitting of multiple control genomes 
 Where $\vec{\paramm^*},\vec{\parame^*}$ is the full set of parameters and $\paramm^i,\parame^i$ are the parameters fitted to $\genome_i$.
 
 \subsection{Movement Model}
-In this section we will describe how movement can be generated from Control Genomes using a Movement Model. Without loss of generality, we will examine plane locomotion and limit the output of the model to trajectories, which is time series of connected positions and facing directions. 
+In this section we will describe how movement can be generated from control genomes using a movement model. Without loss of generality, we will examine plane locomotion and limit the output of the model to trajectories, which is time series of connected positions and facing directions. 
 Conceptually there are no limitations on the complexity of the models we chose. Dense neural networks [ref] or muscle based physical simulations [ref] are capable of even generating full body locomotion. However we would like a model that exposes easily and exactly tweakable parameters to the game designers and animators. In many game scenarios micro timings and the 'feel' of the character movement are core parts of the user experience. Accordingly we need descriptive models, that can still be transparently manipulated by the artists. 
 
 We use the trajectory as evaluation space with $\pos$ and $\facing$ as the 2D plane position and 1D rotation around the up-axis over $t$ frames. Hence we have dimension $\dimes = 3 t$ for our evaluation space,
@@ -99,13 +99,13 @@ We use the trajectory as evaluation space with $\pos$ and $\facing$ as the 2D pl
     \pos_{t-1},\facing_{t-1}
     \right\}
 \end{align}
-We construct control genomes as an initial state followed by a sequence of movement characteristics we would like to achieve. Player input is supplied through standard gamepad control using stick direction and button presses with $\left\{ \controlmove_d, \controlface_d \right\}$ representing the desired facing and movement directions at time $d$. Further parameters can be added to support different movement styles and are controlled with button presses. The simplest genome would contain an initial state and a single control input: $\genome^5 \equiv \left\{ \pos_0,\facing_0,\controlmove,\facing^c \right\}$. Additional data can be added to the control genomes either by expanding the data contained in the initial state, by adding additional types of control values or by providing a time series of control values which are then treated as a step curve. A non-parametric Movement Model maps from control genome to evaluation space
+We construct control genomes as an initial state followed by a sequence of movement characteristics we would like to achieve and a timespan $t$ that the movement should cover. Player input is supplied through standard gamepad control using stick direction and button presses with $\left\{ \controlmove_d, \controlface_d \right\}$ representing the desired facing and movement directions at time $d$. Further parameters can be added to support different movement styles and are controlled with button presses. The simplest genome would contain an initial state for position and facing direction and a single control input for desired facing and movement direction: $\genome^5 \equiv \left\{ \pos_0,\facing_0,\controlmove,\controlface \right\}$. Hat accents on symbols signify user control values that are always associated with a unique and non-overlaping time span within $t$ where the value is active. Additional data can be added to the control genomes either by expanding the data contained in the initial state, by adding additional types of control values or by providing a time series of control values which are then treated as a step curve that cover. A non-parametric movement model maps from control genome to evaluation space
 \begin{equation}
     \model(\goals^5)
     \rightarrow
     \underbrace{
     \left\{
-    \pos_0^m,\facing_0^m,\ldots,\pos_{t-1}^m,\facing_{t-1}^m\right\}
+    \pos_0,\facing_0,\ldots,\pos_{t},\facing_{t}\right\}
     }_{\in \mathcal{R}^{3t}}
     \,,
 \end{equation}
