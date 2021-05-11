@@ -229,7 +229,7 @@ Contacts are detected using a height/velocity heuristic for the foot bones. In t
 \end{figure}
 
 \subsubsection{\bf Drift Correction} 
-We apply adjustment curves as described in \citep{lowe16} by distributing $\counte$ adjustment keyframes held in $\parame$ along the trajectory.  Each keyframe is associated with a rotation and per frame values are interpolated along the curve to ensure smooth changes. The adjustment curve is applied by accumulating rotations along the entire animation, so that an adjustment rotation at frame $n$ influences all frames $>n$. An example in shown in Fig. \ref{fig:method:trajectory} to construct an aligned trajectory With high $\counte$-values adjustment values change frequently due to the higher number of key frames. By decreasing $\counte$ we achieve smoother adjustment. 
+We apply adjustment curves as described in \citep{lowe16} by distributing $\counte$ individual adjustment keyframes along the trajectory. We use $\parame$ to reference the entire list of keyframes. Each keyframe is associated with a rotation and per frame values are interpolated along the curve to ensure smooth changes. The adjustment curve is applied by accumulating rotations along the entire animation, so that an adjustment rotation at frame $n$ influences all frames $>n$. An example in shown in Fig. \ref{fig:method:trajectory} to construct an aligned trajectory. A high $\counte$-value gives a dense distribution of adjustment keyframes which allows interpolated adjustment values to change rapidly. This alters the animation dramatically and has the potential to introduce visual artifacts. By decreasing $\counte$ we achieve smoother adjustment. By manual experimentation we found that a distribution of adjustment key frame around 3Hz gives good drift correction without degrading the visual quality of our reference animations.
 
 Adjustment curves can align evaluation space vectors (trajectories) $v_0,v_1\in R^{3t}$ by an optimization
 \begin{subequations}
@@ -239,9 +239,9 @@ Adjustment curves can align evaluation space vectors (trajectories) $v_0,v_1\in 
     }
 \end{align}
 \end{subequations}
-We apply such an alignment as a post processing step in the optimization procedure. In this case adjustments keyframes are distributed at 2Hz. 
+We apply such an alignment as a post processing step in the optimization procedure. In this case adjustments keyframes are distributed only at 2Hz. 
 
-For Drift Correction we optimize to fit $v \in R^{3t}$ against a linear least squares fit. \kenny{Is optimization not wrt to $v$? I think I am little confused, because I see two optimization problems? I think maybe you should just drop the first version?}
+For Drift Correction we optimize to fit $v \in R^{3t}$ against a linear least squares fit.
 \begin{subequations}
 \begin{align}
     \arg\min_{\parame}{
