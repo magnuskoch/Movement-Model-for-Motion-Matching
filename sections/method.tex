@@ -109,12 +109,12 @@ We construct control genomes as an initial state followed by a sequence of movem
     }_{\in \mathcal{R}^{3t}}
     \,,
 \end{equation}
-and is easily described as recursive updates to the initial genome state. If the state is expanded with additional values those are also integrated by the Model. 
+and is easily described as recursive updates to the initial genome state. If the state is expanded with additional values those are also integrated by the movement model. 
 We may write this in an abstract notation by using a generic update function $\mathcal{U}$ as follows,
 \begin{subequations}
 \begin{align}
     \left\{
-    \pos_d^m,\facing_d^m
+    \pos_d,\facing_d
     \right\}
     &\leftarrow
     \left\{
@@ -122,13 +122,13 @@ We may write this in an abstract notation by using a generic update function $\m
     \right\},&d=0
     \\
     \left\{
-    \pos_{d+1}^m,\facing_{d+1}^m
+    \pos_{d+1},\facing_{d+1}
     \right\}
     &\leftarrow
     \mathcal{U}
     (
     \left\{
-    \pos_d^m,\facing_d^m,
+    \pos_d,\facing_d,
     \controlmove,
     \controlface,
     \dt
@@ -139,7 +139,7 @@ We may write this in an abstract notation by using a generic update function $\m
 \end{subequations}
 The update acts as motion planning by controlling how the current state transitions towards a new state as defined by the Control Genome. We impose a restraint to model this transition process according to the characteristics of the reference animation, by parameterising $\model$ and optimizing using the objective function \eqref{eq:optim:single}. 
 
-It is by no means trivial to construct a general $\model$ even for plane locomotion. Instead we opt for a modular approach where the planning function in \eqref{eq:move:update} is a composition of planning primitives that can be arranged for different levels of expressiveness. Each primitive exposes a set of adjustable parameters and performs input to output mapping using various interpolation methods. In the limit the compositions could approximate full neural networks, but should be kept simple enough for human manipulation of each parameter while maintaining the capability to model the movement in the reference animations.     
+It is by no means trivial to construct a general $\model$ even for plane locomotion. Instead we opt for a modular approach where the planning function in \eqref{eq:move:update} is a composition of planning primitives that can be arranged for different levels of expressiveness. Each primitive exposes a set of adjustable parameters and performs input to output mapping using various interpolation methods. In the limit the compositions could approximate full neural networks or stacked radial bases functions, but should be kept simple enough for human manipulation of each parameter while maintaining the capability to model the movement in the reference animations.     
 
 Our primitives in this work are:
 
@@ -148,7 +148,7 @@ Our primitives in this work are:
 
 \item{\bf 1D interpolation:} The 1D-Map interpolation map uses $\theta^d$ with $d>1$ data-values to find the interpolated value $y \in \Re$ of input $x \in \Re$. We write this as  $y \leftarrow \mapo(x,\theta^{d})$. With out loss of generality we choose to use spline interpolation over 4 knots.
 
-\item{\bf 2D interpolation:} The 2D-Map interpolation is similarly defined. Except it maps input $x_0,x_1 \in \Re$ to output $y_0,y_1 \in \Re$ $(y_0,y_1) \leftarrow \mapt( (x_0, x_1),\theta^{d})$. In our implementation we use barycentric coordinates to interpolate polygon knots according to a 2D grid position given as input.    
+\item{\bf 2D interpolation:} The 2D-Map interpolation is similarly defined. Except it maps input $x_0,x_1 \in \Re$ to output $y_0,y_1 \in \Re$ $(y_0,y_1) \leftarrow \mapt( (x_0, x_1),\theta^{d})$. In our implementation we use barycentric coordinates to interpolate polygon knots according to a 2D grid position given as input. This way parameters are easy to inspect for humans when visualized as a textured quad with control points.   
 \end{itemize}
 
 As an example we propose a Movement Model for plane locomotion typical for 3rd person computer games  \kenny{how can you prove it is typical? any cites for this?} that strikes a compromise between simplicity and expressiveness. We use the convention that an $i$ superscript refers to intermediary values used temporarily during the model update \kenny{The superscript notation really clutters the math in my opinion. Perhaps using hat or tilde might be simpler layout wise?}. 
@@ -158,7 +158,7 @@ First for getting control of speed, move direction and angular speed ie. rate of
 Compared to $\genome^{5}$ the expanded Control Genome looks like this,
 \begin{subequations}
 \begin{align}
-    \genome^{8} \equiv \left\{ \pos_0,\facing_0,\speed_0,\move_0,\angularspeed_0,\controlmove,\facing^c \right\}\,.
+    \genome^{8} \equiv \left\{ \pos_0,\facing_0,\speed_0,\move_0,\angularspeed_0,\controlmove,\controlface \right\}\,.
 \end{align}
 \end{subequations}
 It has 3 additional values that the Movement Model integrates. This reflects that more context than just position and facing direction is needed to model the movement correctly. For simplicity we keep the control values fixed, but usually they will change over time.
