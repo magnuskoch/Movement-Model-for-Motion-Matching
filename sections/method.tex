@@ -229,7 +229,7 @@ Contacts are detected using a height/velocity heuristic for the foot bones. In t
 \end{figure}
 
 \subsubsection{\bf Drift Correction} 
-We apply adjustment curves by distributing $\parame,$ adjustment keyframes along the trajectory. With high $\counte$-values \kenny{It is not clear what $\counte$ is? } adjustment values change frequently due to the higher number of key frames. By decreasing $\counte$ we achieve smoother adjustment. Each keyframe is associated with a rotation and per frame values are interpolated along the curve to ensure smooth changes. The adjustment curve is applied by accumulating rotations along the entire animation, so that an adjustment rotation at frame $n$ influences all frames $>n$. An example in shown in Fig. \ref{fig:method:trajectory}. 
+We apply adjustment curves as described in \citep{lowe16} by distributing $\counte$ adjustment keyframes held in $\parame$ along the trajectory.  Each keyframe is associated with a rotation and per frame values are interpolated along the curve to ensure smooth changes. The adjustment curve is applied by accumulating rotations along the entire animation, so that an adjustment rotation at frame $n$ influences all frames $>n$. An example in shown in Fig. \ref{fig:method:trajectory} to construct an aligned trajectory With high $\counte$-values adjustment values change frequently due to the higher number of key frames. By decreasing $\counte$ we achieve smoother adjustment. 
 
 Adjustment curves can align evaluation space vectors (trajectories) $v_0,v_1\in R^{3t}$ by an optimization
 \begin{subequations}
