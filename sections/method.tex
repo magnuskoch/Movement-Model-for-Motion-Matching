@@ -162,7 +162,7 @@ Compared to $\genome^{5}$ the expanded Control Genome looks like this,
 \end{align}
 \end{subequations}
 It has 3 additional values that the movement model integrates. This reflects that more context than just position and facing direction is needed to model the movement correctly. Consider for instance how a humans ability to turn depends on the current movement speed and also the difference between facing and movement directions. For simplicity we keep the control values fixed, but usually they will change over time.
-\kenny{Alternative control genome definitions can be made, it depends on context and the artistic work flow. We find above definition to be simple and work well for our examples.}
+Alternative control genome definitions can be made, it depends on context and the artistic work flow. We find above definition to be simple and work well for our examples.
 
 Our movement model needs an error measure such that it can figure out how much to change the generated motion. Hence, we compute $\diffmove=||\move_d-\controlmove||$ and $\difffacing=||\move_d-\controlmove||$ as the absolute error at time $d$ between the state and control values for movement and facing directions respectively. 
 %
@@ -202,7 +202,7 @@ Alternatively, we could apply a hybrid approach by discovering correlations in t
 Finally we note that multiple local Movement Models can be easily combined. Transitions between models can be established using the same primitives. In practice we find it is often sufficient to use a single 1D blend \kenny{This statement/section may promise an experiment to prove it}. For instance the shift between 'run' and 'walk', which could require individual models, is usually distinct and of limited complexity and duration. 
 
 \subsection{Motion Alignment}
-To fit a Movement Model and Control Genome pair we project reference animations to evaluation space by constructing $\edit$ as a 2 step function where $\trajest$:\textit{Trajectory Estimation} is followed by $\driftcor$:\textit{Drift Correction}. Using similar convention as in the previous section we map animations of $t$ frames to evaluation space. 
+To fit a movement model and control genome pair we project reference animations to evaluation space by constructing $\edit$ as a 2 step function where $\trajest$:\textit{Trajectory Estimation} is followed by $\driftcor$:\textit{Drift Correction}. Using similar convention as in the previous section we map animations of $t$ frames to evaluation space. 
 \kenny{$\anim_{t}^{\dimas}$ is used in $\edit$ but $\trajest$ takes only $\anim_{t}$ why is there not a superscript? or should superscript be removed all together?}
 \begin{subequations}
 \begin{align}
