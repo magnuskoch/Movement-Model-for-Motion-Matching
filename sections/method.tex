@@ -173,9 +173,9 @@ The full parameter set is $\paramm\equiv(\param_0,\param_1,\param_2,\param_3)$.
 Our Movement model update is constructed by first computing  changes related to speed. 
 \begin{subequations}
 \begin{align}
-    \intermediary\speed&\leftarrow{}\mapt(\angularspeed_d,\diffmove,\param_0)\\
+    \intermediary\speed&\leftarrow{}\mapt(\angularspeed_d,\diffmove,\param_0)
     \,,\\
-    \intermediary\param&\leftarrow{}\mapo(\speed_d-\intermediary\speed, \param_1)\\
+    \intermediary\param&\leftarrow{}\mapo(\speed_d-\intermediary\speed, \param_1)
     \,,\\
     \speed_{d+1}&\leftarrow{}\spring(\speed_d,\dot\speed_d,\intermediary\param,\intermediary\speed,\dt)
     \,.
@@ -186,9 +186,12 @@ Here $\param_0$  models planning of the target speed depending on the current an
 Modeling of changes to movement and facing directions are computed next.
 \begin{subequations}
     \begin{align}
-        \move_{d+1}&\leftarrow\spring(\move_d,\controlmove,\mapt(\speed_{d},\diffmove, \param_2),\dt)\\ 
-        \facing_{d+1}&\leftarrow\spring(\facing_d,\controlface,\mapt(\speed_{d},\difffacing, \param_3),\dt)\\
+        \move_{d+1}&\leftarrow\spring(\move_d,\controlmove,\mapt(\speed_{d},\diffmove, \param_2),\dt)
+        \,,\\
+        \facing_{d+1}&\leftarrow\spring(\facing_d,\controlface,\mapt(\speed_{d},\difffacing, \param_3),\dt)
+        \,,\\
         \pos_{d+1}&\leftarrow{}\pos_d+\speed_{d}[\cos{\move_d},\sin{\move_d}]
+        \,.
     \end{align}
 \end{subequations}
 
