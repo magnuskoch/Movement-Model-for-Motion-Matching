@@ -23,7 +23,7 @@ Control genomes can have a direct counter part in the host application such as u
 
 \begin{figure}
     \centering
-    \kenny{I dislike the style of the figure. It stands out compared to the better visual quality papers. A coherent style everywhere is better, if style looks messy then it colors reviewers opinion of the work.\\}    \includegraphics[width=1\columnwidth]{img/controlgenome.png}
+    \includegraphics[width=1\columnwidth]{img/controlgenome.png}
     \caption{Control Genome.}
     \label{fig:control:genome}
 \end{figure}
@@ -99,7 +99,7 @@ We use the trajectory as evaluation space with $\pos$ and $\facing$ as the 2D pl
     \pos_{t-1},\facing_{t-1}
     \right\}
 \end{align}
-We construct Control Genomes as an initial state followed by a sequence of movement characteristics we would like to achieve. Player input is supplied through standard gamepad control using stick direction and button presses with $\left\{ \controlmove_d, \controlface_d \right\}$ representing the desired facing and movement directions at time $d$. Further parameters can be added to support different movement styles and are controlled with button presses. The simplest genome would contain an initial state and a single control input: $\genome^5 \equiv \left\{ \pos_0,\facing_0,\controlmove,\facing^c \right\}$. Additional data can be added to the Control Genomes either by expanding the data contained in the initial state, by adding additional types of control values or by providing a time series of control values which are then treated as a step curve. A non-parametric Movement Model maps from Control Genome to evaluation space
+We construct control genomes as an initial state followed by a sequence of movement characteristics we would like to achieve. Player input is supplied through standard gamepad control using stick direction and button presses with $\left\{ \controlmove_d, \controlface_d \right\}$ representing the desired facing and movement directions at time $d$. Further parameters can be added to support different movement styles and are controlled with button presses. The simplest genome would contain an initial state and a single control input: $\genome^5 \equiv \left\{ \pos_0,\facing_0,\controlmove,\facing^c \right\}$. Additional data can be added to the control genomes either by expanding the data contained in the initial state, by adding additional types of control values or by providing a time series of control values which are then treated as a step curve. A non-parametric Movement Model maps from control genome to evaluation space
 \begin{equation}
     \model(\goals^5)
     \rightarrow
