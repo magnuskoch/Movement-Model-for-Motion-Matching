@@ -241,7 +241,7 @@ Adjustment curves can align evaluation space vectors (trajectories) $v_0,v_1\in 
 \end{subequations}
 We apply such an alignment as a post processing step in the optimization procedure. In this case adjustments keyframes are distributed only at 2Hz. 
 
-For Drift Correction we optimize to fit $v \in R^{3t}$ against a linear least squares fit.
+For Drift Correction we optimize to fit $v \in R^{3t}$ against a linear least squares fit. Intuitively we identify adjustment keyframes such that the difference between the adjusted trajectory and a linear least squares fit applied to the same adjusted trajectory is minimized. The comparison between an adjusted trajectory and the linear least squares fit gives a simple measure straightness.
 \begin{subequations}
 \begin{align}
     \arg\min_{\parame}{
