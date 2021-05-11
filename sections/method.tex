@@ -19,12 +19,12 @@ Figure \ref{fig:movement:overview} illustrates the definitions and concepts of o
 \subsection{Control Genomes}
 We define Control Genomes as signals that can generate movement. They are a combination of intentions and enough contextual state to follow the Markov principle. As an example a position, direction and time is a control genome for a straight walk. Conversely a straight walk contains a latent control genome (position, direction, time). Under this naive framework we quickly realize that multiple straight walks could be associated with a single control genome. We further impose the constraint that control genomes must disambiguate movement. That means a unique control genome maps to a unique movement. In our simple example we might resolve conflicts by adding a style parameter and assign values such as 'brisk walk' or 'dragging feet' to our control genomes. 
 
-Control genomes can have a direct counter part in the host application such as user input through a game controller or navigational path from an AI system, and therefore can also be viewed as tasks that are carried out by the animations, for instance turn to right. In general we want the control genomes to be of minimal size, since in the limit we could have the animation itself as the control genome. We say that a genome is in \textit{reduced} and \textit{segmented} form if it contains no repetitions and removal of information would break either the Markov property or the disambiguation constraint. 
+Control genomes can have a direct counter part in the host application such as user input through a game controller or navigational path from an AI system, and therefore can be viewed as tasks that are carried out by the animations, for instance turn to right. In general we want the control genomes to be of minimal size, since in the limit we could have the animation itself as the control genome. \kenny{From the description thaat follows the definition of reduced versus segmented is not clear to me?} We say that a genome is in \textit{reduced} and \textit{segmented} form if it contains no repetitions and removal of information would break either the Markov property of the disambiguation constraint \kenny{either? but only one thing is listed}\kenny{What is Markov property of the disambiguation constraint?}. 
 
 \begin{figure}
     \centering
     \includegraphics[width=1\columnwidth]{img/controlgenome.png}
-    \caption{Control Genome.}
+    \caption{Control Genome.Please describe in caption what reader should learn from the figure. }
     \label{fig:control:genome}
 \end{figure}
 
@@ -36,8 +36,9 @@ We assume there exist an automated or manual Retrieve-and-Collapse function, $\r
 \begin{equation}
  \lut(\genome^g_i) \rightarrow \left\{\anim_{\dimas\times\dimae_0},\ldots,\anim_{\dimas\times\dimae_k}\right\}   \,,
 \end{equation}
-where $\dimae\ll\dimat$ refers to a segment of the full animation and $k$ is the number of segments matched to the $i\th$ control genome.
-
+%w
+here $\dimae\ll\dimat$ refers to a segment of the full animation and $k$ is the number of segments matched to the $i\th$ control genome. 
+%
 We define two parametric projections, $\model$ and $\edit$, to a shared $\dimes$-dimensional space, $\mathcal{R}^{\dimes}$, as follows
 \begin{align}
 \model(\paramm,\genome_i^{\dimg}) 
@@ -61,17 +62,18 @@ Intuitively $\model$ is a movement model capable of generating movement or more 
         |\model(\paramm,\genome_i)
         -
         \edit(\parame\anim_k)|^2
-    }
+    }\,,
     \label{eq:optim:single}
     \\
     \paramm^*,\parame^*
     &\equiv \arg\min_{\paramm,\parame}
     {
         \gnorm(\paramm,\parame,\genome_i)
-    }
+    }\,.
 \end{align}
 \end{subequations}
-When we want constant parameters across the fitting of multiple control genomes an additional term is added to the minimization. 
+%When 
+If we want constant parameters across the fitting of multiple control genomes an additional term is added to the minimization, 
 \begin{equation}
     \vec{\paramm^*},\vec{\parame^*}
     \equiv 
@@ -81,13 +83,13 @@ When we want constant parameters across the fitting of multiple control genomes 
         \gnorm(\paramm^i,\parame^i,\genome_i)
     \right)
     +
-    VAR(\vec{\paramm},\vec{\parame})
+    VAR(\vec{\paramm},\vec{\parame})\,.
 \end{equation}
-Where $\vec{\paramm^*},\vec{\parame^*}$ is the full set of parameters and $\paramm^i,\parame^i$ are the parameters fitted to $\genome_i$.
+Here $\vec{\paramm^*},\vec{\parame^*}$ is the full set of parameters and $\paramm^i,\parame^i$ are the parameters fitted to $\genome_i$.
 
 \subsection{Movement Model}
 In this section we will describe how movement can be generated from control genomes using a movement model. Without loss of generality, we will examine plane locomotion and limit the output of the model to trajectories, which is time series of connected positions and facing directions. 
-Conceptually there are no limitations on the complexity of the models we chose. Dense neural networks [ref] or muscle based physical simulations [ref] are capable of even generating full body locomotion. However we would like a model that exposes easily and exactly tweakable parameters to the game designers and animators. In many game scenarios micro timings and the 'feel' of the character movement are core parts of the user experience. Accordingly we need descriptive models, that can still be transparently manipulated by the artists. 
+Conceptually there are no limitations on the complexity of the models we chose. Dense neural networks [ref] or muscle based physical simulations [ref] are capable of even generating full body locomotion. We would like a model that exposes easily and exactly tweakable parameters to the game designers and animators. In many game scenarios micro timings and the 'feel' of the character movement are core parts of the user experience. Accordingly we need descriptive models, that can still be transparently manipulated by the artists. 
 
 We use the trajectory as evaluation space with $\pos$ and $\facing$ as the 2D plane position and 1D rotation around the up-axis over $t$ frames. Hence we have dimension $\dimes = 3 t$ for our evaluation space,
 \begin{align}
@@ -97,7 +99,7 @@ We use the trajectory as evaluation space with $\pos$ and $\facing$ as the 2D pl
     \pos_0,\facing_0,
     \ldots,
     \pos_{t-1},\facing_{t-1}
-    \right\}
+    \right\} \,.
 \end{align}
 We construct control genomes as an initial state followed by a sequence of movement characteristics we would like to achieve and a timespan $t$ that the movement should cover. Player input is supplied through standard gamepad control using stick direction and button presses with $\left\{ \controlmove_d, \controlface_d \right\}$ representing the desired facing and movement directions at time $d$. Further parameters can be added to support different movement styles and are controlled with button presses. The simplest genome would contain an initial state for position and facing direction and a single control input for desired facing and movement direction: $\genome^5 \equiv \left\{ \pos_0,\facing_0,\controlmove,\controlface \right\}$. Hat accents on symbols signify user control values that are always associated with a unique and non-overlaping time span within $t$ where the value is active. Additional data can be added to the control genomes either by expanding the data contained in the initial state, by adding additional types of control values or by providing a time series of control values which are then treated as a step curve that cover. A non-parametric movement model maps from control genome to evaluation space
 \begin{equation}
@@ -107,9 +109,9 @@ We construct control genomes as an initial state followed by a sequence of movem
     \left\{
     \pos_0,\facing_0,\ldots,\pos_{t},\facing_{t}\right\}
     }_{\in \mathcal{R}^{3t}}
-    \,,
+    \,.
 \end{equation}
-and is easily described as recursive updates to the initial genome state. If the state is expanded with additional values those are also integrated by the movement model. 
+It is easily described as recursive updates to the initial genome state. If the state is expanded with additional values those are integrated by the Model. 
 We may write this in an abstract notation by using a generic update function $\mathcal{U}$ as follows,
 \begin{subequations}
 \begin{align}
@@ -139,8 +141,8 @@ We may write this in an abstract notation by using a generic update function $\m
 \end{subequations}
 The update acts as motion planning by controlling how the current state transitions towards a new state as defined by the Control Genome. We impose a restraint to model this transition process according to the characteristics of the reference animation, by parameterising $\model$ and optimizing using the objective function \eqref{eq:optim:single}. 
 
-It is by no means trivial to construct a general $\model$ even for plane locomotion. Instead we opt for a modular approach where the planning function in \eqref{eq:move:update} is a composition of planning primitives that can be arranged for different levels of expressiveness. Each primitive exposes a set of adjustable parameters and performs input to output mapping using various interpolation methods. In the limit the compositions could approximate full neural networks or stacked radial bases functions, but should be kept simple enough for human manipulation of each parameter while maintaining the capability to model the movement in the reference animations.     
-
+It is by no means trivial to construct a general $\model$ even for plane locomotion. Instead we opt for a modular approach where the planning function in \eqref{eq:move:update} is a composition of planning primitives that can be arranged for different levels of expressiveness. Each primitive exposes a set of adjustable parameters and performs input to output mapping using various interpolation methods. In the limit the compositions could approximate full neural networks or stacked radial basis functions, but should be kept simple enough for human manipulation of each parameter while maintaining the capability to model the movement in the reference animations.     
+%
 Our primitives in this work are:
 
 \begin{itemize}
@@ -172,8 +174,11 @@ Our Movement model update is constructed by first computing  changes related to 
 \begin{subequations}
 \begin{align}
     \intermediary\speed&\leftarrow{}\mapt(\angularspeed_d,\diffmove,\param_0)\\
+    \,,\\
     \intermediary\param&\leftarrow{}\mapo(\speed_d-\intermediary\speed, \param_1)\\
+    \,,\\
     \speed_{d+1}&\leftarrow{}\spring(\speed_d,\dot\speed_d,\intermediary\param,\intermediary\speed,\dt)
+    \,.
 \end{align}
 \end{subequations}
 Here $\param_0$  models planning of the target speed depending on the current angular speed and the required change to movement direction. $\param_1$ models the acceleration of the model depending on the relative change in speed.
@@ -212,7 +217,6 @@ To fit a movement model and control genome pair we project reference animations 
 \end{subequations}
 Notice that only $\driftcor$ is parameterized.
 
-
 Even simple animations contain details that makes it difficult to extract a reduced control genome. A recording of a straight walk does not contain a straight line in the bone movements of the subject. Projection of the hip bone or center of mass to the ground plane has cyclical components due to the nature of human locomotion. Additionally, the subject might drift on and off the instructed straight path. We need complex control genomes to model such details. 
 Informally $\edit$ extracts an idealized movement path from animations by removing noise and applying slight corrections. Ie. a straight walk is estimated as a sequence of local line segments, which are then corrected to produce a single straight trajectory. The animation can now be described by a further reduced control genome of just a single direction.
 
@@ -237,6 +241,7 @@ Adjustment curves can align evaluation space vectors (trajectories) $v_0,v_1\in 
     \arg\min_{\parame}{
         \frac{1}{2}|v_0-\driftcor(\parame,v_1)|^2
     }
+    \,.
 \end{align}
 \end{subequations}
 We apply such an alignment as a post processing step in the optimization procedure. In this case adjustments keyframes are distributed only at 2Hz. 
@@ -247,11 +252,14 @@ For Drift Correction we optimize to fit $v \in R^{3t}$ against a linear least sq
     \arg\min_{\parame}{
         \frac{1}{2}|\mathcal{LLS}(v)-\driftcor(\omega\,\parame,v_1)|^2
     }
+    \,.
 \end{align}
 \end{subequations}
 We apply the procedure to local segments of the animation that are almost straight. Straight segments are identified as regions between neighboring Control Genome changes, where $\omega$ is a weight vector used to disable alignment close to the local end points. In this case the keyframes are distributed only at 1Hz. The heuristic works well for animations consisting of turns and straight segments, but it is quite brittle and needs careful animation dependent tuning of the weights to avoid unwanted straightening of curved sections.
+
+
 \subsection{Optimization}
-We use a multi step optimization consisting of three independent passes. The procedure takes a reference animation and a Movement Model as input. Control Genomes are annotated by hand or generated automatically. We use the latter approach. Parameters are fitted locally to each Control Genome and associated animation segments in S. The locally fitted models are combined in a final pass. The Control Genome granularity can be increased if the combined model exhibits poor behavior.
+We use a multi step optimization consisting of three independent passes. The procedure takes a reference animation and a Movement Model as input. Control Genomes are annotated by hand or generated automatically. We use the latter approach. Parameters are fitted locally to each Control Genome and associated animation segments in $\lut$. The locally fitted models are combined in a final pass. The Control Genome granularity can be increased if the combined model exhibits poor behavior.
 \begin{itemize}
     \item {\bf{Step 1: Trajectory Estimation \& LLS Alignment}} is applied to the input animation. The output is an evaluation space vector. Control Genomes are generated from the vector using a heuristic where entries are added when the vector tangent changes above a threshold. The input animation is updated to use the estimated trajectory.\magnus{Maybe figure ?}\kenny{Yes, please}
     \item {\bf{Step 2: Movement model fitting}} optimizes the parameters of the Movement Model and Control Genome adjustments to fit the generated evaluation space vector. Control Genomes are adjusted to allow wiggle room in the timings and directions.
@@ -264,7 +272,7 @@ We use a multi step optimization consisting of three independent passes. The pro
     \KwIn{$A$: Reference animations, $M$: Movement Model}
     $\theta^{*}_{M} \leftarrow$ initialize global model parameters\\
     $T\in R^{3t} \leftarrow \{A\}$, estimate trajectory\\
-    $S \leftarrow \{T\}$, extract genome/segment map\\
+    $\lut \leftarrow \{T\}$, extract genome/segment map\\
     \ForEach{$\{G,seg\} \in S$} {
         $\theta_{M} \leftarrow$ initialize local model parameters\\
         $\theta_{G} \leftarrow$ initialize Genome adjustments\\
@@ -281,10 +289,10 @@ We use a multi step optimization consisting of three independent passes. The pro
             $\nabla\theta \leftarrow loss$, backtrack\\
             $\theta_M,\theta_G \leftarrow \nabla\theta$, gradient descent\\
         }
-        $S \leftarrow \{\theta_G\}$, store genome adjustments\\
+        $\lut \leftarrow \{\theta_G\}$, store genome adjustments\\
         $\theta^{*}_{M} \leftarrow \{\theta_G$\}, store model parameters
     }
-    $A \leftarrow \{M,G \in S,\theta^{*}_{M}\}$, align full animation to model fit 
+    $A \leftarrow \{M,G \in \lut,\theta^{*}_{M}\}$, align full animation to model fit 
     \caption{Fitting Procedure}\label{algo:optim}
     \end{algorithm}
  We use PyTorch auto differentiation with gradient descent for the implementation. The procedure is shown in Algorithm. \ref{algo:optim}. Good convergence requires continuous gradients across the parameter space. We use branchless programming techniques and PyTorch constructs for non-continuous functions. In the implementation of movement primitives, absolute() is used to guard against negative parameters, and GreaterThan/LessThan() for branchless if statements. While discontinuities are introduced, we find that the optimization is still able to arrive at expected minima, probably because the discontinuities lie between unrelated areas of the parameter space.
