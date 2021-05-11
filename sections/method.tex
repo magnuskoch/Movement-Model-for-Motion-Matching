@@ -161,7 +161,7 @@ Compared to $\genome^{5}$ the expanded Control Genome looks like this,
     \genome^{8} \equiv \left\{ \pos_0,\facing_0,\speed_0,\move_0,\angularspeed_0,\controlmove,\controlface \right\}\,.
 \end{align}
 \end{subequations}
-It has 3 additional values that the Movement Model integrates. This reflects that more context than just position and facing direction is needed to model the movement correctly. For simplicity we keep the control values fixed, but usually they will change over time.
+It has 3 additional values that the movement model integrates. This reflects that more context than just position and facing direction is needed to model the movement correctly. Consider for instance how a humans ability to turn depends on the current movement speed and also the difference between how facing and movement directions. For simplicity we keep the control values fixed, but usually they will change over time.
 \kenny{Alternative control genome definitions can be made, it depends on context and the artistic work flow. We find above definition to be simple and work well for our examples.}
 
 Our movement model needs an error measure such that it can figure out how much to change the generated motion. Hence, we compute $\diffmove_d=||\move_d^m-\controlmove_d||$ as the absolute error between the state and control values for movement direction. 
