@@ -2,7 +2,7 @@
 \begin{figure}
     \centering
     \includegraphics[width=1\columnwidth]{img/overview}
-    \caption{System overviews}
+    \caption{System overview. Our method finds movement model parameters to describe a set of motion capture animations. We present a model structure for plane locomotion. The alignment procedure filters and prepeares animation data for in-game use, and can also be used as a stand alone.}
     \label{fig:movement:overview}
 \end{figure}
 Human movement is a complex interplay between intentions within the brain and the physical environment. The thought to 'walk-forward' triggers an array of intractable optimizations. A movement model is similar when high level gamepad input is mapped to low level control signals. We notice that if no restrictions are imposed to the granularity of the high level signal, it can in the limit approach the low level signal we wish to model. In this perspective the modeling task is ill-posed, and we suggest control genomes as a method to regularize the task by formalizing the complexity of the high level input signal.   
@@ -14,12 +14,12 @@ In the following we will introduce an end-to-end method for synchronization betw
     \item \textbf{Trajectory estimation} and alignment of reference animations to avoid modeling unwanted details. 
     \item \textbf{Optimization procedure} to fit exposed parameters of all the above systems to minimize the difference between the movement model and the reference animation.
 \end{itemize}
-Figure \ref{fig:movement:overview} illustrates the definitions and concepts of a movement model.
+Figure \ref{fig:movement:overview} illustrates the definitions and concepts of our movement model optimization.
 
 \subsection{Control Genomes}
 We define Control Genomes as signals that can generate movement. They are a combination of intentions and enough contextual state to follow the Markov principle. As an example a position, direction and time is a control genome for a straight walk. Conversely a straight walk contains a latent control genome (position, direction, time). Under this naive framework we quickly realize that multiple straight walks could be associated with a single control genome. We further impose the constraint that control genomes must disambiguate movement. That means a unique control genome maps to a unique movement. In our simple example we might resolve conflicts by adding a style parameter and assign values such as 'brisk walk' or 'dragging feet' to our control genomes. 
 
-Control genomes can have a direct counter part in the host application such as user input through a game controller or navigational path from an AI system, and therefore can also be viewed as tasks that are carried out by the animations, for instance turn to right. In general we want the control genomes to be of minimal size, since in the limit we could have the animation itself as the control genome. We say that a genome is in \textit{reduced} and \textit{segmented} form if it contains no repetitions and removal of information would break either the Markov property of the disambiguation constraint. 
+Control genomes can have a direct counter part in the host application such as user input through a game controller or navigational path from an AI system, and therefore can also be viewed as tasks that are carried out by the animations, for instance turn to right. In general we want the control genomes to be of minimal size, since in the limit we could have the animation itself as the control genome. We say that a genome is in \textit{reduced} and \textit{segmented} form if it contains no repetitions and removal of information would break either the Markov property or the disambiguation constraint. 
 
 \begin{figure}
     \centering
@@ -28,13 +28,13 @@ Control genomes can have a direct counter part in the host application such as u
     \label{fig:control:genome}
 \end{figure}
 
-Figure \ref{fig:control:genome} shows an example where an animation has been assigned a control genome. Each frame is annotated with a 2D-control direction corresponding to stick input from a game controller. A dense and redundant control genome contains the entire skeletal animation as well as the annotated directions. The animation has two similar right turns so we get a single segmented control genome by splitting the redundant genome in two identical parts. We then trim all unnecessary information from the genome to get the reduced form which only contain a starting position and two direction offset in time. This last step assumes that we are capable of regenerating the animation from the reduced genome using a model we will refer to as a \textit{Movement Model}. A Control Genome paired with a Movement Model describes an animation exactly when the Movement Model can regenerate the Animation from the Control Genome.  In practice it is not possible to develop accurate generative or predictive models for human movement. So we will allow our animations to undergo non destructive transformation such as smoothing and path adjustment, and only expect our model to regenerate a fraction of the complete signal, such as the trajectory. 
+Figure \ref{fig:control:genome} shows an example where an animation has been assigned a control genome. Each frame is annotated with a 2D-control direction corresponding to stick input from a game controller. A dense and redundant control genome contains the entire skeletal animation as well as the annotated directions. The animation has two similar right turns so we get a single segmented control genome by splitting the redundant genome in two identical parts. We then trim all unnecessary information from the genome to get the reduced form which only contain a starting position and two directions offset in time. This last step assumes that we are capable of regenerating the animation from the reduced genome using a model we will refer to as a \textit{movement model}. A control genome paired with a movement model describes an animation exactly when the movement model can regenerate the Animation from the control genome.  In practice it is not possible to develop accurate generative or predictive models for human movement. So we will allow our animations to undergo non destructive transformation such as smoothing and path adjustment, and only expect our model to regenerate a fraction of the complete signal, such as the trajectory. 
 
-We will now proceed to a formalized description of control genomes. The input to our method is an annotated animation. Let $\anim^{\dimas,\dimaa}_\dimat$ denote $\dimat$ frames of animation of a skeleton with $\dimas$ degrees of freedom, where each frame is given an $\dimaa$-dimensional annotation. 
+We will now proceed to a formalized description of control genomes. The input to our method is a reference animation. Let $\anim_{\dimas\times_\dimat}$ denote $\dimat$ frames of animation of a skeleton with $\dimas$ degrees of freedom. 
 
-We assume there exist an automated or manual Retrieve-and-Collapse function, $\reco$,  that extracts all reduced and segmented control genomes present in the animation and for each maintains a pairing to all $k$ corresponding un-annotated segments of the source animation. That is $\reco$ converts a source animation into an associate map, $\lut$, that uses genomes as keys and un-annotated segments of source animation as values. We may write $\reco(\anim^{\dimas,\dimaa}_\dimat) \rightarrow \lut$. Now given the $i\th$ control genome of dimension $\dimg$ we have
+We assume there exist an automated or manual Retrieve-and-Collapse function, $\reco$,  that extracts all reduced and segmented control genomes present in the animation and for each maintains a pairing to all $k$ corresponding segments of the source animation. That is $\reco$ converts a source animation into an associate map, $\lut$, that uses genomes as keys and segments of source animation as values. We may write $\reco(\anim_{\dimas\times_\dimat}) \rightarrow \lut$. Now given the $i\th$ control genome of dimension $\dimg$ we have
 \begin{equation}
- \lut(\genome^g_i) \rightarrow \left\{\anim^{\dimas,\dimaa}_{\dimae_0},\ldots,\anim^{\dimas,\dimaa}_{\dimae_k}\right\}   \,,
+ \lut(\genome^g_i) \rightarrow \left\{\anim_{\dimas\times\dimae_0},\ldots,\anim_{\dimas\times\dimae_k}\right\}   \,,
 \end{equation}
 where $\dimae\ll\dimat$ refers to a segment of the full animation and $k$ is the number of segments matched to the $i\th$ control genome.
 
@@ -44,7 +44,7 @@ We define two parametric projections, $\model$ and $\edit$, to a shared $\dimes$
 &\rightarrow 
 \mathcal{R}^{\dimes}    \,,
 \\
-\edit(\parame,\anim_{\dimae}^{\dimas,\dimaa})
+\edit(\parame,\anim_{\dimas,\dimae})
 &\rightarrow
 \mathcal{R}^{\dimes} \,,
 \end{align}
@@ -218,7 +218,6 @@ Although similar techniques have been described before [ref] we have not seen th
 Contacts are detected using a height/velocity heuristic for the foot bones. A preliminary line is traced by connecting center point between adjacent right-left foot contact pairs. At each contact point we locate synchronization points on the preliminary line that is closest to hip bone position at the corresponding time. Trajectory samples are evenly spaced between synchronization points at a rate controlled by animation frame distances between the associated hip positions. The process is illustrated in Fig. \ref{fig:method:trajectory}. 
 \begin{figure}
     \centering
-    \kenny{This figure is conceptually nice. I think it is worthwhile to keep in. However, if the rendering style could look more like the one in Fig 8, so style are more coherent, then that would be great.\\}
     \includegraphics[width=1\columnwidth]{img/trajectory.png}
     \caption{Movement Model update computation for generating the evaluation space. White and grey background indicate values in the Control Genome and generated by the Movement Model respectively. \kenny{Observe the recursive forward evaluation nature in the update.} Trajectory estimation from center of feet positions. Observe how the mid-points between feet center points generate a more straight trajectory compared to the filtered root motion that oscillates.}
     \label{fig:method:trajectory}
