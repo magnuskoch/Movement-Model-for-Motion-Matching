@@ -164,14 +164,14 @@ Compared to $\genome^{5}$ the expanded Control Genome looks like this,
 It has 3 additional values that the movement model integrates. This reflects that more context than just position and facing direction is needed to model the movement correctly. Consider for instance how a humans ability to turn depends on the current movement speed and also the difference between facing and movement directions. For simplicity we keep the control values fixed, but usually they will change over time.
 \kenny{Alternative control genome definitions can be made, it depends on context and the artistic work flow. We find above definition to be simple and work well for our examples.}
 
-Our movement model needs an error measure such that it can figure out how much to change the generated motion. Hence, we compute $\diffmove_d=||\move_d-\controlmove||$ as the absolute error between the state and control values for movement direction. 
+Our movement model needs an error measure such that it can figure out how much to change the generated motion. Hence, we compute $\diffmove=||\move_d-\controlmove||$ and $\difffacing=||\move_d-\controlmove||$ as the absolute error at time $d$ between the state and control values for movement and facing directions respectively. 
 %
 The full parameter set is $\paramm\equiv(\param_0,\param_1,\param_2,\param_3)$. 
 %
 Our Movement model update is constructed by first computing  changes related to speed. 
 \begin{subequations}
 \begin{align}
-    \intermediary\speed&\leftarrow{}\mapt(\angularspeed_d,\diffmove_d,\param_0)\\
+    \intermediary\speed&\leftarrow{}\mapt(\angularspeed_d,\diffmove,\param_0)\\
     \intermediary\param&\leftarrow{}\mapo(\speed_d-\intermediary\speed, \param_1)\\
     \speed_{d+1}&\leftarrow{}\spring(\speed_d,\dot\speed_d,\intermediary\param,\intermediary\speed,\dt)
 \end{align}
@@ -189,7 +189,7 @@ Modeling of changes to movement and facing directions are computed next.
 
 Here $\param_2$ and $\param_3$ model planning of movement and facing direction dependent on the current speed and facing values and the differences to the control targets.
 %
-The mapping to evaluation space $\model(\paramm, \goals^{8}) \rightarrow \mathcal{R}^{3t}$ is done by performing $t$ updates to the state and extracting $\pos$ and $\facing$ at each update, and quality and style can be controlled by changes to $\paramm$. \kenny{Current practice in game production tune such parameters by hand.} The process is illustrated in Fig. \ref{fig:control:trajectory}. 
+The mapping to evaluation space $\model(\paramm, \goals^{8}) \rightarrow \mathcal{R}^{3t}$ is done by performing $t$ updates to the state and extracting $\pos$ and $\facing$ at each update, and quality and style can be controlled by changes to $\paramm$. Our method replaces the current practice to tune such parameters by hand with and optimization procedure we later describe. The process of mapping the control genome to evaluation space is illustrated in Fig. \ref{fig:method:trajectory}. 
 
 An analytical model like this can be of great practical use to the game developers. The parameters have direct links to explainable properties in the animation which makes it easier to tweak the behavior of the model. On the other hand, the analytical approach requires that the designers are able to adequately model the complexity of the movement. 
 %
