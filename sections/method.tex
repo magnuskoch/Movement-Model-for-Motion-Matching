@@ -19,12 +19,12 @@ Figure \ref{fig:movement:overview} illustrates the definitions and concepts of o
 \subsection{Control Genomes}
 We define Control Genomes as signals that can generate movement. They are a combination of intentions and enough contextual state to follow the Markov principle. As an example a position, direction and time is a control genome for a straight walk. Conversely a straight walk contains a latent control genome (position, direction, time). Under this naive framework we quickly realize that multiple straight walks could be associated with a single control genome. We further impose the constraint that control genomes must disambiguate movement. That means a unique control genome maps to a unique movement. In our simple example we might resolve conflicts by adding a style parameter and assign values such as 'brisk walk' or 'dragging feet' to our control genomes. 
 
-Control genomes can have a direct counter part in the host application such as user input through a game controller or navigational path from an AI system, and therefore can be viewed as tasks that are carried out by the animations, for instance turn to right. In general we want the control genomes to be of minimal size, since in the limit we could have the animation itself as the control genome. \kenny{From the description thaat follows the definition of reduced versus segmented is not clear to me?} We say that a genome is in \textit{reduced} and \textit{segmented} form if it contains no repetitions and removal of information would break either the Markov property of the disambiguation constraint \kenny{either? but only one thing is listed}\kenny{What is Markov property of the disambiguation constraint?}. 
+Control genomes can have a direct counter part in the host application such as user input through a game controller or navigational path from an AI system, and therefore can be viewed as tasks that are carried out by the animations, for instance turn to right. In general we want the control genomes to be of minimal size, since in the limit we could have the animation itself as the control genome. \kenny{From the description that follows the definition of reduced versus segmented is not clear to me?} We say that a genome is in \textit{reduced} and \textit{segmented} form if it contains no repetitions and removal of information would break either the Markov property of the disambiguation constraint \kenny{either? but only one thing is listed}\kenny{What is Markov property of the disambiguation constraint?}. 
 
 \begin{figure}
     \centering
     \includegraphics[width=1\columnwidth]{img/controlgenome.png}
-    \caption{Control Genome.Please describe in caption what reader should learn from the figure. }
+    \caption{Control Genome. \kenny{Please describe in caption what reader should learn from the figure.} }
     \label{fig:control:genome}
 \end{figure}
 
@@ -153,7 +153,10 @@ Our primitives in this work are:
 \item{\bf 2D interpolation:} The 2D-Map interpolation is similarly defined. Except it maps input $x_0,x_1 \in \Re$ to output $y_0,y_1 \in \Re$ $(y_0,y_1) \leftarrow \mapt( (x_0, x_1),\theta^{d})$. In our implementation we use barycentric coordinates to interpolate polygon knots according to a 2D grid position given as input. This way parameters are easy to inspect for humans when visualized as a textured quad with control points.   
 \end{itemize}
 
-As an example we propose a Movement Model for plane locomotion typical for 3rd person computer games  \kenny{how can you prove it is typical? any cites for this?} that strikes a compromise between simplicity and expressiveness. We use the convention that variabel annotated with a bar such as $\intermediary\speed$ refers to intermediary values used temporarily during the model update. 
+As an example we propose a Movement Model for plane locomotion typical for 3rd person computer games  
+% Let us not worry about this cite for now
+%\kenny{how can you prove it is typical? any cites for this?} 
+that strikes a compromise between simplicity and expressiveness. We use the convention that variables annotated with a bar such as $\intermediary\speed$ refers to intermediary values used temporarily during the model update. 
 %
 First for getting control of speed, move direction and angular speed ie. rate of change of the movement direction the position and facing information contained in the Control Genome state is augmented with derived values $\speed_0, \move_0, \angularspeed_0$. 
 %
@@ -201,13 +204,11 @@ The mapping to evaluation space $\model(\paramm, \goals^{8}) \rightarrow \mathca
 
 An analytical model like this can be of great practical use to the game developers. The parameters have direct links to explainable properties in the animation which makes it easier to tweak the behavior of the model. On the other hand, the analytical approach requires that the designers are able to adequately model the complexity of the movement. 
 %
-\kenny{The next sentence fells out of place? Are you talking about what people are doing or what we want to do?}
 When this is not the case, we can apply machine learning techniques to discover latent properties of our animation set. % 
 One approach is to extract a limited latent variable set using a dense neural network and then feed the latent variables to a set a primitives which are weighted to give the final output. 
 Alternatively, we could apply a hybrid approach by discovering correlations in the data by automated statistical analysis, but still allow the designer to setup the primitives and chose which parameters should be used. 
-\kenny{If what was described above is current practice then I am missing some citations for it as well as some arguments/descriptions of why it is not clever and why what we are doing is better?}
 
-Finally we note that multiple local Movement Models can be easily combined. Transitions between models can be established using the same primitives. In practice we find it is often sufficient to use a single 1D blend \kenny{This statement/section may promise an experiment to prove it}. For instance the shift between 'run' and 'walk', which could require individual models, is usually distinct and of limited complexity and duration. 
+Finally we note that multiple local Movement Models can be easily combined. Transitions between models can be established using the same primitives. In practice we find it is often sufficient to use a single 1D blend \changed{as seen from our results}. For instance the shift between 'run' and 'walk', which could require individual models, is usually distinct and of limited complexity and duration. 
 
 \subsection{Motion Alignment}
 To fit a movement model and control genome pair we project reference animations to evaluation space by constructing $\edit$ as a 2 step function where \textit{Trajectory Estimation} ($\trajest$) is followed by \textit{Drift Correction} ($\driftcor$). Using similar conventions as in the previous section we map animations of $t$ frames to evaluation space. 
@@ -231,7 +232,7 @@ Contacts are detected using a height/velocity heuristic for the foot bones. In t
 \begin{figure}
     \centering
     \includegraphics[width=1\columnwidth]{img/trajectory.png}
-    \caption{Movement Model update computation for generating the evaluation space. White and grey background indicate values in the Control Genome and generated by the Movement Model respectively. \kenny{Observe the recursive forward evaluation nature in the update.} Trajectory estimation from center of feet positions. Observe how the mid-points between feet center points generate a more straight trajectory compared to the filtered root motion that oscillates.}
+    \caption{Left shows a movement model update computation for generating the evaluation space. Background colors indicate values in the Control Genome that are generated by the Movement Model. \changed{Observe the recursive forward evaluation nature in the update.} Right illustrates the trajectory estimation from center of feet positions. Observe how the mid-points between feet center points generate a more straight trajectory compared to the filtered root motion that oscillates.}
     \label{fig:method:trajectory}
 \end{figure}
 
@@ -239,25 +240,25 @@ Contacts are detected using a height/velocity heuristic for the foot bones. In t
 We apply adjustment curves as described in \citep{lowe16} by distributing $\counte$ individual adjustment keyframes along the trajectory. We use $\parame$ to reference the entire list of keyframes. Each keyframe is associated with a rotation and per frame values are interpolated along the curve to ensure smooth changes. The adjustment curve is applied by accumulating rotations along the entire animation, so that an adjustment rotation at frame $n$ influences all frames $>n$. An example in shown in Fig. \ref{fig:method:trajectory} to construct an aligned trajectory. A high $\counte$-value gives a dense distribution of adjustment keyframes which allows interpolated adjustment values to change rapidly. This alters the animation dramatically and has the potential to introduce visual artifacts. By decreasing $\counte$ we achieve smoother adjustment. By manual experimentation we found that a distribution of adjustment key frame around 3Hz gives good drift correction without degrading the visual quality of our reference animations.
 
 Adjustment curves can align evaluation space vectors (trajectories) $v_0,v_1\in R^{3t}$ by an optimization
-\begin{subequations}
+%\begin{subequations}
 \begin{align}
     \arg\min_{\parame}{
         \frac{1}{2}|v_0-\driftcor(\parame,v_1)|^2
     }
     \,.
 \end{align}
-\end{subequations}
+%\end{subequations}
 We apply such an alignment as a post processing step in the optimization procedure. In this case adjustments keyframes are distributed only at 2Hz. 
 
 For Drift Correction we optimize to fit $v \in R^{3t}$ against a linear least squares fit. Intuitively we identify adjustment keyframes such that the difference between the adjusted trajectory and a linear least squares fit applied to the same adjusted trajectory is minimized. The comparison between an adjusted trajectory and the linear least squares fit gives a simple measure straightness.
-\begin{subequations}
+%\begin{subequations}
 \begin{align}
     \arg\min_{\parame}{
         \frac{1}{2}|\mathcal{LLS}(v)-\driftcor(\omega\,\parame,v_1)|^2
     }
     \,.
 \end{align}
-\end{subequations}
+%\end{subequations}
 We apply the procedure to local segments of the animation that are almost straight. Straight segments are identified as regions between neighboring Control Genome changes, where $\omega$ is a weight vector used to disable alignment close to the local end points. In this case the keyframes are distributed only at 1Hz. The heuristic works well for animations consisting of turns and straight segments, but it is quite brittle and needs careful animation dependent tuning of the weights to avoid unwanted straightening of curved sections.
 
 
