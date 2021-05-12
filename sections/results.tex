@@ -26,9 +26,9 @@ To avoid sharp trajectory changes on foot contacts we apply a Gaussian filter wi
 \begin{figure}
     \centering
     \includegraphics[width=1.0\columnwidth]{img/estimated_trajectory_angular_velocity.png}
-    \caption{Angular velocity profiles of 2 animation clips. Top: Straight movement. Center: Same straight movement, but zoomed. Bottom: A turn. Estimated trajectories show clear peaks and smaller integrals of angular velocities compared to projected hip movement. Positive and negative angular velocities indicate right and left steering respectively. The estimated trajectories of straight animations show clear localized non-cyclic adjustments to heading, while hip movement obfuscate details.
+    \caption{Angular velocity profiles of 2 animation clips with foot contacts indicated by vertical dashed lines. Top: Straight movement. Center: Same straight movement, but zoomed. Bottom: A turn. Estimated trajectories show clear peaks and smaller integrals of angular velocities compared to projected hip movement. Positive and negative angular velocities indicate right and left steering respectively. The estimated trajectories of straight animations show clear localized non-cyclic adjustments to heading, while hip movement obfuscate details.
     %\\
-    The bottom plot shows the effects of applying local smoothing around foot contacts \changed{indicated by the vertical dashed lines}.}
+    The smaller plot to the bottom right shows the effects of applying local smoothing around foot contacts.}
     \label{fig:results:estimatedtrajectory:stats}
 \end{figure}
 
