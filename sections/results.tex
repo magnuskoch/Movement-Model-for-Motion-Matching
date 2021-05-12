@@ -70,11 +70,11 @@ After genome extraction we defined straight animation sections to begin when the
 %     \label{fig:results:trajectory_straight}
 % \end{figure}
 \subsection{Movement Model Fitting}
-We performed local fittings on our animations using control genomes with 2-5 changes in direction. The optimization was performed using PyTorch and the Adagrad optimizer with a general learning rate of 0.1. Convergence rates are shown in Fig. \label{fig:results:stats} and visual examples in Fig. \ref{fig:results:engine_view} and the supplied video material. Our model is able to reproduce relatively complex motion planning such as a gradual slow down in speed before starting to rotate during a $180^o$ turn and two phase accelerations during softer turns using only 17 adjustable parameters. 
+We performed local fittings on our animations using control genomes with 2-5 changes in direction. The optimization was performed using PyTorch and the Adagrad optimizer with a general learning rate of 0.1. Convergence rates are shown in Fig. \ref{fig:results:stats} and visual examples in Fig. \ref{fig:results:engine_view} and the supplied video material. Our model is able to reproduce relatively complex motion planning such as a gradual slow down in speed before starting to rotate during a $180^o$ turn and two phase accelerations during softer turns using only 17 adjustable parameters. 
 
 %\magnus{Convergence, increase genome count}
 
-\changed{Fig. \label{fig:results:stats} shows that our approach scales linear in the number of frames, has a small time foot print that allow its use in a game production environment, and that the bulk of the work is in the model optimization step, whereas trajectory estimation and adjustments are negligible.  Adagrad is a gradient descent method that modifies the general learning rate based on past steps our results show this works well for many examples, but can fail to fit.
+\changed{Fig. \ref{fig:results:stats} shows that our approach scales linear in the number of frames, has a small time foot print that allow its use in a game production environment, and that the bulk of the work is in the model optimization step, whereas trajectory estimation and adjustments are negligible.  Adagrad is a gradient descent method that modifies the general learning rate based on past steps our results show this works well for many examples, but can fail to fit.
 }
 
 \begin{figure}
