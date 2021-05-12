@@ -201,13 +201,7 @@ Here $\param_2$ and $\param_3$ model planning of movement and facing direction d
 %
 The mapping to evaluation space $\model(\paramm, \goals^{8}) \rightarrow \mathcal{R}^{3t}$ is done by performing $t$ updates to the state and extracting $\pos$ and $\facing$ at each update, and quality and style can be controlled by changes to $\paramm$. Our method replaces the current practice to tune such parameters by hand with and optimization procedure we later describe. The process of mapping the control genome to evaluation space is illustrated in Fig. \ref{fig:method:trajectory}. 
 
-An analytical model like this can be of great practical use to the game developers. The parameters have direct links to explainable properties in the animation which makes it easier to tweak the behavior of the model. On the other hand, the analytical approach requires that the designers are able to adequately model the complexity of the movement. 
-%
-When this is not the case, we can apply machine learning techniques to discover latent properties of our animation set. % 
-One approach is to extract a limited latent variable set using a dense neural network and then feed the latent variables to a set a primitives which are weighted to give the final output. 
-Alternatively, we could apply a hybrid approach by discovering correlations in the data by automated statistical analysis, but still allow the designer to setup the primitives and chose which parameters should be used. 
-
-Finally we note that multiple local Movement Models can be easily combined. Transitions between models can be established using the same primitives. In practice we find it is often sufficient to use a single 1D blend \changed{as seen from our results}. For instance the shift between 'run' and 'walk', which could require individual models, is usually distinct and of limited complexity and duration. 
+Finally we note that multiple local movement models can be easily combined. Transitions between models can be established using the same primitives. In practice we find it is often sufficient to use a single 1D blend \changed{as seen from our results}. For instance the shift between 'run' and 'walk', which could require individual models, is usually distinct and of limited complexity and duration. 
 
 \subsection{Motion Alignment}
 To fit a movement model and control genome pair we project reference animations to evaluation space by constructing $\edit$ as a 2 step function where \textit{Trajectory Estimation} ($\trajest$) is followed by \textit{Drift Correction} ($\driftcor$). Using similar conventions as in the previous section we map animations of $t$ frames to evaluation space. 
