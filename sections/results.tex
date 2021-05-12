@@ -74,8 +74,7 @@ We performed local fittings on our animations using control genomes with 2-5 cha
 
 %\magnus{Convergence, increase genome count}
 
-\changed{Fig. \ref{fig:results:stats} shows that our approach scales linear in the number of frames, has a small time foot print that allow its use in a game production environment, and that the bulk of the work is in the model optimization step, whereas trajectory estimation and adjustments are negligible.  Adagrad is a gradient descent method that modifies the general learning rate based on past steps our results show this works well for many examples, but can fail to fit.
-}
+Fig. \ref{fig:results:stats} shows that our approach scales linearly in the number of frames, has a small time foot print that allow its use in a game production environment, and that the bulk of the work is in the model optimization step, whereas trajectory estimation and adjustments are negligible.  Adagrad is a gradient descent method that modifies the general learning rate based on past steps. Our results show this works well for many examples, but can fail to fit in some case. When this happens we often find that heuristic for extracting control genome has failed to produce movement directions that correspond to the trajectory in the the animation. In such cases it is possible to manually adjust the control genomes before running the optimization. In other cases, the complexity of the animation cannot be reproduced by our model using the supplied control genome. In this case additional information must be added to the control genome. We also experienced some cases where the fitting failed entirely. Most likely due to incorrect gradient flow. Here an initial parameter sweep could be implemented to escape the unusable local minimum.
 
 \begin{figure}
     \centering
